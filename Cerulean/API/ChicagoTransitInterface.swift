@@ -13,6 +13,62 @@ class ChicagoTransitInterface: NSObject {
     @Published var returnedData: [String: Any] = [:]
     private let key = "e7a27d1443d8412b957e3c4ff7a655c2"
     
+    class func hasServiceEnded(line: Line) -> Bool {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        switch line {
+        case .red, .blue:
+            return false
+        case .brown:
+            if weekday == 1 {
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 40), end: Time(hour: 4, minute: 00))
+            } else {
+                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 10), end: Time(hour: 4, minute: 00))
+            }
+        case .green:
+            if weekday == 1 || weekday == 7 {
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 08), end: Time(hour: 4, minute: 45))
+            } else {
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 08), end: Time(hour: 3, minute: 45))
+            }
+        case .orange:
+            switch weekday {
+            case 1:
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 4, minute: 30))
+            case 7:
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 4, minute: 00))
+            default:
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 3, minute: 30))
+            }
+        case .pink:
+            if weekday == 1 || weekday == 7 {
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 31), end: Time(hour: 5, minute: 00))
+            } else {
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 31), end: Time(hour: 4, minute: 00))
+            }
+        case .purple:
+            switch weekday {
+            case 1:
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 37), end: Time(hour: 6, minute: 05))
+            case 6:
+                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 07), end: Time(hour: 4, minute: 28))
+            case 7:
+                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 07), end: Time(hour: 5, minute: 08))
+            default:
+                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 27), end: Time(hour: 4, minute: 28))
+            }
+        case .yellow:
+            if weekday == 1 || weekday == 7 {
+                return Time.isItCurrentlyBetween(start: Time(hour: 23, minute: 15), end: Time(hour: 6, minute: 00))
+            } else {
+                return Time.isItCurrentlyBetween(start: Time(hour: 23, minute: 15), end: Time(hour: 4, minute: 40))
+            }
+        }
+    }
+    
+    class func isPurpleExpressRunning() -> Bool {
+        return Time.isItCurrentlyBetween(start: Time(hour: 5, minute: 05), end: Time(hour: 10, minute: 08)) || Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 18), end: Time(hour: 7, minute: 17))
+    }
+    
     func getRunNumberInfo(run: String) {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttfollow.aspx"
         

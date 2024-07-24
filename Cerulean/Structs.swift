@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import CoreLocation
 
 enum Line {
     case red
@@ -16,7 +17,6 @@ enum Line {
     case orange
     case pink
     case purple
-    case purpleExpress
     case yellow
     
     func textualRepresentation() -> String {
@@ -35,8 +35,6 @@ enum Line {
             return "Pink"
         case .purple:
             return "Purple"
-        case .purpleExpress:
-            return "Purple Express"
         case .yellow:
             return "Yellow"
         }
@@ -58,8 +56,6 @@ enum Line {
             return "Pink"
         case .purple:
             return "P"
-        case .purpleExpress:
-            return "Pexp"
         case .yellow:
             return "Y"
         }
@@ -81,10 +77,46 @@ enum Line {
             return 5
         case .purple:
             return 6
-        case .purpleExpress:
-            return 6
         case .yellow:
             return 7
         }
+    }
+}
+
+struct Time: Comparable {
+    let hour: Int
+    let minute: Int
+    
+    static func < (lhs: Time, rhs: Time) -> Bool {
+        return lhs.hour * 60 + lhs.minute < rhs.hour * 60 + rhs.minute
+    }
+    
+    static func == (lhs: Time, rhs: Time) -> Bool {
+        return lhs.hour == rhs.hour && lhs.minute == rhs.minute
+    }
+    
+    static func isItCurrentlyBetween(start: Time, end: Time) -> Bool {
+        let now = Date()
+        let calendar = Calendar.current
+        let current = Time(hour: calendar.component(.hour, from: now), minute: calendar.component(.minute, from: now))
+        
+        if start < end {
+            return start <= current && current < end
+        } else {
+            return current >= start || current < end
+        }
+    }
+    
+    static func apiTimeToReadabletime(string: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        inputFormatter.timeZone = TimeZone(identifier: "America/Chicago")
+        let time: Date = inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "HH:mm"
+        outputFormatter.timeZone = TimeZone.autoupdatingCurrent
+        
+        return outputFormatter.string(from: time)
     }
 }

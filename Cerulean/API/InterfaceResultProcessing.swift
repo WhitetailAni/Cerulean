@@ -21,8 +21,8 @@ class InterfaceResultProcessing {
         }
         
         for train in trains {
-            if let rn = train["rn"] as? String, let destSt = train["destNm"] as? String {
-                trainInfoArray.append(["run": rn, "destinationStation": destSt])
+            if let rn = train["rn"] as? String, let destSt = train["destNm"] as? String, let time = ctatt["tmst"] as? String {
+                trainInfoArray.append(["run": rn, "destinationStation": destSt, "requestTime": time])
             }
         }
         
@@ -46,6 +46,8 @@ class InterfaceResultProcessing {
             let isBreakingDown: String = eta["isFlt"] as? String ?? "2"
             let isScheduled: String = eta["isSch"] as? String ?? "2"
             let nextStation: String = eta["staNm"] as? String ?? "Unknown"
+            let nextStationID: String = eta["staId"] as? String ?? "Unknown"
+            let nextStopID: String = eta["stpId"] as? String ?? "Unknown"
             let trainDirection: String = eta["trDr"] as? String ?? "2"
             let timeToArrive: String = eta["arrT"] as? String ?? "1970-01-01T00:00:00"
             
@@ -89,6 +91,8 @@ class InterfaceResultProcessing {
             }
             
             estimatedEta["nextStation"] = nextStation
+            estimatedEta["nextStationID"] = nextStationID
+            estimatedEta["nextStopID"] = nextStopID
             estimatedEta["finalStation"] = endDestination
             estimatedEta["direction"] = trainDirection
             estimatedEta["nextStationArrivalTime"] = timeToArrive
