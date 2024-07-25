@@ -21,8 +21,8 @@ class InterfaceResultProcessing {
         }
         
         for train in trains {
-            if let rn = train["rn"] as? String, let destSt = train["destNm"] as? String, let time = ctatt["tmst"] as? String {
-                trainInfoArray.append(["run": rn, "destinationStation": destSt, "requestTime": time])
+            if let rn = train["rn"] as? String, let destSt = train["destNm"] as? String, let destStID = train["destSt"] as? String, let time = ctatt["tmst"] as? String, let latitude: String = train["lat"] as? String, let longitude: String = train["lon"] as? String {
+                trainInfoArray.append(["run": rn, "destinationStation": destSt, "destinationStationID": destStID, "requestTime": time, "latitude": latitude, "longitude": longitude])
             }
         }
         
@@ -46,13 +46,13 @@ class InterfaceResultProcessing {
             let isBreakingDown: String = eta["isFlt"] as? String ?? "2"
             let isScheduled: String = eta["isSch"] as? String ?? "2"
             let nextStation: String = eta["staNm"] as? String ?? "Unknown"
-            let nextStationID: String = eta["staId"] as? String ?? "Unknown"
             let nextStopID: String = eta["stpId"] as? String ?? "Unknown"
             let trainDirection: String = eta["trDr"] as? String ?? "2"
             let timeToArrive: String = eta["arrT"] as? String ?? "1970-01-01T00:00:00"
             
-            let latitude: String = eta["lat"] as? String ?? "0"
-            let longitude: String = eta["lon"] as? String ?? "0"
+            /*let latitude: String = eta["lat"] as? String ?? "69"
+            let longitude: String = eta["lon"] as? String ?? "69"*/
+            //the cta literally just doesn't give this info at ttfollow
             
             switch isDelayed {
             case "0":
@@ -91,13 +91,12 @@ class InterfaceResultProcessing {
             }
             
             estimatedEta["nextStation"] = nextStation
-            estimatedEta["nextStationID"] = nextStationID
             estimatedEta["nextStopID"] = nextStopID
             estimatedEta["finalStation"] = endDestination
             estimatedEta["direction"] = trainDirection
             estimatedEta["nextStationArrivalTime"] = timeToArrive
-            estimatedEta["latitude"] = latitude
-            estimatedEta["longitude"] = longitude
+            /*estimatedEta["latitude"] = latitude
+            estimatedEta["longitude"] = longitude*/
             
             estimatedEtaArray.append(estimatedEta)
         }

@@ -12,9 +12,16 @@ class CRMapView: MKMapView {
     var train: CRPlacemark
     var station: CRPlacemark
     
+    init(train: CRPlacemark) {
+        self.train = train
+        self.station = CRPlacemark(coordinate: CLLocationCoordinate2D(latitude: 52.31697130005335, longitude: 4.746418131532647))
+        super.init(frame: .zero)
+    }
+    
     init(train: CRPlacemark, station: CRPlacemark) {
         self.train = train
         self.station = station
+        print("init correct")
         super.init(frame: .zero)
     }
     
@@ -24,36 +31,43 @@ class CRMapView: MKMapView {
     
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
-        
-    }
-    
-    private func zoomToAnnotations(annotations: [MKAnnotation]) {
-        var zoomRect = MKMapRect.null
-        for annotation in annotations {
-            let annotationPoint = MKMapPoint(annotation.coordinate)
-            let pointRect = MKMapRect(x: annotationPoint.x, y: annotationPoint.y, width: 0, height: 0)
-            if zoomRect.isNull {
-                zoomRect = pointRect
-            } else {
-                zoomRect = zoomRect.union(pointRect)
-            }
+        if station.coordinate.latitude == 52.31697130005335 && station.coordinate.longitude == 4.746418131532647 {
+            zoomMapToTrain(train: train)
+            print("only zooming to train")
+        } else {
+            zoomMapToTrainAndStation(train: train, station: station)
+            print("st joe")
         }
-        self.setVisibleMapRect(zoomRect, edgePadding: NSEdgeInsets(top: 35, left: 35, bottom: 100, right: 35), animated: true)
     }
     
-    private func plotPolylineAndTrainAndZoomMap(train: CRPlacemark, station: CRPlacemark) {
+    private func zoomMapToTrain(train: CRPlacemark) {
+        let trainAnnotation = MKPointAnnotation()
+        trainAnnotation.coordinate = train.coordinate
+        trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
+        self.addAnnotation(trainAnnotation)
+        
+        let coordinate = train.coordinate
+        let span = MKCoordinateSpan(latitudeDelta: 0, longitudeDelta: 360 / pow(2, 17) * Double(self.frame.size.width) / 256)
+        self.setRegion(MKCoordinateRegion(center: coordinate, span: span), animated: true)
+    }
+    
+    private func zoomMapToTrainAndStation(train: CRPlacemark, station: CRPlacemark) {
+        print("doing both")
         let trainAnnotation = MKPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
         
         let stationAnnotation = MKPointAnnotation()
-        stationAnnotation.coordinate = train.coordinate
-        stationAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line stop \(train.stationName ?? "Unknown")"
+        stationAnnotation.coordinate = station.coordinate
+        stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
         
-        var annotations: [any MKAnnotation] = [trainAnnotation, stationAnnotation]
         
-        self.addAnnotations(annotations)
+        self.addAnnotations([trainAnnotation, stationAnnotation])
         
-        self.zoomToAnnotations(annotations: annotations)
+        let midpointLatitude = (trainAnnotation.coordinate.latitude + stationAnnotation.coordinate.latitude) / 2
+        let midpointLongitude = (trainAnnotation.coordinate.longitude + stationAnnotation.coordinate.longitude) / 2
+        let midpoint = CLLocationCoordinate2D(latitude: midpointLatitude, longitude: midpointLongitude)
+        let span = MKCoordinateSpan(latitudeDelta: 0, longitudeDelta: 360 / pow(2, 14) * Double(self.frame.size.width) / 256)
+        self.setRegion(MKCoordinateRegion(center: midpoint, span: span), animated: true)
     }
 }

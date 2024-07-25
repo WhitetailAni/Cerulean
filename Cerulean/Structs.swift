@@ -60,27 +60,6 @@ enum Line {
             return "Y"
         }
     }
-    
-    func barIndex() -> Int {
-        switch self {
-        case .red:
-            return 0
-        case .blue:
-            return 1
-        case .green:
-            return 2
-        case .brown:
-            return 3
-        case .orange:
-            return 4
-        case .pink:
-            return 5
-        case .purple:
-            return 6
-        case .yellow:
-            return 7
-        }
-    }
 }
 
 struct Time: Comparable {
@@ -118,5 +97,11 @@ struct Time: Comparable {
         outputFormatter.timeZone = TimeZone.autoupdatingCurrent
         
         return outputFormatter.string(from: time)
+    }
+}
+
+extension NSMenuItem {
+    convenience init(title: String, action: Selector?) {
+        self.init(title: title, action: action, keyEquivalent: "")
     }
 }

@@ -6,12 +6,12 @@
 //
 
 import Foundation
+import CoreLocation
 
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
-    @Published var requestInProgress = true
     @Published var returnedData: [String: Any] = [:]
-    private let key = "e7a27d1443d8412b957e3c4ff7a655c2"
+    private var requestInProgress = true
     
     class func hasServiceEnded(line: Line) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
@@ -69,12 +69,31 @@ class ChicagoTransitInterface: NSObject {
         return Time.isItCurrentlyBetween(start: Time(hour: 5, minute: 05), end: Time(hour: 10, minute: 08)) || Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 18), end: Time(hour: 7, minute: 17))
     }
     
+    ///Waits for the request to be done. This will block the current thread until it is complete.
+    func wait() {
+        while requestInProgress { }
+    }
+    
+    func getStationCoordinateForID(id: String) {
+        let baseURL = "https://data.cityofchicago.org/resource/8pix-ypme.json"
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "stop_id", value: id)
+        ]
+        
+        contactDowntown(components: components) { result in
+            self.returnedData = result
+            self.requestInProgress = false
+        }
+    }
+    
     func getRunNumberInfo(run: String) {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttfollow.aspx"
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "key", value: key),
+            URLQueryItem(name: "key", value: "e7a27d1443d8412b957e3c4ff7a655c2"),
             URLQueryItem(name: "runnumber", value: run),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
@@ -90,7 +109,7 @@ class ChicagoTransitInterface: NSObject {
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "key", value: key),
+            URLQueryItem(name: "key", value: "e7a27d1443d8412b957e3c4ff7a655c2"),
             URLQueryItem(name: "rt", value: line.apiRepresentation()),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
@@ -107,10 +126,21 @@ class ChicagoTransitInterface: NSObject {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        var request = URLRequest(url: url)
+        request.addValue("ZBIgPAfk5Mt5twmWHYWw1yDVd", forHTTPHeaderField: "X-App-Token")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(["Error": "Request failed: \(error.localizedDescription)"])
                 return
+            }
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode == 502 {
+                    completion(["destNm": "Error", "lat":"Unable to get predictions"])
+                } else if response.statusCode == 503 {
+                    completion(["destNm": "Error", "lat":"Run has no predictions"])
+                }
             }
             
             guard let data = data else {
@@ -119,8 +149,30 @@ class ChicagoTransitInterface: NSObject {
             }
             
             do {
-                let jsonResult = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? ["Error": "Invalid JSON"]
-                completion(jsonResult)
+                if components?.queryItems?[0].name == "stop_id" {
+                    let rawString = String(data: data, encoding: .utf8) ?? "[]\n"
+                    let jsonString = rawString.replacingOccurrences(of: "\n", with: "")
+                    
+                    if let latitudeRange = jsonString.range(of: "\"latitude\":\""), let longitudeRange = jsonString.range(of: "\"longitude\":\"") {
+                        let latitudeStartIndex = jsonString.index(latitudeRange.upperBound, offsetBy: 0)
+                        let longitudeStartIndex = jsonString.index(longitudeRange.upperBound, offsetBy: 0)
+                        
+                        if let latitudeEndIndex = jsonString.range(of: "\"", range: latitudeStartIndex..<jsonString.endIndex), let longitudeEndIndex = jsonString.range(of: "\"", range: longitudeStartIndex..<jsonString.endIndex) {
+                            let latitude: String = String(jsonString[latitudeStartIndex..<latitudeEndIndex.lowerBound])
+                            let longitude: String = String(jsonString[longitudeStartIndex..<longitudeEndIndex.lowerBound])
+                            
+                            let jsonResult = ["latitude": latitude, "longitude": longitude]
+                            completion(jsonResult)
+                        } else {
+                            completion(["Error":"Couldn't parse string to end"])
+                        }
+                    } else {
+                        completion(["Error":"Couldn't find location info"])
+                    }
+                } else {
+                    let jsonResult = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? ["Error": "Invalid JSON"]
+                    completion(jsonResult)
+                }
             } catch {
                 completion(["Error": "JSON parsing failed: \(error.localizedDescription)"])
             }

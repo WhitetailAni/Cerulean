@@ -14,5 +14,9 @@ class CRMenuItem: NSMenuItem {
     var trainCoordinate: CLLocationCoordinate2D?
     var trainDesiredStop: String?
     var trainDesiredStopID: String?
+    
+    var trainEndStop: String?
+    var trainEndStopID: String?
+    var trainHasReachedEnd: Bool?
 }
 
