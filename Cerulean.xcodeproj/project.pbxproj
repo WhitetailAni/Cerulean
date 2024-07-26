@@ -10,6 +10,9 @@
 		420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */; };
 		420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012F12C50B9C3007ACC67 /* CRPlacemark.swift */; };
 		420012F52C5207C9007ACC67 /* MapWindowDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012F42C5207BB007ACC67 /* MapWindowDelegate.swift */; };
+		420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012FC2C535F88007ACC67 /* AboutView.swift */; };
+		420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012FE2C5367A5007ACC67 /* UserInfo.swift */; };
+		420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013002C536B93007ACC67 /* AboutWindowDelegate.swift */; };
 		422124BF2C5026D80062695A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124BE2C5026D80062695A /* AppDelegate.swift */; };
 		422124C12C5026DA0062695A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422124C02C5026DA0062695A /* Assets.xcassets */; };
 		422124CE2C5026FA0062695A /* ChicagoTransitInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CC2C5026FA0062695A /* ChicagoTransitInterface.swift */; };
@@ -23,6 +26,9 @@
 		420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMenuItem.swift; sourceTree = "<group>"; };
 		420012F12C50B9C3007ACC67 /* CRPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPlacemark.swift; sourceTree = "<group>"; };
 		420012F42C5207BB007ACC67 /* MapWindowDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWindowDelegate.swift; sourceTree = "<group>"; };
+		420012FC2C535F88007ACC67 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		420012FE2C5367A5007ACC67 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		420013002C536B93007ACC67 /* AboutWindowDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowDelegate.swift; sourceTree = "<group>"; };
 		422124BB2C5026D80062695A /* Cerulean.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cerulean.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		422124BE2C5026D80062695A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		422124C02C5026DA0062695A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -75,12 +81,15 @@
 		422124BD2C5026D80062695A /* Cerulean */ = {
 			isa = PBXGroup;
 			children = (
+				420012FE2C5367A5007ACC67 /* UserInfo.swift */,
 				420012F42C5207BB007ACC67 /* MapWindowDelegate.swift */,
+				420013002C536B93007ACC67 /* AboutWindowDelegate.swift */,
 				420012EE2C50B9B5007ACC67 /* Subclasses */,
 				422124CB2C5026F20062695A /* API */,
 				422124DB2C502E6D0062695A /* Info.plist */,
 				422124D92C502D900062695A /* CeruleanApp.swift */,
 				422124BE2C5026D80062695A /* AppDelegate.swift */,
+				420012FC2C535F88007ACC67 /* AboutView.swift */,
 				422124D22C50270E0062695A /* Structs.swift */,
 				422124C02C5026DA0062695A /* Assets.xcassets */,
 				422124C52C5026DA0062695A /* Cerulean.entitlements */,
@@ -169,6 +178,7 @@
 			files = (
 				422124BF2C5026D80062695A /* AppDelegate.swift in Sources */,
 				420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */,
+				420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */,
 				424B28F32C509E81002E3E9B /* CRMapView.swift in Sources */,
 				420012F52C5207C9007ACC67 /* MapWindowDelegate.swift in Sources */,
 				422124D32C50270E0062695A /* Structs.swift in Sources */,
@@ -176,6 +186,8 @@
 				422124DA2C502D920062695A /* CeruleanApp.swift in Sources */,
 				420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */,
 				422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */,
+				420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */,
+				420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,11 +321,12 @@
 				CODE_SIGN_ENTITLEMENTS = Cerulean/Cerulean.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 463;
 				DEVELOPMENT_TEAM = DK2B92MAN7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -340,11 +353,12 @@
 				CODE_SIGN_ENTITLEMENTS = Cerulean/Cerulean.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 463;
 				DEVELOPMENT_TEAM = DK2B92MAN7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";

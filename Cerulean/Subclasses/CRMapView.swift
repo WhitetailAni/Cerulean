@@ -21,7 +21,6 @@ class CRMapView: MKMapView {
     init(train: CRPlacemark, station: CRPlacemark) {
         self.train = train
         self.station = station
-        print("init correct")
         super.init(frame: .zero)
     }
     
@@ -31,12 +30,17 @@ class CRMapView: MKMapView {
     
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        
+        self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .castle, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
+        self.isScrollEnabled = false
+        self.isZoomEnabled = false
+        self.isRotateEnabled = false
+        self.isPitchEnabled = false
+        
         if station.coordinate.latitude == 52.31697130005335 && station.coordinate.longitude == 4.746418131532647 {
             zoomMapToTrain(train: train)
-            print("only zooming to train")
         } else {
             zoomMapToTrainAndStation(train: train, station: station)
-            print("st joe")
         }
     }
     
@@ -52,7 +56,6 @@ class CRMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation(train: CRPlacemark, station: CRPlacemark) {
-        print("doing both")
         let trainAnnotation = MKPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
@@ -61,13 +64,14 @@ class CRMapView: MKMapView {
         stationAnnotation.coordinate = station.coordinate
         stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
         
-        
         self.addAnnotations([trainAnnotation, stationAnnotation])
         
         let midpointLatitude = (trainAnnotation.coordinate.latitude + stationAnnotation.coordinate.latitude) / 2
         let midpointLongitude = (trainAnnotation.coordinate.longitude + stationAnnotation.coordinate.longitude) / 2
         let midpoint = CLLocationCoordinate2D(latitude: midpointLatitude, longitude: midpointLongitude)
-        let span = MKCoordinateSpan(latitudeDelta: 0, longitudeDelta: 360 / pow(2, 14) * Double(self.frame.size.width) / 256)
+        let latitudeDelta = abs(trainAnnotation.coordinate.latitude - stationAnnotation.coordinate.latitude) * 1.53
+        let longitudeDelta = abs(trainAnnotation.coordinate.longitude - stationAnnotation.coordinate.longitude) * 1.53
+        let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
         self.setRegion(MKCoordinateRegion(center: midpoint, span: span), animated: true)
     }
 }
