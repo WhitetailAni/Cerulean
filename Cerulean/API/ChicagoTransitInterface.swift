@@ -12,6 +12,8 @@ import CoreLocation
 class ChicagoTransitInterface: NSObject {
     @Published var returnedData: [String: Any] = [:]
     private var requestInProgress = true
+    private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
+    private let chicagoDataPortalAPIKey = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
     
     class func hasServiceEnded(line: CRLine) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
@@ -45,7 +47,7 @@ class ChicagoTransitInterface: NSObject {
             } else {
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 4, minute: 00))
             }
-        case .purple, .purpleExpress:
+        case .purple:
             switch weekday {
             case 1:
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 37), end: CRTime(hour: 6, minute: 05))
@@ -93,7 +95,7 @@ class ChicagoTransitInterface: NSObject {
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "key", value: "e7a27d1443d8412b957e3c4ff7a655c2"),
+            URLQueryItem(name: "key", value: trainTrackerAPIKey),
             URLQueryItem(name: "runnumber", value: run),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
@@ -109,7 +111,7 @@ class ChicagoTransitInterface: NSObject {
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "key", value: "e7a27d1443d8412b957e3c4ff7a655c2"),
+            URLQueryItem(name: "key", value: trainTrackerAPIKey),
             URLQueryItem(name: "rt", value: line.apiRepresentation()),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
@@ -127,7 +129,7 @@ class ChicagoTransitInterface: NSObject {
         }
         
         var request = URLRequest(url: url)
-        request.addValue("ZBIgPAfk5Mt5twmWHYWw1yDVd", forHTTPHeaderField: "X-App-Token")
+        request.addValue(chicagoDataPortalAPIKey, forHTTPHeaderField: "X-App-Token")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {

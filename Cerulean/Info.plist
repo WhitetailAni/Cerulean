@@ -6,8 +6,6 @@
 	<string>AppIcon</string>
 	<key>CRRefreshInterval</key>
 	<real>60</real>
-	<key>CRViolateTrademarks</key>
-	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

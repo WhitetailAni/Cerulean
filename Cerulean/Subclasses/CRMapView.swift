@@ -13,6 +13,7 @@ class CRMapView: MKMapView {
     var train: CRPlacemark
     var station: CRPlacemark
     var timeLastUpdated: String
+    var timeLabel: NSTextField!
     
     init(train: CRPlacemark, timeLastUpdated: String) {
         self.train = train
@@ -39,13 +40,14 @@ class CRMapView: MKMapView {
         
         self.register(CRMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
-        let timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
+        timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
         timeLabel.font = NSFont.systemFont(ofSize: 12)
         timeLabel.textColor = NSColor(r: 222, g: 222, b: 222)
         timeLabel.isBezeled = false
         timeLabel.drawsBackground = false
         timeLabel.isEditable = false
         timeLabel.sizeToFit()
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(timeLabel)
         
@@ -54,19 +56,31 @@ class CRMapView: MKMapView {
             timeLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
         ])
         
+        let refreshButton = NSButton(image: NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!, target: self, action: #selector(refreshTrainPosition))
+        refreshButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.addSubview(refreshButton)
+        
+        NSLayoutConstraint.activate([
+            refreshButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            refreshButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+        ])
+        
         if station.coordinate.latitude == 52.31697130005335 && station.coordinate.longitude == 4.746418131532647 {
-            zoomMapToTrain(train: train)
+            zoomMapToTrain()
         } else {
-            zoomMapToTrainAndStation(train: train, station: station)
+            zoomMapToTrainAndStation()
         }
     }
     
-    private func zoomMapToTrain(train: CRPlacemark) {
+    private func zoomMapToTrain() {
+        self.removeAnnotations(self.annotations)
         
         let trainAnnotation = CRPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
         trainAnnotation.mark = train
+        trainAnnotation.isTrainAnnotation = true
         self.addAnnotation(trainAnnotation)
         
         let coordinate = train.coordinate
@@ -74,16 +88,20 @@ class CRMapView: MKMapView {
         self.setRegion(MKCoordinateRegion(center: coordinate, span: span), animated: true)
     }
     
-    private func zoomMapToTrainAndStation(train: CRPlacemark, station: CRPlacemark) {
+    private func zoomMapToTrainAndStation() {
+        self.removeAnnotations(self.annotations)
+        
         let trainAnnotation = CRPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
         trainAnnotation.mark = train
+        trainAnnotation.isTrainAnnotation = true
         
         let stationAnnotation = CRPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
         stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
         stationAnnotation.mark = station
+        trainAnnotation.isTrainAnnotation = false
         
         self.addAnnotations([trainAnnotation, stationAnnotation])
         
@@ -94,5 +112,29 @@ class CRMapView: MKMapView {
         let longitudeDelta = abs(trainAnnotation.coordinate.longitude - stationAnnotation.coordinate.longitude) * 1.53
         let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
         self.setRegion(MKCoordinateRegion(center: midpoint, span: span), animated: true)
+    }
+    
+    @objc func refreshTrainPosition() {
+        DispatchQueue.global().async {
+            let instance = ChicagoTransitInterface()
+            instance.getRunNumberInfo(run: self.train.trainRun ?? "000")
+            instance.wait()
+            let locationInfo = InterfaceResultProcessing.getLocationForRun(info: instance.returnedData)
+            
+            if locationInfo.0.latitude == -2, locationInfo.0.longitude == -3 {
+                return
+            }
+            
+            DispatchQueue.main.sync {
+                self.train = self.train.placemarkWithNewLocation(locationInfo.0)
+                self.timeLabel.stringValue = "Updated at \(locationInfo)"
+                
+                if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
+                    self.zoomMapToTrain()
+                } else {
+                    self.zoomMapToTrainAndStation()
+                }
+            }
+        }
     }
 }

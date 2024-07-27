@@ -19,23 +19,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var windows: [NSWindow] = []
     var aboutWindows: [NSWindow] = []
     var aboutWindowDelegate: AboutWindowDelegate!
+    var mapWindowDelegate: MapWindowDelegate!
+    var autoRefresh: AutomaticRefresh!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem.button {
-            var image: NSImage!
-            if Bundle.main.infoDictionary?["CRViolateTrademarks"] as? Bool ?? false {
-                image = NSImage(size: NSSize(width: 22, height: 22), flipped: false) { (rect) -> Bool in
-                    NSImage(named: "ctaLogo")!.draw(in: rect)
-                    return true
-                }
-            } else {
-                image = NSImage(size: NSSize(width: 22, height: 22), flipped: false) { (rect) -> Bool in
-                    NSImage(named: "ctaTrain")!.tint(color: .white).draw(in: rect)
-                    return true
-                }
+            let image = NSImage(size: NSSize(width: 22, height: 22), flipped: false) { (rect) -> Bool in
+                NSImage(named: "ctaTrain")!.tint(color: .white).draw(in: rect)
+                return true
             }
+            
             image.isTemplate = true
             button.image = image
             button.imagePosition = .imageLeft
@@ -44,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu = NSMenu()
         refreshInfo()
         
-        let autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 60.0) {
+        autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 60.0) {
             self.refreshInfo()
         }
         autoRefresh.start()
@@ -70,6 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let validLines = [CRLine.red, CRLine.blue, CRLine.brown, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow]
         for line in validLines {
             let item = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
+            item.linkToOpen = line.link()
             if line == .yellow {
                 let yellowLineTitle = NSMutableAttributedString(string: line.textualRepresentation())
                 
@@ -103,12 +99,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 subMenu.removeItem(at: 0)
                 
                 DispatchQueue.main.sync {
-                    if line == .purple && ChicagoTransitInterface.isPurpleExpressRunning() {
-                        subMenu.addItem(NSMenuItem(title: "Express service active", action: nil))
-                        subMenu.addItem(NSMenuItem.separator())
-                    }
-                    
-                    
                     if ChicagoTransitInterface.hasServiceEnded(line: line) {
                         subMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
                     } else if trains.count == 0 {
@@ -117,6 +107,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         let timeLastUpdated = CRTime.apiTimeToReadabletime(string: trains[0]["requestTime"] ?? "")
                         subMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
                         subMenu.addItem(NSMenuItem.separator())
+                        if line == .purple && ChicagoTransitInterface.isPurpleExpressRunning() {
+                            let purpleExpressStatusItem = CRMenuItem(title: "Express service active", action: #selector(self.openLink(_:)))
+                            purpleExpressStatusItem.linkToOpen = URL(string: "https://www.transitchicago.com/assets/1/6/rail-tt_purple.pdf")
+                            subMenu.addItem(purpleExpressStatusItem)
+                        }
                         for train in trains {
                             var line2 = line
                             if line == .green && train["destinationStation"] == "Cottage Grove" {
@@ -195,9 +190,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             subSubMenu.addItem(subSubItem)
                                             
                                             let subSubSubMenu = NSMenu()
-                                            let delayItem = NSMenuItem(title: "Delayed: \(station["isDelayed"] ?? "Unknown")", action: #selector(self.nop), keyEquivalent: "")
-                                            let faultItem = NSMenuItem(title: "Fault detected: \(station["isBreakingDown"] ?? "Unknown")", action: #selector(self.nop), keyEquivalent: "")
-                                            let approachingItem = NSMenuItem(title: "Scheduled: \(station["isScheduled"] ?? "Unknown")", action: #selector(self.nop), keyEquivalent: "")
+                                            let alertLink = URL(string: "https://www.transitchicago.com/alerts/")
+                                            let delayItem = CRMenuItem(title: "Delayed: \(station["isDelayed"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                            delayItem.linkToOpen = alertLink
+                                            
+                                            let faultItem = CRMenuItem(title: "Fault detected: \(station["isBreakingDown"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                            faultItem.linkToOpen = alertLink
+                                            
+                                            let approachingItem = CRMenuItem(title: "Scheduled: \(station["isScheduled"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                            approachingItem.linkToOpen = alertLink
+                                            
                                             subSubSubMenu.addItem(delayItem)
                                             subSubSubMenu.addItem(faultItem)
                                             subSubSubMenu.addItem(approachingItem)
@@ -236,8 +238,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func openWindow(_ sender: CRMenuItem) {
         if let screenSize = NSScreen.main?.frame.size {
-            let defaultRect = NSMakeRect(0, 0, screenSize.width * 0.43, screenSize.height * 0.43)
-            windows.append(NSWindow(contentRect: defaultRect, styleMask: [.titled, .closable], backing: .buffered, defer: false))
+            windows.append(NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false))
             let index = windows.count - 1
             let trainMark = CRPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 41.88372, longitude: 87.63238))
             
@@ -316,10 +317,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     windows[index].makeKey()
                     NSApp.activate(ignoringOtherApps: true)
                     
-                    let delegate = MapWindowDelegate(closeWindow: {
+                    mapWindowDelegate = MapWindowDelegate(closeWindow: {
                         self.windows.remove(at: index)
                     })
-                    windows[index].delegate = delegate
+                    windows[index].delegate = mapWindowDelegate
                 }
             }
         }
@@ -332,20 +333,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let index = aboutWindows.count - 1
             
             aboutWindows[index].contentView = NSHostingView(rootView: AboutView())
-            aboutWindows[index].title = "Cerulean - About"
+            aboutWindows[index].title = "Cerulean \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "772")) - About"
             aboutWindows[index].center()
             aboutWindows[index].setIsVisible(true)
             aboutWindows[index].orderFrontRegardless()
             aboutWindows[index].makeKey()
             NSApp.activate(ignoringOtherApps: true)
             
-            aboutWindowDelegate = AboutWindowDelegate(window: aboutWindows[index])
+            aboutWindowDelegate = AboutWindowDelegate(window: aboutWindows[index]) {
+                self.aboutWindows.remove(at: index)
+            }
             aboutWindows[index].delegate = aboutWindowDelegate
         }
     }
     
     @objc func openLink(_ sender: CRMenuItem) {
-        if let link = sender.trainLine?.link() {
+        if let link = sender.linkToOpen {
             NSWorkspace.shared.open(link)
         }
     }

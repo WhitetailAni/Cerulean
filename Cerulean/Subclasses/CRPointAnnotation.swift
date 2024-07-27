@@ -10,4 +10,5 @@ import MapKit
 
 class CRPointAnnotation: MKPointAnnotation {
     var mark: CRPlacemark?
+    var isTrainAnnotation: Bool?
 }

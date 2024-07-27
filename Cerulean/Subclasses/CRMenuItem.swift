@@ -20,5 +20,7 @@ class CRMenuItem: NSMenuItem {
     var trainHasReachedEnd: Bool?
     
     var timeLastUpdated: String?
+    
+    var linkToOpen: URL?
 }
 

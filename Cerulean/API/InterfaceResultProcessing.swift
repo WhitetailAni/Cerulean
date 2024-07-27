@@ -5,6 +5,9 @@
 //  Created by WhitetailAni on 7/23/24.
 //
 
+import Foundation
+import CoreLocation
+
 class InterfaceResultProcessing {
     
     ///Turns the CTA's Train Tracker API response for all runs along a line
@@ -101,5 +104,16 @@ class InterfaceResultProcessing {
             estimatedEtaArray.append(estimatedEta)
         }
         return estimatedEtaArray
+    }
+    
+    class func getLocationForRun(info: [String: Any]) -> (CLLocationCoordinate2D, String) {
+        guard let ctatt = info["ctatt"] as? [String: Any], let position = ctatt["position"] as? [String: Any], let timeString = ctatt["tmst"] as? String else {
+            return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
+        }
+        
+        if let latitudeString = position["lat"] as? String, let longitudeString = position["lon"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+            return (CLLocationCoordinate2D(latitude: latitude, longitude: longitude), CRTime.apiTimeToReadabletime(string: timeString))
+        }
+        return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
     }
 }

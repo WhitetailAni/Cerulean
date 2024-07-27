@@ -8,13 +8,19 @@
 import AppKit
 
 class AboutWindowDelegate: NSObject, NSWindowDelegate {
-    var window: NSWindow!
+    var window: NSWindow
+    var closeWindow: (() -> Void)
     
-    init(window: NSWindow) {
+    init(window: NSWindow, closeWindow: @escaping () -> Void) {
         self.window = window
+        self.closeWindow = closeWindow
     }
     
-    func windowDidResignKey(_ notification: Notification) {
+    func windowDidResignMain(_ notification: Notification) {
         window.close()
+    }
+        
+    func windowWillClose(_ notification: Notification) {
+        closeWindow()
     }
 }

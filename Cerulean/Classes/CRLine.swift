@@ -18,7 +18,6 @@ enum CRLine {
     case orange
     case pink
     case purple
-    case purpleExpress
     case yellow
     
     func textualRepresentation() -> String {
@@ -35,7 +34,7 @@ enum CRLine {
             return "Orange"
         case .pink:
             return "Pink"
-        case .purple, .purpleExpress:
+        case .purple:
             return "Purple"
         case .yellow:
             return "Yellow"
@@ -56,7 +55,7 @@ enum CRLine {
             return "Org"
         case .pink:
             return "Pink"
-        case .purple, .purpleExpress:
+        case .purple:
             return "P"
         case .yellow:
             return "Y"
@@ -77,7 +76,7 @@ enum CRLine {
             return NSColor(r: 244, g: 120, b: 54)
         case .pink:
             return NSColor(r: 243, g: 139, b: 185)
-        case .purple, .purpleExpress:
+        case .purple:
             return NSColor(r: 73, g: 47, b: 146)
         case .yellow:
             return NSColor(r: 255, g: 232, b: 0)
@@ -98,7 +97,7 @@ enum CRLine {
             return URL(string: "https://www.transitchicago.com/orangeline/")!
         case .pink:
             return URL(string: "https://www.transitchicago.com/pinkline/")!
-        case .purple, .purpleExpress:
+        case .purple:
             return URL(string: "https://www.transitchicago.com/purpleline/")!
         case .yellow:
             return URL(string: "https://www.transitchicago.com/yellowline/")!
