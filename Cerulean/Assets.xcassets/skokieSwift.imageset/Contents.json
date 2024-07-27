@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "skokie swift.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
