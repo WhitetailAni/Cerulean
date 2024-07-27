@@ -13,11 +13,16 @@
 		420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012FC2C535F88007ACC67 /* AboutView.swift */; };
 		420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420012FE2C5367A5007ACC67 /* UserInfo.swift */; };
 		420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013002C536B93007ACC67 /* AboutWindowDelegate.swift */; };
+		420013032C54B0AF007ACC67 /* CRMarkerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */; };
+		420013062C54B1F1007ACC67 /* CRLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013052C54B1F0007ACC67 /* CRLine.swift */; };
+		420013082C54B1FC007ACC67 /* CRTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013072C54B1FB007ACC67 /* CRTime.swift */; };
+		4200130A2C54B2B6007ACC67 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420013092C54B2B5007ACC67 /* Extensions.swift */; };
+		4200130C2C54B47E007ACC67 /* CRPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */; };
+		4200132C2C54E846007ACC67 /* AutomaticRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4200132B2C54E841007ACC67 /* AutomaticRefresh.swift */; };
 		422124BF2C5026D80062695A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124BE2C5026D80062695A /* AppDelegate.swift */; };
 		422124C12C5026DA0062695A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 422124C02C5026DA0062695A /* Assets.xcassets */; };
 		422124CE2C5026FA0062695A /* ChicagoTransitInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CC2C5026FA0062695A /* ChicagoTransitInterface.swift */; };
 		422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */; };
-		422124D32C50270E0062695A /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124D22C50270E0062695A /* Structs.swift */; };
 		422124DA2C502D920062695A /* CeruleanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124D92C502D900062695A /* CeruleanApp.swift */; };
 		424B28F32C509E81002E3E9B /* CRMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424B28F22C509E79002E3E9B /* CRMapView.swift */; };
 /* End PBXBuildFile section */
@@ -29,13 +34,18 @@
 		420012FC2C535F88007ACC67 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		420012FE2C5367A5007ACC67 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		420013002C536B93007ACC67 /* AboutWindowDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowDelegate.swift; sourceTree = "<group>"; };
+		420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMarkerAnnotationView.swift; sourceTree = "<group>"; };
+		420013052C54B1F0007ACC67 /* CRLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLine.swift; sourceTree = "<group>"; };
+		420013072C54B1FB007ACC67 /* CRTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRTime.swift; sourceTree = "<group>"; };
+		420013092C54B2B5007ACC67 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPointAnnotation.swift; sourceTree = "<group>"; };
+		4200132B2C54E841007ACC67 /* AutomaticRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomaticRefresh.swift; sourceTree = "<group>"; };
 		422124BB2C5026D80062695A /* Cerulean.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cerulean.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		422124BE2C5026D80062695A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		422124C02C5026DA0062695A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		422124C52C5026DA0062695A /* Cerulean.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cerulean.entitlements; sourceTree = "<group>"; };
 		422124CC2C5026FA0062695A /* ChicagoTransitInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChicagoTransitInterface.swift; sourceTree = "<group>"; };
 		422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceResultProcessing.swift; sourceTree = "<group>"; };
-		422124D22C50270E0062695A /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		422124D92C502D900062695A /* CeruleanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeruleanApp.swift; sourceTree = "<group>"; };
 		422124DB2C502E6D0062695A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		424B28F22C509E79002E3E9B /* CRMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMapView.swift; sourceTree = "<group>"; };
@@ -56,10 +66,21 @@
 			isa = PBXGroup;
 			children = (
 				424B28F22C509E79002E3E9B /* CRMapView.swift */,
+				420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */,
 				420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */,
 				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
+				4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */,
 			);
 			path = Subclasses;
+			sourceTree = "<group>";
+		};
+		420013042C54B1EC007ACC67 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				420013052C54B1F0007ACC67 /* CRLine.swift */,
+				420013072C54B1FB007ACC67 /* CRTime.swift */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		422124B22C5026D80062695A = {
@@ -81,6 +102,7 @@
 		422124BD2C5026D80062695A /* Cerulean */ = {
 			isa = PBXGroup;
 			children = (
+				420013042C54B1EC007ACC67 /* Classes */,
 				420012FE2C5367A5007ACC67 /* UserInfo.swift */,
 				420012F42C5207BB007ACC67 /* MapWindowDelegate.swift */,
 				420013002C536B93007ACC67 /* AboutWindowDelegate.swift */,
@@ -89,8 +111,9 @@
 				422124DB2C502E6D0062695A /* Info.plist */,
 				422124D92C502D900062695A /* CeruleanApp.swift */,
 				422124BE2C5026D80062695A /* AppDelegate.swift */,
+				4200132B2C54E841007ACC67 /* AutomaticRefresh.swift */,
 				420012FC2C535F88007ACC67 /* AboutView.swift */,
-				422124D22C50270E0062695A /* Structs.swift */,
+				420013092C54B2B5007ACC67 /* Extensions.swift */,
 				422124C02C5026DA0062695A /* Assets.xcassets */,
 				422124C52C5026DA0062695A /* Cerulean.entitlements */,
 			);
@@ -176,15 +199,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				420013062C54B1F1007ACC67 /* CRLine.swift in Sources */,
 				422124BF2C5026D80062695A /* AppDelegate.swift in Sources */,
 				420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */,
+				4200132C2C54E846007ACC67 /* AutomaticRefresh.swift in Sources */,
 				420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */,
 				424B28F32C509E81002E3E9B /* CRMapView.swift in Sources */,
 				420012F52C5207C9007ACC67 /* MapWindowDelegate.swift in Sources */,
-				422124D32C50270E0062695A /* Structs.swift in Sources */,
+				420013032C54B0AF007ACC67 /* CRMarkerAnnotationView.swift in Sources */,
 				422124CE2C5026FA0062695A /* ChicagoTransitInterface.swift in Sources */,
 				422124DA2C502D920062695A /* CeruleanApp.swift in Sources */,
+				420013082C54B1FC007ACC67 /* CRTime.swift in Sources */,
+				4200130A2C54B2B6007ACC67 /* Extensions.swift in Sources */,
 				420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */,
+				4200130C2C54B47E007ACC67 /* CRPointAnnotation.swift in Sources */,
 				422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */,
 				420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */,
 				420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */,
@@ -317,16 +345,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Cerulean/Cerulean.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 463;
+				CURRENT_PROJECT_VERSION = 753;
 				DEVELOPMENT_TEAM = DK2B92MAN7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -335,6 +365,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -349,16 +380,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Cerulean/Cerulean.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 463;
+				CURRENT_PROJECT_VERSION = 753;
 				DEVELOPMENT_TEAM = DK2B92MAN7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -367,6 +400,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";

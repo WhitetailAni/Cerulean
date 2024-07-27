@@ -8,7 +8,7 @@
 import MapKit
 
 class CRPlacemark: MKPlacemark, @unchecked Sendable {
-    var line: Line?
+    var line: CRLine?
     var trainRun: String?
     var stationName: String?
 }

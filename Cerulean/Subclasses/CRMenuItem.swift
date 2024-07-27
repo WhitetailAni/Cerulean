@@ -9,7 +9,7 @@ import AppKit
 import CoreLocation
 
 class CRMenuItem: NSMenuItem {
-    var trainLine: Line?
+    var trainLine: CRLine?
     var trainRun: String?
     var trainCoordinate: CLLocationCoordinate2D?
     var trainDesiredStop: String?
@@ -18,5 +18,7 @@ class CRMenuItem: NSMenuItem {
     var trainEndStop: String?
     var trainEndStopID: String?
     var trainHasReachedEnd: Bool?
+    
+    var timeLastUpdated: String?
 }
 

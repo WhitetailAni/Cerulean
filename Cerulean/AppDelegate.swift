@@ -15,63 +15,85 @@ import SwiftUI
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
-    var progressIndicator: NSProgressIndicator!
     var menu: NSMenu!
     var windows: [NSWindow] = []
     var aboutWindows: [NSWindow] = []
     var aboutWindowDelegate: AboutWindowDelegate!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        //statusItem.image = NSImage(systemSymbolName: "tram", accessibilityDescription: nil)
-        //statusItem.image = .ctaSvg
-        if let button = statusItem.button {
-            print("gm")
-            //button.image = .ctaSvg
-            button.image = NSImage(systemSymbolName: "tram", accessibilityDescription: nil)
-        }
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
-        DispatchQueue.global().async {
-            let instance = ChicagoTransitInterface()
+        if let button = statusItem.button {
+            var image: NSImage!
+            if Bundle.main.infoDictionary?["CRViolateTrademarks"] as? Bool ?? false {
+                image = NSImage(size: NSSize(width: 22, height: 22), flipped: false) { (rect) -> Bool in
+                    NSImage(named: "ctaLogo")!.draw(in: rect)
+                    return true
+                }
+            } else {
+                image = NSImage(size: NSSize(width: 22, height: 22), flipped: false) { (rect) -> Bool in
+                    NSImage(named: "ctaTrain")!.tint(color: .white).draw(in: rect)
+                    return true
+                }
+            }
+            image.isTemplate = true
+            button.image = image
+            button.imagePosition = .imageLeft
         }
         
         menu = NSMenu()
         refreshInfo()
         
+        let autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 60.0) {
+            self.refreshInfo()
+        }
+        autoRefresh.start()
+        
         statusItem.menu = menu
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        for window in windows {
+            window.close()
+        }
+        for aboutWindow in aboutWindows {
+            aboutWindow.close()
+        }
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
-        return true
-    }
-    
-    func progressWheelItem() -> NSMenuItem {
-        progressIndicator = NSProgressIndicator(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
-        progressIndicator.style = .spinning
-        progressIndicator.isIndeterminate = true
-        progressIndicator.controlSize = .small
-        progressIndicator.isDisplayedWhenStopped = false
-        
-        progressIndicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        let progressMenuItem = NSMenuItem()
-        progressMenuItem.view = progressIndicator
-        
-        progressIndicator.startAnimation(nil)
-        return progressMenuItem
+        return false
     }
     
     @objc func refreshInfo() {
         menu.removeAllItems()
-        let validLines = [Line.red, Line.blue, Line.brown, Line.green, Line.orange, Line.pink, Line.purple, Line.yellow]
+        let validLines = [CRLine.red, CRLine.blue, CRLine.brown, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow]
         for line in validLines {
-            let item = NSMenuItem(title: line.textualRepresentation(), action: nil) //listing in main view
+            let item = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
+            if line == .yellow {
+                let yellowLineTitle = NSMutableAttributedString(string: line.textualRepresentation())
+                
+                let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+                let skokieSwiftBaseImage = NSImage(named: "skokieSwift")!
+                let aspectRatio = skokieSwiftBaseImage.size.width / skokieSwiftBaseImage.size.height
+                let newSize = NSSize(width: height * aspectRatio, height: height)
+                    
+                let skokieSwiftImage = NSImage(size: newSize)
+                skokieSwiftImage.lockFocus()
+                skokieSwiftBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
+                skokieSwiftImage.unlockFocus()
+                
+                let skokieSwift = NSTextAttachment()
+                skokieSwift.image = skokieSwiftImage
+                
+                let skokieSwiftString = NSAttributedString(attachment: skokieSwift)
+                yellowLineTitle.append(NSAttributedString(string: " "))
+                yellowLineTitle.append(skokieSwiftString)
+                item.attributedTitle = yellowLineTitle
+            }
+            item.trainLine = line
             let subMenu = NSMenu()
-            subMenu.addItem(progressWheelItem())
+            subMenu.addItem(NSMenuItem.progressWheel())
             
             let instance = ChicagoTransitInterface()
             DispatchQueue.global().async {
@@ -92,22 +114,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     } else if trains.count == 0 {
                         subMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
                     } else {
-                        subMenu.addItem(NSMenuItem(title: "Last updated at \(Time.apiTimeToReadabletime(string: trains[0]["requestTime"] ?? ""))", action: nil))
+                        let timeLastUpdated = CRTime.apiTimeToReadabletime(string: trains[0]["requestTime"] ?? "")
+                        subMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
                         subMenu.addItem(NSMenuItem.separator())
                         for train in trains {
+                            var line2 = line
+                            if line == .green && train["destinationStation"] == "Cottage Grove" {
+                                line2 = .greenAlternate
+                            }
+                            if line == .blue && train["destinationStation"] == "UIC-Halsted" {
+                                line2 = .blueAlternate
+                            }
                             var subItem: CRMenuItem!
                             if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                                 subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: #selector(self.openWindow(_:)))
                                 subItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                 
-                                subItem.trainLine = line
+                                subItem.trainLine = line2
                                 subItem.trainRun = train["run"] ?? "Unknown Run"
+                                
+                                subItem.timeLastUpdated = timeLastUpdated
                             } else {
                                 subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: nil)
                             }
                             
                             let subSubMenu = NSMenu()
-                            subSubMenu.addItem(self.progressWheelItem())
+                            subSubMenu.addItem(NSMenuItem.progressWheel())
                             
                             let instance = ChicagoTransitInterface()
                             DispatchQueue.global().async {
@@ -122,10 +154,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                                         title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openWindow(_:)))
                                         title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                        title.trainLine = line
+                                        title.trainLine = line2
                                         title.trainRun = train["run"] ?? "Unknown Run"
                                         title.trainEndStop = train["destinationStation"] ?? "Bryn Mawr"
                                         title.trainEndStopID = train["destinationStationID"] ?? "30267"
+                                        title.timeLastUpdated = timeLastUpdated
                                         if niceStats.count == 0 {
                                             title.trainHasReachedEnd = true
                                         }
@@ -142,20 +175,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             let errorItem = NSMenuItem(title: errorString, action: nil)
                                             subSubMenu.addItem(errorItem)
                                         } else {
-                                            subSubMenu.addItem(NSMenuItem(title: "Arrived at destination", action: nil))
+                                            subSubMenu.addItem(NSMenuItem(title: "No predictions available", action: nil))
                                         }
                                     } else {
                                         for station in niceStats {
                                             var subSubItem: CRMenuItem!
                                             if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(Time.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openWindow(_:)))
+                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openWindow(_:)))
                                                 subSubItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                                subSubItem.trainLine = line
+                                                subSubItem.trainLine = line2
                                                 subSubItem.trainRun = run
                                                 subSubItem.trainDesiredStop = station["nextStation"]
                                                 subSubItem.trainDesiredStopID = station["nextStopID"]
+                                                subSubItem.timeLastUpdated = timeLastUpdated
                                             } else {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(Time.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
+                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
                                             }
                                             
                                             subSubMenu.addItem(subSubItem)
@@ -207,7 +241,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let index = windows.count - 1
             let trainMark = CRPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 41.88372, longitude: 87.63238))
             
-            if let line = sender.trainLine, let run = sender.trainRun {
+            if let line = sender.trainLine, let run = sender.trainRun, let timeLastUpdated = sender.timeLastUpdated {
                 let stationName = sender.trainDesiredStop ?? "Rochester"
                 trainMark.line = line
                 trainMark.trainRun = run
@@ -228,7 +262,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             stationMark.line = line
                             
                             DispatchQueue.main.sync {
-                                self.windows[index].contentView = CRMapView(train: trainMark, station: stationMark)
+                                self.windows[index].contentView = CRMapView(train: trainMark, station: stationMark, timeLastUpdated: timeLastUpdated)
                                 self.windows[index].center()
                                 self.windows[index].setIsVisible(true)
                                 self.windows[index].orderFrontRegardless()
@@ -258,7 +292,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 stationMark.stationName = sender.trainEndStop
                                 
                                 DispatchQueue.main.sync {
-                                    self.windows[index].contentView = CRMapView(train: stationMark)
+                                    self.windows[index].contentView = CRMapView(train: stationMark, timeLastUpdated: timeLastUpdated)
                                     self.windows[index].center()
                                     self.windows[index].setIsVisible(true)
                                     self.windows[index].orderFrontRegardless()
@@ -275,7 +309,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                 } else {
                     windows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000")"
-                    windows[index].contentView = CRMapView(train: trainMark)
+                    windows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: timeLastUpdated)
                     windows[index].center()
                     windows[index].setIsVisible(true)
                     windows[index].orderFrontRegardless()
@@ -294,7 +328,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func openAboutWindow() {
         if let screenSize = NSScreen.main?.frame.size {
             let defaultRect = NSMakeRect(0, 0, screenSize.width * 0.27, screenSize.height * 0.27)
-            aboutWindows.append(NSWindow(contentRect: defaultRect, styleMask: [.titled], backing: .buffered, defer: false))
+            aboutWindows.append(NSWindow(contentRect: defaultRect, styleMask: [.titled, .closable], backing: .buffered, defer: false))
             let index = aboutWindows.count - 1
             
             aboutWindows[index].contentView = NSHostingView(rootView: AboutView())
@@ -310,10 +344,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    @objc func openLink(_ sender: CRMenuItem) {
+        if let link = sender.trainLine?.link() {
+            NSWorkspace.shared.open(link)
+        }
+    }
+    
     @objc func nop() { }
     
     @objc func quit() {
         NSApp.terminate(nil)
     }
 }
-

@@ -13,60 +13,60 @@ class ChicagoTransitInterface: NSObject {
     @Published var returnedData: [String: Any] = [:]
     private var requestInProgress = true
     
-    class func hasServiceEnded(line: Line) -> Bool {
+    class func hasServiceEnded(line: CRLine) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
         switch line {
-        case .red, .blue:
+        case .red, .blue, .blueAlternate:
             return false
         case .brown:
             if weekday == 1 {
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 40), end: Time(hour: 4, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 40), end: CRTime(hour: 4, minute: 00))
             } else {
-                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 10), end: Time(hour: 4, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 10), end: CRTime(hour: 4, minute: 00))
             }
-        case .green:
+        case .green, .greenAlternate:
             if weekday == 1 || weekday == 7 {
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 08), end: Time(hour: 4, minute: 45))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 08), end: CRTime(hour: 4, minute: 45))
             } else {
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 08), end: Time(hour: 3, minute: 45))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 08), end: CRTime(hour: 3, minute: 45))
             }
         case .orange:
             switch weekday {
             case 1:
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 4, minute: 30))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 4, minute: 30))
             case 7:
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 4, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 4, minute: 00))
             default:
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 34), end: Time(hour: 3, minute: 30))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 3, minute: 30))
             }
         case .pink:
             if weekday == 1 || weekday == 7 {
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 31), end: Time(hour: 5, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 5, minute: 00))
             } else {
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 31), end: Time(hour: 4, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 4, minute: 00))
             }
-        case .purple:
+        case .purple, .purpleExpress:
             switch weekday {
             case 1:
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 37), end: Time(hour: 6, minute: 05))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 37), end: CRTime(hour: 6, minute: 05))
             case 6:
-                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 07), end: Time(hour: 4, minute: 28))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 07), end: CRTime(hour: 4, minute: 28))
             case 7:
-                return Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 07), end: Time(hour: 5, minute: 08))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 07), end: CRTime(hour: 5, minute: 08))
             default:
-                return Time.isItCurrentlyBetween(start: Time(hour: 1, minute: 27), end: Time(hour: 4, minute: 28))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 27), end: CRTime(hour: 4, minute: 28))
             }
         case .yellow:
             if weekday == 1 || weekday == 7 {
-                return Time.isItCurrentlyBetween(start: Time(hour: 23, minute: 15), end: Time(hour: 6, minute: 00))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 23, minute: 15), end: CRTime(hour: 6, minute: 00))
             } else {
-                return Time.isItCurrentlyBetween(start: Time(hour: 23, minute: 15), end: Time(hour: 4, minute: 40))
+                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 23, minute: 15), end: CRTime(hour: 4, minute: 40))
             }
         }
     }
     
     class func isPurpleExpressRunning() -> Bool {
-        return Time.isItCurrentlyBetween(start: Time(hour: 5, minute: 05), end: Time(hour: 10, minute: 08)) || Time.isItCurrentlyBetween(start: Time(hour: 2, minute: 18), end: Time(hour: 7, minute: 17))
+        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17))
     }
     
     ///Waits for the request to be done. This will block the current thread until it is complete.
@@ -104,7 +104,7 @@ class ChicagoTransitInterface: NSObject {
         }
     }
     
-    func getRunsForLine(line: Line) {
+    func getRunsForLine(line: CRLine) {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx"
         
         var components = URLComponents(string: baseURL)

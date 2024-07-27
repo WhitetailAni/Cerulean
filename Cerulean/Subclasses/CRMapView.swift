@@ -7,20 +7,24 @@
 
 import AppKit
 import MapKit
+import SwiftUI
 
 class CRMapView: MKMapView {
     var train: CRPlacemark
     var station: CRPlacemark
+    var timeLastUpdated: String
     
-    init(train: CRPlacemark) {
+    init(train: CRPlacemark, timeLastUpdated: String) {
         self.train = train
         self.station = CRPlacemark(coordinate: CLLocationCoordinate2D(latitude: 52.31697130005335, longitude: 4.746418131532647))
+        self.timeLastUpdated = timeLastUpdated
         super.init(frame: .zero)
     }
     
-    init(train: CRPlacemark, station: CRPlacemark) {
+    init(train: CRPlacemark, station: CRPlacemark, timeLastUpdated: String) {
         self.train = train
         self.station = station
+        self.timeLastUpdated = timeLastUpdated
         super.init(frame: .zero)
     }
     
@@ -31,11 +35,24 @@ class CRMapView: MKMapView {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         
-        self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .castle, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
-        self.isScrollEnabled = false
-        self.isZoomEnabled = false
-        self.isRotateEnabled = false
-        self.isPitchEnabled = false
+        self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
+        
+        self.register(CRMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        
+        let timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
+        timeLabel.font = NSFont.systemFont(ofSize: 12)
+        timeLabel.textColor = NSColor(r: 222, g: 222, b: 222)
+        timeLabel.isBezeled = false
+        timeLabel.drawsBackground = false
+        timeLabel.isEditable = false
+        timeLabel.sizeToFit()
+        
+        self.addSubview(timeLabel)
+        
+        NSLayoutConstraint.activate([
+            timeLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            timeLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+        ])
         
         if station.coordinate.latitude == 52.31697130005335 && station.coordinate.longitude == 4.746418131532647 {
             zoomMapToTrain(train: train)
@@ -45,9 +62,11 @@ class CRMapView: MKMapView {
     }
     
     private func zoomMapToTrain(train: CRPlacemark) {
-        let trainAnnotation = MKPointAnnotation()
+        
+        let trainAnnotation = CRPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
+        trainAnnotation.mark = train
         self.addAnnotation(trainAnnotation)
         
         let coordinate = train.coordinate
@@ -56,13 +75,15 @@ class CRMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation(train: CRPlacemark, station: CRPlacemark) {
-        let trainAnnotation = MKPointAnnotation()
+        let trainAnnotation = CRPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
+        trainAnnotation.mark = train
         
-        let stationAnnotation = MKPointAnnotation()
+        let stationAnnotation = CRPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
         stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
+        stationAnnotation.mark = station
         
         self.addAnnotations([trainAnnotation, stationAnnotation])
         
