@@ -19,7 +19,7 @@ extension NSMenuItem {
         progressIndicator.controlSize = .small
         progressIndicator.isDisplayedWhenStopped = false
         
-        progressIndicator.translatesAutoresizingMaskIntoConstraints = false
+        //progressIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         let progressMenuItem = NSMenuItem()
         progressMenuItem.view = progressIndicator

@@ -10,11 +10,11 @@ import CoreLocation
 
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
-    @Published var returnedData: [String: Any] = [:]
-    private var requestInProgress = true
+    let semaphore = DispatchSemaphore(value: 0)
     private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
-    private let chicagoDataPortalAPIKey = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
+    private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
     
+    ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
         switch line {
@@ -67,17 +67,16 @@ class ChicagoTransitInterface: NSObject {
         }
     }
     
+    ///Checks if Purple Line Express service is running
     class func isPurpleExpressRunning() -> Bool {
-        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17))
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && (weekday == 1 || weekday == 7)
     }
     
-    ///Waits for the request to be done. This will block the current thread until it is complete.
-    func wait() {
-        while requestInProgress { }
-    }
-    
-    func getStationCoordinateForID(id: String) {
+    ///Gets information about a given CTA stop ID
+    func getStopCoordinateForID(id: String) -> [String: Any] {
         let baseURL = "https://data.cityofchicago.org/resource/8pix-ypme.json"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -85,13 +84,17 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
-    func getRunNumberInfo(run: String) {
+    ///Gets predictions for every station along a given train run
+    func getRunNumberInfo(run: String) -> [String: Any] {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttfollow.aspx"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -101,13 +104,17 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
-    func getRunsForLine(line: CRLine) {
+    ///Gets a list of every run on a given CTA line
+    func getRunsForLine(line: CRLine) -> [String: Any] {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -117,9 +124,11 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
     private func contactDowntown(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {
@@ -129,7 +138,7 @@ class ChicagoTransitInterface: NSObject {
         }
         
         var request = URLRequest(url: url)
-        request.addValue(chicagoDataPortalAPIKey, forHTTPHeaderField: "X-App-Token")
+        request.addValue(chicagoDataPortalAppToken, forHTTPHeaderField: "X-App-Token")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {

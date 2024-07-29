@@ -16,11 +16,14 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var menu: NSMenu!
-    var windows: [NSWindow] = []
+    var autoRefresh: AutomaticRefresh!
+    
+    var mapWindows: [NSWindow] = []
+    var mapMutex = NSLock()
+    
     var aboutWindows: [NSWindow] = []
     var aboutWindowDelegate: AboutWindowDelegate!
-    var mapWindowDelegate: MapWindowDelegate!
-    var autoRefresh: AutomaticRefresh!
+    var aboutMutex = NSLock()
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -48,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        for window in windows {
+        for window in mapWindows {
             window.close()
         }
         for aboutWindow in aboutWindows {
@@ -93,12 +96,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let instance = ChicagoTransitInterface()
             DispatchQueue.global().async {
-                instance.getRunsForLine(line: line)
-                instance.wait()
-                let trains = InterfaceResultProcessing.cleanUpLineInfo(info: instance.returnedData)
-                subMenu.removeItem(at: 0)
+                let trains = InterfaceResultProcessing.cleanUpLineInfo(info: instance.getRunsForLine(line: line))
                 
                 DispatchQueue.main.sync {
+                    subMenu.removeItem(at: 0)
+                    
                     if ChicagoTransitInterface.hasServiceEnded(line: line) {
                         subMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
                     } else if trains.count == 0 {
@@ -135,16 +137,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             
                             let subSubMenu = NSMenu()
                             subSubMenu.addItem(NSMenuItem.progressWheel())
+                            subItem.submenu = subSubMenu
+                            subMenu.addItem(subItem)
                             
+                            #warning("Station prediction for train starts here")
                             let instance = ChicagoTransitInterface()
                             DispatchQueue.global().async {
                                 let run = train["run"] ?? "000"
-                                instance.getRunNumberInfo(run: run)
-                                instance.wait()
-                                let niceStats = InterfaceResultProcessing.cleanUpRunInfo(info: instance.returnedData)
-                                subSubMenu.removeItem(at: 0)
+                                let niceStats = InterfaceResultProcessing.cleanUpRunInfo(info: instance.getRunNumberInfo(run: run))
                                 
                                 DispatchQueue.main.sync {
+                                    subSubMenu.removeItem(at: 0)
+                                    
                                     var title: CRMenuItem!
                                     if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                                         title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openWindow(_:)))
@@ -209,9 +213,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     }
                                 }
                             }
-                            
-                            subItem.submenu = subSubMenu
-                            subMenu.addItem(subItem)
                         }
                     }
                 }
@@ -237,9 +238,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func openWindow(_ sender: CRMenuItem) {
+        mapMutex.lock()
         if let screenSize = NSScreen.main?.frame.size {
-            windows.append(NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false))
-            let index = windows.count - 1
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
             let trainMark = CRPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 41.88372, longitude: 87.63238))
             
             if let line = sender.trainLine, let run = sender.trainRun, let timeLastUpdated = sender.timeLastUpdated {
@@ -250,42 +254,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 
                 let instance = ChicagoTransitInterface()
                 if let id = sender.trainDesiredStopID {
-                    windows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000") to \(sender.trainDesiredStop ?? "Unknown")"
+                    mapWindows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000") to \(sender.trainDesiredStop ?? "Unknown")"
                     
                     DispatchQueue.global().async {
-                        instance.getStationCoordinateForID(id: id)
-                        instance.wait()
+                        let returnedData = instance.getStopCoordinateForID(id: id)
                         
-                        if let latitudeString = instance.returnedData["latitude"] as? String, let longitudeString = instance.returnedData["longitude"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+                        if let latitudeString = returnedData["latitude"] as? String, let longitudeString = returnedData["longitude"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                             
                             let stationMark = CRPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
                             stationMark.stationName = sender.trainDesiredStop
                             stationMark.line = line
                             
                             DispatchQueue.main.sync {
-                                self.windows[index].contentView = CRMapView(train: trainMark, station: stationMark, timeLastUpdated: timeLastUpdated)
-                                self.windows[index].center()
-                                self.windows[index].setIsVisible(true)
-                                self.windows[index].orderFrontRegardless()
-                                self.windows[index].makeKey()
+                                self.mapWindows[index].contentView = CRMapView(train: trainMark, station: stationMark, timeLastUpdated: timeLastUpdated)
+                                self.mapWindows[index].center()
+                                self.mapWindows[index].setIsVisible(true)
+                                self.mapWindows[index].orderFrontRegardless()
+                                self.mapWindows[index].makeKey()
                                 NSApp.activate(ignoringOtherApps: true)
-                                
-                                let delegate = MapWindowDelegate(closeWindow: {
-                                    self.windows.remove(at: index)
-                                })
-                                self.windows[index].delegate = delegate
                             }
                         }
                     }
                 } else if sender.trainHasReachedEnd == true {
                     if let id = sender.trainEndStopID {
-                        windows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000") at \(sender.trainDesiredStop ?? "Unknown")"
+                        mapWindows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000") at \(sender.trainDesiredStop ?? "Unknown")"
                         
-                        DispatchQueue.global().async {
-                            instance.getStationCoordinateForID(id: id)
-                            instance.wait()
+                        DispatchQueue.global().async { [self] in
+                            let returnedData = instance.getStopCoordinateForID(id: id)
                             
-                            if let latitudeString = instance.returnedData["latitude"] as? String, let longitudeString = instance.returnedData["longitude"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+                            if let latitudeString = returnedData["latitude"] as? String, let longitudeString = returnedData["longitude"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                                 
                                 let stationMark = CRPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
                                 stationMark.line = line
@@ -293,40 +290,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 stationMark.stationName = sender.trainEndStop
                                 
                                 DispatchQueue.main.sync {
-                                    self.windows[index].contentView = CRMapView(train: stationMark, timeLastUpdated: timeLastUpdated)
-                                    self.windows[index].center()
-                                    self.windows[index].setIsVisible(true)
-                                    self.windows[index].orderFrontRegardless()
-                                    self.windows[index].makeKey()
+                                    self.mapWindows[index].contentView = CRMapView(train: stationMark, timeLastUpdated: timeLastUpdated)
+                                    self.mapWindows[index].center()
+                                    self.mapWindows[index].setIsVisible(true)
+                                    self.mapWindows[index].orderFrontRegardless()
+                                    self.mapWindows[index].makeKey()
                                     NSApp.activate(ignoringOtherApps: true)
-                                    
-                                    let delegate = MapWindowDelegate(closeWindow: {
-                                        self.windows.remove(at: index)
-                                    })
-                                    self.windows[index].delegate = delegate
                                 }
                             }
                         }
                     }
                 } else {
-                    windows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000")"
-                    windows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: timeLastUpdated)
-                    windows[index].center()
-                    windows[index].setIsVisible(true)
-                    windows[index].orderFrontRegardless()
-                    windows[index].makeKey()
+                    mapWindows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000")"
+                    mapWindows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: timeLastUpdated)
+                    mapWindows[index].center()
+                    mapWindows[index].setIsVisible(true)
+                    mapWindows[index].orderFrontRegardless()
+                    mapWindows[index].makeKey()
                     NSApp.activate(ignoringOtherApps: true)
-                    
-                    mapWindowDelegate = MapWindowDelegate(closeWindow: {
-                        self.windows.remove(at: index)
-                    })
-                    windows[index].delegate = mapWindowDelegate
                 }
             }
         }
+        mapMutex.unlock()
     }
     
     @objc func openAboutWindow() {
+        aboutMutex.lock()
         if let screenSize = NSScreen.main?.frame.size {
             let defaultRect = NSMakeRect(0, 0, screenSize.width * 0.27, screenSize.height * 0.27)
             aboutWindows.append(NSWindow(contentRect: defaultRect, styleMask: [.titled, .closable], backing: .buffered, defer: false))
@@ -340,11 +329,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             aboutWindows[index].makeKey()
             NSApp.activate(ignoringOtherApps: true)
             
-            aboutWindowDelegate = AboutWindowDelegate(window: aboutWindows[index]) {
-                self.aboutWindows.remove(at: index)
-            }
+            aboutWindowDelegate = AboutWindowDelegate(window: aboutWindows[index])
             aboutWindows[index].delegate = aboutWindowDelegate
         }
+        aboutMutex.unlock()
     }
     
     @objc func openLink(_ sender: CRMenuItem) {

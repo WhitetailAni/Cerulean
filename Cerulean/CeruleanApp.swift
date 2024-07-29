@@ -8,11 +8,11 @@
 import AppKit
 
 class CeruleanApp: NSApplication {
-    let delegate = AppDelegate()
+    let strongDelegate = AppDelegate()
 
     override init() {
         super.init()
-        self.delegate = delegate
+        self.delegate = strongDelegate
     }
 
     required init?(coder: NSCoder) {

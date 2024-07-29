@@ -117,9 +117,7 @@ class CRMapView: MKMapView {
     @objc func refreshTrainPosition() {
         DispatchQueue.global().async {
             let instance = ChicagoTransitInterface()
-            instance.getRunNumberInfo(run: self.train.trainRun ?? "000")
-            instance.wait()
-            let locationInfo = InterfaceResultProcessing.getLocationForRun(info: instance.returnedData)
+            let locationInfo = InterfaceResultProcessing.getLocationForRun(info: instance.getRunNumberInfo(run: self.train.trainRun ?? "000"))
             
             if locationInfo.0.latitude == -2, locationInfo.0.longitude == -3 {
                 return
@@ -127,7 +125,7 @@ class CRMapView: MKMapView {
             
             DispatchQueue.main.sync {
                 self.train = self.train.placemarkWithNewLocation(locationInfo.0)
-                self.timeLabel.stringValue = "Updated at \(locationInfo)"
+                self.timeLabel.stringValue = "Updated at \(locationInfo.1)"
                 
                 if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
                     self.zoomMapToTrain()

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AboutView: View {
     var body: some View {
-        Link(destination: URL(string: "https://thanos.lol")!, label: {
+        Link(destination: URL(string: "https://twitter.com/whitetailani")!, label: {
             UserInfo(title: "WhitetailAni 🏳️‍⚧️", subTitle: "App developer", titleColor: Color(red: 0.129411765, green: 0.784313725, blue: 0.858823529), subTitleColor: Color(red: 0.560784314, green: 0.560784314, blue: 0.560784314), imageName: "cerulean", showChevron: true)
         })
         
