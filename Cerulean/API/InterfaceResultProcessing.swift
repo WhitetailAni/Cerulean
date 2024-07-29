@@ -106,6 +106,7 @@ class InterfaceResultProcessing {
         return estimatedEtaArray
     }
     
+    ///Gets the current location and time for a given CTA run
     class func getLocationForRun(info: [String: Any]) -> (CLLocationCoordinate2D, String) {
         guard let ctatt = info["ctatt"] as? [String: Any], let position = ctatt["position"] as? [String: Any], let timeString = ctatt["tmst"] as? String else {
             return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")

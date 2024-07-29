@@ -10,14 +10,14 @@ import CoreLocation
 
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
-    @Published var returnedData: [String: Any] = [:]
-    private var requestInProgress = true
-
+    let semaphore = DispatchSemaphore(value: 0)
     #error("Supply Train Tracker API key - apply at https://www.transitchicago.com/developers/traintrackerapply/")
     private let trainTrackerAPIKey = ""
+    
     #error("Supply Chicago Data Portal app token - get one at https://data.cityofchicago.org/profile/edit/developer_settings")
     private let chicagoDataPortalAppToken = ""
     
+    ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
         switch line {
@@ -70,17 +70,16 @@ class ChicagoTransitInterface: NSObject {
         }
     }
     
+    ///Checks if Purple Line Express service is running
     class func isPurpleExpressRunning() -> Bool {
-        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17))
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && (weekday == 1 || weekday == 7)
     }
     
-    ///Waits for the request to be done. This will block the current thread until it is complete.
-    func wait() {
-        while requestInProgress { }
-    }
-    
-    func getStationCoordinateForID(id: String) {
+    ///Gets information about a given CTA stop ID
+    func getStopCoordinateForID(id: String) -> [String: Any] {
         let baseURL = "https://data.cityofchicago.org/resource/8pix-ypme.json"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -88,13 +87,17 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
-    func getRunNumberInfo(run: String) {
+    ///Gets predictions for every station along a given train run
+    func getRunNumberInfo(run: String) -> [String: Any] {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttfollow.aspx"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -104,13 +107,17 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
-    func getRunsForLine(line: CRLine) {
+    ///Gets a list of every run on a given CTA line
+    func getRunsForLine(line: CRLine) -> [String: Any] {
         let baseURL = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx"
+        var returnedData: [String: Any] = [:]
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -120,9 +127,11 @@ class ChicagoTransitInterface: NSObject {
         ]
         
         contactDowntown(components: components) { result in
-            self.returnedData = result
-            self.requestInProgress = false
+            returnedData = result
+            self.semaphore.signal()
         }
+        semaphore.wait()
+        return returnedData
     }
     
     private func contactDowntown(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {
