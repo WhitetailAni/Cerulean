@@ -12,17 +12,20 @@ extension NSMenuItem {
         self.init(title: title, action: action, keyEquivalent: "")
     }
     
-    class func progressWheel() -> NSMenuItem {
-        let progressIndicator = NSProgressIndicator(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
+    @MainActor class func progressWheel() -> NSMenuItem {
+        let rect = NSRect(x: 0, y: 0, width: 16, height: 16)
+        let view = NSView(frame: rect)
+        let progressIndicator = NSProgressIndicator(frame: rect)
+        progressIndicator.frame.origin.x = 7
         progressIndicator.style = .spinning
         progressIndicator.isIndeterminate = true
         progressIndicator.controlSize = .small
-        progressIndicator.isDisplayedWhenStopped = false
+        view.addSubview(progressIndicator)
         
-        //progressIndicator.translatesAutoresizingMaskIntoConstraints = false
+        progressIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         let progressMenuItem = NSMenuItem()
-        progressMenuItem.view = progressIndicator
+        progressMenuItem.view = view
         
         progressIndicator.startAnimation(nil)
         return progressMenuItem
