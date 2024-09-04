@@ -53,10 +53,6 @@ class InterfaceResultProcessing {
             let trainDirection: String = eta["trDr"] as? String ?? "2"
             let timeToArrive: String = eta["arrT"] as? String ?? "1970-01-01T00:00:00"
             
-            /*let latitude: String = eta["lat"] as? String ?? "69"
-            let longitude: String = eta["lon"] as? String ?? "69"*/
-            //the cta literally just doesn't give this info at ttfollow
-            
             switch isDelayed {
             case "0":
                 estimatedEta["isDelayed"] = "No"

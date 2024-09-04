@@ -42,7 +42,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu = NSMenu()
         refreshInfo()
         
-        autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 60.0) {
+        autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 360.0) {
             self.refreshInfo()
         }
         autoRefresh.start()
@@ -63,7 +63,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
     
-    @objc func refreshInfo() {
+    
+    
+    @MainActor @objc func refreshInfo() {
         menu.removeAllItems()
         let validLines = [CRLine.red, CRLine.blue, CRLine.brown, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow]
         for line in validLines {
@@ -91,6 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 item.attributedTitle = yellowLineTitle
             }
             item.trainLine = line
+            
             let subMenu = NSMenu()
             subMenu.addItem(NSMenuItem.progressWheel())
             
@@ -123,7 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 line2 = .blueAlternate
                             }
                             var subItem: CRMenuItem!
-                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
                                 subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: #selector(self.openWindow(_:)))
                                 subItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                 
@@ -154,7 +157,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openWindow(_:)))
                                         title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                         title.trainLine = line2
+                                        
                                         title.trainRun = train["run"] ?? "Unknown Run"
+                                        title.trainDesiredStop = train["destinationStation"] ?? "Bryn Mawr"
                                         title.trainEndStop = train["destinationStation"] ?? "Bryn Mawr"
                                         title.trainEndStopID = train["destinationStationID"] ?? "30267"
                                         title.timeLastUpdated = timeLastUpdated
@@ -177,9 +182,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             subSubMenu.addItem(NSMenuItem(title: "No predictions available", action: nil))
                                         }
                                     } else {
+                                        #warning("Adding items to subSubMenu is the station predictions")
                                         for station in niceStats {
                                             var subSubItem: CRMenuItem!
-                                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+                                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
                                                 subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openWindow(_:)))
                                                 subSubItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                                 subSubItem.trainLine = line2

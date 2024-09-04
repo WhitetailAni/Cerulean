@@ -101,7 +101,7 @@ class CRMapView: MKMapView {
         stationAnnotation.coordinate = station.coordinate
         stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
         stationAnnotation.mark = station
-        trainAnnotation.isTrainAnnotation = false
+        stationAnnotation.isTrainAnnotation = false
         
         self.addAnnotations([trainAnnotation, stationAnnotation])
         

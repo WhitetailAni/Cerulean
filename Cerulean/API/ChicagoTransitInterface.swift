@@ -16,7 +16,10 @@ class ChicagoTransitInterface: NSObject {
     
     ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
-        let weekday = Calendar.current.component(.weekday, from: Date())
+        var weekday = Calendar.current.component(.weekday, from: Date())
+        if isHoliday() {
+            weekday = 1
+        }
         switch line {
         case .red, .blue, .blueAlternate:
             return false
@@ -70,7 +73,71 @@ class ChicagoTransitInterface: NSObject {
     ///Checks if Purple Line Express service is running
     class func isPurpleExpressRunning() -> Bool {
         let weekday = Calendar.current.component(.weekday, from: Date())
-        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && (weekday == 1 || weekday == 7)
+        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && !(weekday == 1 || weekday == 7 || isHoliday())
+    }
+    
+    class private func isHoliday() -> Bool {
+        let calendar = Calendar.current
+        let today = Date()
+        let year = calendar.component(.year, from: today)
+        let month = calendar.component(.month, from: today)
+        let day = calendar.component(.day, from: today)
+        let weekday = calendar.component(.weekday, from: today)
+
+        if month == 1 && day == 1 {
+            return true
+        }
+
+        let easterDate = calculateEasterDate(year: year)
+        if calendar.isDate(today, inSameDayAs: easterDate) {
+            return true
+        }
+
+        if month == 5 && weekday == 2 && (31 - day) < 7 {
+            return true
+        }
+
+        if month == 6 && day == 19 {
+            return true
+        }
+
+        if month == 9 && weekday == 2 && day <= 7 {
+            return true
+        }
+
+        if month == 11 && weekday == 5 && (22...28).contains(day) {
+            return true
+        }
+
+        if month == 12 && day == 25 {
+            return true
+        }
+
+        return false
+    }
+
+    class private func calculateEasterDate(year: Int) -> Date {
+        let a = year % 19
+        let b = Int(floor(Double(year) / 100))
+        let c = year % 100
+        let d = Int(floor(Double(b) / 4))
+        let e = b % 4
+        let f = Int(floor(Double(b + 8) / 25))
+        let g = Int(floor(Double(b - f + 1) / 3))
+        let h = (19 * a + b - d - g + 15) % 30
+        let i = Int(floor(Double(c) / 4))
+        let k = c % 4
+        let l = (32 + 2 * e + 2 * i - h - k) % 7
+        let m = Int(floor(Double(a + 11 * h + 22 * l) / 451))
+        let month = Int(floor(Double(h + l - 7 * m + 114) / 31))
+        let day = ((h + l - 7 * m + 114) % 31) + 1
+
+        var dateComponents = DateComponents()
+        dateComponents.year = year
+        dateComponents.month = month
+        dateComponents.day = day
+
+        return Calendar.current.date(from: dateComponents)!
     }
     
     ///Gets information about a given CTA stop ID
