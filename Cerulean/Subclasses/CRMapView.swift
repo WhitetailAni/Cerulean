@@ -39,6 +39,7 @@ class CRMapView: MKMapView {
         self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
         
         self.register(CRMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        self.delegate = self
         
         timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
         timeLabel.font = NSFont.systemFont(ofSize: 12)
@@ -59,6 +60,11 @@ class CRMapView: MKMapView {
         let refreshButton = NSButton(image: NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!, target: self, action: #selector(refreshTrainPosition))
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
         
+        let config = MKStandardMapConfiguration()
+        config.pointOfInterestFilter = MKPointOfInterestFilter(including: [])
+        self.preferredConfiguration = config
+        self.mapType = .mutedStandard
+        
         self.addSubview(refreshButton)
         
         NSLayoutConstraint.activate([
@@ -74,6 +80,8 @@ class CRMapView: MKMapView {
     }
     
     private func zoomMapToTrain() {
+        applyLineOverlay()
+        
         self.removeAnnotations(self.annotations)
         
         let trainAnnotation = CRPointAnnotation()
@@ -89,6 +97,8 @@ class CRMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation() {
+        applyLineOverlay()
+        
         self.removeAnnotations(self.annotations)
         
         let trainAnnotation = CRPointAnnotation()
@@ -114,6 +124,16 @@ class CRMapView: MKMapView {
         self.setRegion(MKCoordinateRegion(center: midpoint, span: span), animated: true)
     }
     
+    private func applyLineOverlay() {
+        DispatchQueue.global().async {
+            let overlay = ChicagoTransitInterface().getPolylineForLine(line: self.train.line ?? CRLine.red, run: Int(self.train.trainRun ?? "000") ?? 0)
+                
+            DispatchQueue.main.sync {
+                self.addOverlay(overlay)
+            }
+        }
+    }
+    
     @objc func refreshTrainPosition() {
         DispatchQueue.global().async {
             let instance = ChicagoTransitInterface()
@@ -134,5 +154,17 @@ class CRMapView: MKMapView {
                 }
             }
         }
+    }
+}
+
+extension CRMapView: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let polyline = overlay as? CRPolyline {
+            let polylineRenderer = MKPolylineRenderer(polyline: polyline)
+            polylineRenderer.strokeColor = polyline.line?.color()
+            polylineRenderer.lineWidth = 3.0
+            return polylineRenderer
+        }
+        return MKOverlayRenderer(overlay: overlay)
     }
 }

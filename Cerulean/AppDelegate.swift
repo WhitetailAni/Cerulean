@@ -42,6 +42,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu = NSMenu()
         refreshInfo()
         
+        /*METXAPI().readGTFS(endpoint: "positions") { result in
+            print(result)
+        }
+        METXAPI().readGTFS(endpoint: "alerts") { result in
+            print(result)
+        }
+        METXAPI().readGTFS(endpoint: "tripUpdates") { result in
+            print(result)
+        }*/
+        
+        
+        /*let window = NSWindow(contentRect: NSMakeRect(0, 0, (NSScreen.main?.frame.size.width)! * 0.5, (NSScreen.main?.frame.size.height)! * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        let index = mapWindows.count
+        mapWindows.append(window)
+        
+        let train = ChicagoTransitInterface().getRunNumberInfo(run: "421")
+        let location = InterfaceResultProcessing.getLocationForRun(info: train)
+        
+        let trainMark = CRPlacemark(coordinate: location.0)
+        
+        trainMark.line = .brown
+        trainMark.trainRun = "422"
+        
+        mapWindows[index].title = "Cerulean - \(CRLine.brown.textualRepresentation() ?? "Unknown") Line run 421"
+        mapWindows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: location.1)
+        mapWindows[index].center()
+        mapWindows[index].setIsVisible(true)
+        mapWindows[index].orderFrontRegardless()
+        mapWindows[index].makeKey()
+        NSApp.activate(ignoringOtherApps: true)*/
+        
+        
         autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 360.0) {
             self.refreshInfo()
         }
@@ -50,20 +82,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
     }
 
-    func applicationWillTerminate(_ aNotification: Notification) {
-        for window in mapWindows {
-            window.close()
-        }
-        for aboutWindow in aboutWindows {
-            aboutWindow.close()
-        }
-    }
-
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
         return false
     }
-    
-    
     
     @MainActor @objc func refreshInfo() {
         menu.removeAllItems()

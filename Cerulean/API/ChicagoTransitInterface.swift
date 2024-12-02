@@ -11,8 +11,8 @@ import CoreLocation
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
     let semaphore = DispatchSemaphore(value: 0)
-    private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
-    private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
+    private let trainTrackerAPIKey = ""
+    private let chicagoDataPortalAppToken = ""
     
     ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
@@ -50,7 +50,7 @@ class ChicagoTransitInterface: NSObject {
             } else {
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 4, minute: 00))
             }
-        case .purple:
+        case .purple, .purpleExpress:
             switch weekday {
             case 1:
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 37), end: CRTime(hour: 6, minute: 05))
@@ -196,6 +196,53 @@ class ChicagoTransitInterface: NSObject {
         }
         semaphore.wait()
         return returnedData
+    }
+    
+    func getPolylineForLine(line: CRLine, run: Int) -> CRPolyline {
+        var pointArray: [CRPoint] = []
+        
+        guard let filePath = Bundle.main.path(forResource: "shapes", ofType: "csv") else {
+            return CRPolyline(points: [], count: 0)
+        }
+        
+        var rawList = ""
+        
+        do {
+            rawList = try String(contentsOfFile: filePath)
+        } catch {
+            print(error.localizedDescription)
+            return CRPolyline(points: [], count: 0)
+        }
+        
+        var rows = rawList.components(separatedBy: "\n")
+        rows.removeFirst()
+        
+        for i in 0..<rows.count {
+            let columns = rows[i].split(separator: ",")
+            if columns.count > 0 {
+                let id = Int(columns[0])!
+                if id > 308000000 {
+                    if ![308400053, 308500129, 308500007, 308500038, 308500029, 308500008, 308500012, 308500001, 308400036, 308500022, 308500039, 308500040].contains(id) {
+                        pointArray.append(CRPoint(routeId: Int(columns[0])!, coordinate: CLLocationCoordinate2D(latitude: Double(columns[1])!, longitude: Double(columns[2])!), sequencePosition: Int(columns[3])!))
+                    }
+                }
+            }
+        }
+        let sorted = Dictionary(grouping: pointArray) { $0.routeId }
+        let extraSorted = sorted.mapValues { route in
+            route.sorted { $0.sequencePosition < $1.sequencePosition }
+        }
+        
+        let desiredId = CRLine.gtfsIDForLineAndRun(line: line, run: run)
+        let pojntArray: [CRPoint] = extraSorted[desiredId]!
+        var coordinateArray: [CLLocationCoordinate2D] = []
+        for pojnt in pojntArray {
+            coordinateArray.append(pojnt.coordinate)
+        }
+        let overlay = CRPolyline(coordinates: coordinateArray, count: coordinateArray.count)
+        overlay.line = line
+        
+        return overlay
     }
     
     private func contactDowntown(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {
