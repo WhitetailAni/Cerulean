@@ -60,9 +60,6 @@ class CRMapView: MKMapView {
         let refreshButton = NSButton(image: NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!, target: self, action: #selector(refreshTrainPosition))
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let config = MKStandardMapConfiguration()
-        config.pointOfInterestFilter = MKPointOfInterestFilter(including: [])
-        self.preferredConfiguration = config
         self.mapType = .mutedStandard
         
         self.addSubview(refreshButton)
@@ -126,10 +123,20 @@ class CRMapView: MKMapView {
     
     private func applyLineOverlay() {
         DispatchQueue.global().async {
-            let overlay = ChicagoTransitInterface().getPolylineForLine(line: self.train.line ?? CRLine.red, run: Int(self.train.trainRun ?? "000") ?? 0)
-                
+            var overlayArray: [MKOverlay] = []
+            
+            let overlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: self.train.line ?? CRLine.red, run: Int(self.train.trainRun ?? "000") ?? 0)
+            overlayArray.append(overlay)
+            
+            if self.train.line == .green {
+                if InterfaceResultProcessing.cleanUpRunInfo(info: ChicagoTransitInterface().getRunNumberInfo(run: self.train.trainRun ?? "000"))[0]["finalStation"] == "Harlem/Lake" {
+                    let pverlay = ChicagoTransitInterface.polyline.getPolylineForLine(line: CRLine.greenAlternate, run: Int(self.train.trainRun ?? "000") ?? 0)
+                    overlayArray.append(pverlay)
+                }
+            }
+            
             DispatchQueue.main.sync {
-                self.addOverlay(overlay)
+                self.addOverlays(overlayArray)
             }
         }
     }

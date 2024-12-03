@@ -29,6 +29,16 @@
 		42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FD2CFD823700A060A2 /* CRPoint.swift */; };
 		42D99A002CFD82D700A060A2 /* shapes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42D999FF2CFD82D700A060A2 /* shapes.csv */; };
 		42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A012CFD8B4400A060A2 /* CRPolyline.swift */; };
+		42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A062CFE50C400A060A2 /* MetworkManager.swift */; };
+		42D99A092CFE5BC800A060A2 /* MTConsist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A082CFE5BC200A060A2 /* MTConsist.swift */; };
+		42D99A0D2CFE5E5800A060A2 /* MTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A0C2CFE5E5600A060A2 /* MTService.swift */; };
+		42D99A0F2CFE9E4000A060A2 /* MTPlacemark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A0E2CFE9E4000A060A2 /* MTPlacemark.swift */; };
+		42D99A132CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A122CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift */; };
+		42D99A152CFE9E6500A060A2 /* MTPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A142CFE9E6500A060A2 /* MTPointAnnotation.swift */; };
+		42D99A172CFE9EBA00A060A2 /* MTMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A162CFE9EBA00A060A2 /* MTMenuItem.swift */; };
+		42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A182CFE9FEA00A060A2 /* MTMapView.swift */; };
+		42D99A1B2CFEA00900A060A2 /* MTPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1A2CFEA00900A060A2 /* MTPolyline.swift */; };
+		42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1C2CFEB07100A060A2 /* MTPoint.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +67,16 @@
 		42D999FD2CFD823700A060A2 /* CRPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPoint.swift; sourceTree = "<group>"; };
 		42D999FF2CFD82D700A060A2 /* shapes.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = shapes.csv; sourceTree = "<group>"; };
 		42D99A012CFD8B4400A060A2 /* CRPolyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPolyline.swift; sourceTree = "<group>"; };
+		42D99A062CFE50C400A060A2 /* MetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetworkManager.swift; sourceTree = "<group>"; };
+		42D99A082CFE5BC200A060A2 /* MTConsist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTConsist.swift; sourceTree = "<group>"; };
+		42D99A0C2CFE5E5600A060A2 /* MTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTService.swift; sourceTree = "<group>"; };
+		42D99A0E2CFE9E4000A060A2 /* MTPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPlacemark.swift; sourceTree = "<group>"; };
+		42D99A122CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTMarkerAnnotationview.swift; sourceTree = "<group>"; };
+		42D99A142CFE9E6500A060A2 /* MTPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPointAnnotation.swift; sourceTree = "<group>"; };
+		42D99A162CFE9EBA00A060A2 /* MTMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTMenuItem.swift; sourceTree = "<group>"; };
+		42D99A182CFE9FEA00A060A2 /* MTMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTMapView.swift; sourceTree = "<group>"; };
+		42D99A1A2CFEA00900A060A2 /* MTPolyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPolyline.swift; sourceTree = "<group>"; };
+		42D99A1C2CFEB07100A060A2 /* MTPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPoint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,13 +93,8 @@
 		420012EE2C50B9B5007ACC67 /* Subclasses */ = {
 			isa = PBXGroup;
 			children = (
-				42D99A012CFD8B4400A060A2 /* CRPolyline.swift */,
-				424B28F22C509E79002E3E9B /* CRMapView.swift */,
-				420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */,
-				420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */,
-				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
-				4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */,
-				42A41DF42C5B369C004ABBC1 /* CRTextField.swift */,
+				42D99A112CFE9E5400A060A2 /* Metra */,
+				42D99A102CFE9E4700A060A2 /* CTA */,
 			);
 			path = Subclasses;
 			sourceTree = "<group>";
@@ -87,6 +102,7 @@
 		420013042C54B1EC007ACC67 /* Structs */ = {
 			isa = PBXGroup;
 			children = (
+				42D99A0A2CFE5E2E00A060A2 /* Metra */,
 				42D999FD2CFD823700A060A2 /* CRPoint.swift */,
 				420013052C54B1F0007ACC67 /* CRLine.swift */,
 				420013072C54B1FB007ACC67 /* CRTime.swift */,
@@ -134,11 +150,65 @@
 		422124CB2C5026F20062695A /* API */ = {
 			isa = PBXGroup;
 			children = (
+				42D99A042CFE4F2200A060A2 /* CTA */,
+				42D99A032CFE4F1E00A060A2 /* Metra */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		42D99A032CFE4F1E00A060A2 /* Metra */ = {
+			isa = PBXGroup;
+			children = (
+				42D99A062CFE50C400A060A2 /* MetworkManager.swift */,
 				42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */,
+			);
+			path = Metra;
+			sourceTree = "<group>";
+		};
+		42D99A042CFE4F2200A060A2 /* CTA */ = {
+			isa = PBXGroup;
+			children = (
 				422124CC2C5026FA0062695A /* ChicagoTransitInterface.swift */,
 				422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */,
 			);
-			path = API;
+			path = CTA;
+			sourceTree = "<group>";
+		};
+		42D99A0A2CFE5E2E00A060A2 /* Metra */ = {
+			isa = PBXGroup;
+			children = (
+				42D99A1C2CFEB07100A060A2 /* MTPoint.swift */,
+				42D99A0C2CFE5E5600A060A2 /* MTService.swift */,
+				42D99A082CFE5BC200A060A2 /* MTConsist.swift */,
+			);
+			path = Metra;
+			sourceTree = "<group>";
+		};
+		42D99A102CFE9E4700A060A2 /* CTA */ = {
+			isa = PBXGroup;
+			children = (
+				42D99A012CFD8B4400A060A2 /* CRPolyline.swift */,
+				424B28F22C509E79002E3E9B /* CRMapView.swift */,
+				420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */,
+				420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */,
+				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
+				4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */,
+				42A41DF42C5B369C004ABBC1 /* CRTextField.swift */,
+			);
+			path = CTA;
+			sourceTree = "<group>";
+		};
+		42D99A112CFE9E5400A060A2 /* Metra */ = {
+			isa = PBXGroup;
+			children = (
+				42D99A1A2CFEA00900A060A2 /* MTPolyline.swift */,
+				42D99A162CFE9EBA00A060A2 /* MTMenuItem.swift */,
+				42D99A142CFE9E6500A060A2 /* MTPointAnnotation.swift */,
+				42D99A122CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift */,
+				42D99A0E2CFE9E4000A060A2 /* MTPlacemark.swift */,
+				42D99A182CFE9FEA00A060A2 /* MTMapView.swift */,
+			);
+			path = Metra;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -214,6 +284,7 @@
 			files = (
 				420013062C54B1F1007ACC67 /* CRLine.swift in Sources */,
 				422124BF2C5026D80062695A /* AppDelegate.swift in Sources */,
+				42D99A092CFE5BC800A060A2 /* MTConsist.swift in Sources */,
 				420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */,
 				4200132C2C54E846007ACC67 /* AutomaticRefresh.swift in Sources */,
 				420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */,
@@ -223,13 +294,22 @@
 				422124DA2C502D920062695A /* CeruleanApp.swift in Sources */,
 				420013082C54B1FC007ACC67 /* CRTime.swift in Sources */,
 				4200130A2C54B2B6007ACC67 /* Extensions.swift in Sources */,
+				42D99A1B2CFEA00900A060A2 /* MTPolyline.swift in Sources */,
 				420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */,
 				4200130C2C54B47E007ACC67 /* CRPointAnnotation.swift in Sources */,
 				422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */,
 				42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */,
+				42D99A152CFE9E6500A060A2 /* MTPointAnnotation.swift in Sources */,
 				420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */,
+				42D99A172CFE9EBA00A060A2 /* MTMenuItem.swift in Sources */,
+				42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */,
+				42D99A0D2CFE5E5800A060A2 /* MTService.swift in Sources */,
+				42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */,
 				42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */,
+				42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */,
+				42D99A132CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift in Sources */,
 				42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */,
+				42D99A0F2CFE9E4000A060A2 /* MTPlacemark.swift in Sources */,
 				420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */,
 				42A41DF52C5B369E004ABBC1 /* CRTextField.swift in Sources */,
 			);
@@ -382,8 +462,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -420,8 +500,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

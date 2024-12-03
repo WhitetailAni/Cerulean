@@ -11,8 +11,20 @@ import CoreLocation
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
     let semaphore = DispatchSemaphore(value: 0)
-    private let trainTrackerAPIKey = ""
-    private let chicagoDataPortalAppToken = ""
+    private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
+    private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
+    
+    var polylines: [Int: [CRPoint]] = [:]
+    public static var polyline = ChicagoTransitInterface(polyline: true)
+    
+    override init() {
+        super.init()
+    }
+    
+    init(polyline: Bool) {
+        super.init()
+        storePolylines()
+    }
     
     ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
@@ -70,12 +82,6 @@ class ChicagoTransitInterface: NSObject {
         }
     }
     
-    ///Checks if Purple Line Express service is running
-    class func isPurpleExpressRunning() -> Bool {
-        let weekday = Calendar.current.component(.weekday, from: Date())
-        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && !(weekday == 1 || weekday == 7 || isHoliday())
-    }
-    
     class private func isHoliday() -> Bool {
         let calendar = Calendar.current
         let today = Date()
@@ -88,7 +94,29 @@ class ChicagoTransitInterface: NSObject {
             return true
         }
 
-        let easterDate = calculateEasterDate(year: year)
+        let easterDate = {
+            let a = year % 19
+            let b = Int(floor(Double(year) / 100))
+            let c = year % 100
+            let d = Int(floor(Double(b) / 4))
+            let e = b % 4
+            let f = Int(floor(Double(b + 8) / 25))
+            let g = Int(floor(Double(b - f + 1) / 3))
+            let h = (19 * a + b - d - g + 15) % 30
+            let i = Int(floor(Double(c) / 4))
+            let k = c % 4
+            let l = (32 + 2 * e + 2 * i - h - k) % 7
+            let m = Int(floor(Double(a + 11 * h + 22 * l) / 451))
+            let month = Int(floor(Double(h + l - 7 * m + 114) / 31))
+            let day = ((h + l - 7 * m + 114) % 31) + 1
+
+            var dateComponents = DateComponents()
+            dateComponents.year = year
+            dateComponents.month = month
+            dateComponents.day = day
+
+            return Calendar.current.date(from: dateComponents)!
+        }()
         if calendar.isDate(today, inSameDayAs: easterDate) {
             return true
         }
@@ -116,28 +144,11 @@ class ChicagoTransitInterface: NSObject {
         return false
     }
 
-    class private func calculateEasterDate(year: Int) -> Date {
-        let a = year % 19
-        let b = Int(floor(Double(year) / 100))
-        let c = year % 100
-        let d = Int(floor(Double(b) / 4))
-        let e = b % 4
-        let f = Int(floor(Double(b + 8) / 25))
-        let g = Int(floor(Double(b - f + 1) / 3))
-        let h = (19 * a + b - d - g + 15) % 30
-        let i = Int(floor(Double(c) / 4))
-        let k = c % 4
-        let l = (32 + 2 * e + 2 * i - h - k) % 7
-        let m = Int(floor(Double(a + 11 * h + 22 * l) / 451))
-        let month = Int(floor(Double(h + l - 7 * m + 114) / 31))
-        let day = ((h + l - 7 * m + 114) % 31) + 1
-
-        var dateComponents = DateComponents()
-        dateComponents.year = year
-        dateComponents.month = month
-        dateComponents.day = day
-
-        return Calendar.current.date(from: dateComponents)!
+    
+    ///Checks if Purple Line Express service is running
+    class func isPurpleExpressRunning() -> Bool {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && !(weekday == 1 || weekday == 7 || isHoliday())
     }
     
     ///Gets information about a given CTA stop ID
@@ -198,11 +209,11 @@ class ChicagoTransitInterface: NSObject {
         return returnedData
     }
     
-    func getPolylineForLine(line: CRLine, run: Int) -> CRPolyline {
+    func storePolylines() {
         var pointArray: [CRPoint] = []
         
         guard let filePath = Bundle.main.path(forResource: "shapes", ofType: "csv") else {
-            return CRPolyline(points: [], count: 0)
+            return
         }
         
         var rawList = ""
@@ -211,7 +222,7 @@ class ChicagoTransitInterface: NSObject {
             rawList = try String(contentsOfFile: filePath)
         } catch {
             print(error.localizedDescription)
-            return CRPolyline(points: [], count: 0)
+            return
         }
         
         var rows = rawList.components(separatedBy: "\n")
@@ -233,8 +244,12 @@ class ChicagoTransitInterface: NSObject {
             route.sorted { $0.sequencePosition < $1.sequencePosition }
         }
         
+        polylines = extraSorted
+    }
+    
+    func getPolylineForLine(line: CRLine, run: Int) -> CRPolyline {
         let desiredId = CRLine.gtfsIDForLineAndRun(line: line, run: run)
-        let pojntArray: [CRPoint] = extraSorted[desiredId]!
+        let pojntArray: [CRPoint] = polylines[desiredId]!
         var coordinateArray: [CLLocationCoordinate2D] = []
         for pojnt in pojntArray {
             coordinateArray.append(pojnt.coordinate)

@@ -16,6 +16,8 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var menu: NSMenu!
+    var ctaMenu: NSMenu!
+    var metraMenu: NSMenu!
     var autoRefresh: AutomaticRefresh!
     
     var mapWindows: [NSWindow] = []
@@ -40,17 +42,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         menu = NSMenu()
-        refreshInfo()
-        
-        /*METXAPI().readGTFS(endpoint: "positions") { result in
-            print(result)
-        }
-        METXAPI().readGTFS(endpoint: "alerts") { result in
-            print(result)
-        }
-        METXAPI().readGTFS(endpoint: "tripUpdates") { result in
+
+        /*METXAPI().readGTFS(endpoint: "alerts") { result in
             print(result)
         }*/
+        METXAPI().readGTFS(endpoint: "tripUpdates") { result in
+            print(result)
+        }
         
         
         /*let window = NSWindow(contentRect: NSMakeRect(0, 0, (NSScreen.main?.frame.size.width)! * 0.5, (NSScreen.main?.frame.size.height)! * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
@@ -73,6 +71,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mapWindows[index].makeKey()
         NSApp.activate(ignoringOtherApps: true)*/
         
+        let ctaItem = CRMenuItem(title: "CTA", action: #selector(openLink(_:)))
+        ctaItem.linkToOpen = URL(string: "https://www.transitchicago.com/traintracker/")!
+        let ctaTitle = prependImageToString(imageName: "cta", title: "CTA")
+        ctaItem.attributedTitle = ctaTitle
+        ctaMenu = NSMenu()
+        ctaItem.submenu = ctaMenu
+        
+        menu.addItem(ctaItem)
+        
+        let metraItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
+        metraItem.linkToOpen = URL(string: "https://metra.com/metratracker")!
+        let metraTitle = prependImageToString(imageName: "metra", title: "Metra")
+        metraItem.attributedTitle = metraTitle
+        metraMenu = NSMenu()
+        metraItem.submenu = metraMenu
+        
+        menu.addItem(metraItem)
+        
+        refreshInfo()
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        let aboutItem = NSMenuItem(title: "About", action: #selector(openAboutWindow), keyEquivalent: "a")
+        aboutItem.keyEquivalentModifierMask = [.command]
+        menu.addItem(aboutItem)
+        
+        let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshInfo), keyEquivalent: "r")
+        refreshItem.keyEquivalentModifierMask = [.command]
+        menu.addItem(refreshItem)
+        
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
+        quitItem.keyEquivalentModifierMask = [.command]
+        menu.addItem(quitItem)
+        
         
         autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 360.0) {
             self.refreshInfo()
@@ -86,8 +118,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
     
+    func prependImageToString(imageName: String, title: String) -> NSMutableAttributedString {
+        let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+        let baseImage = NSImage(named: imageName)!
+        
+        let aspectRatio = baseImage.size.width / baseImage.size.height
+        let newSize = NSSize(width: height * aspectRatio, height: height)
+            
+        let image = NSImage(size: newSize)
+        image.lockFocus()
+        baseImage.draw(in: NSRect(origin: .zero, size: newSize))
+        image.unlockFocus()
+        
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = image
+        
+        let resultingString = NSAttributedString(attachment: imageAttachment)
+        
+        let attributedTitle = NSMutableAttributedString(string: "")
+        attributedTitle.append(resultingString)
+        attributedTitle.append(NSAttributedString(string: " "))
+        attributedTitle.append(NSAttributedString(string: title))
+        
+        return attributedTitle
+    }
+    
     @MainActor @objc func refreshInfo() {
-        menu.removeAllItems()
+        refreshCTAInfo()
+        refreshMetraInfo()
+    }
+    
+    @MainActor @objc func refreshCTAInfo() {
+        ctaMenu.removeAllItems()
         let validLines = [CRLine.red, CRLine.blue, CRLine.brown, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow]
         for line in validLines {
             let item = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
@@ -148,7 +210,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             }
                             var subItem: CRMenuItem!
                             if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: #selector(self.openWindow(_:)))
+                                subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: #selector(self.openCTAMapWindow(_:)))
                                 subItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                 
                                 subItem.trainLine = line2
@@ -175,7 +237,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     
                                     var title: CRMenuItem!
                                     if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
-                                        title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openWindow(_:)))
+                                        title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openCTAMapWindow(_:)))
                                         title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                         title.trainLine = line2
                                         
@@ -207,7 +269,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         for station in niceStats {
                                             var subSubItem: CRMenuItem!
                                             if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openWindow(_:)))
+                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
                                                 subSubItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                                 subSubItem.trainLine = line2
                                                 subSubItem.trainRun = run
@@ -246,25 +308,92 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             
             item.submenu = subMenu
-            menu.addItem(item)
+            ctaMenu.addItem(item)
         }
         
-        menu.addItem(NSMenuItem.separator())
+        ctaMenu.addItem(NSMenuItem.separator())
         
-        let aboutItem = NSMenuItem(title: "About", action: #selector(openAboutWindow), keyEquivalent: "a")
-        aboutItem.keyEquivalentModifierMask = [.command]
-        menu.addItem(aboutItem)
-        
-        let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshInfo), keyEquivalent: "r")
+        let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshCTAInfo), keyEquivalent: "r")
         refreshItem.keyEquivalentModifierMask = [.command]
-        menu.addItem(refreshItem)
-        
-        let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
-        quitItem.keyEquivalentModifierMask = [.command]
-        menu.addItem(quitItem)
+        ctaMenu.addItem(refreshItem)
     }
     
-    @objc func openWindow(_ sender: CRMenuItem) {
+    @MainActor @objc func refreshMetraInfo() {
+        metraMenu.removeAllItems()
+        
+        DispatchQueue.global().async {
+            let allConsists = METXAPI().getActiveTrains()
+            
+            let sortedConsists = Dictionary(grouping: allConsists) { $0.service.textualRepresentation() }
+            
+            DispatchQueue.main.sync {
+                let services = [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
+                for service in services {
+                    let item = CRMenuItem(title: service.textualRepresentation(), action: #selector(self.openLink(_:)))
+                    
+                    let consistsNotSorted = sortedConsists[service.textualRepresentation()] ?? []
+                    let consists = consistsNotSorted.sorted { (top, bottom) -> Bool in
+                       if top.trainNumber == "RAV1" {
+                           return false
+                       }
+                       if bottom.trainNumber == "RAV1" {
+                           return true
+                       }
+                       
+                       guard let topInt = Int(top.trainNumber), let bottomInt = Int(bottom.trainNumber) else {
+                           return top.trainNumber < top.trainNumber
+                       }
+                       
+                       return topInt < bottomInt
+                    }
+                    
+                    let trainMenu = NSMenu()
+                    
+                    if service.outOfService() {
+                        trainMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
+                    } else if consists.count == 0 {
+                        trainMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
+                    } else {
+                        for consist in consists {
+                            let trainItem = MTMenuItem(title: "\(consist.trainNumber) to \(consist.service.getDestination(trainString: consist.trainNumber))", action: #selector(self.openMetraMapWindow(_:)))
+                            trainItem.trainCoordinate = consist.location
+                            trainItem.trainNumber = consist.trainNumber
+                            trainItem.service = service
+                            trainMenu.addItem(trainItem)
+                        }
+                    }
+                    
+                    item.submenu = trainMenu
+                    
+                    /*if service == .bnsf {
+                     let bnsfTitle = NSMutableAttributedString(string: "")
+                     
+                     let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+                     let bnsfBaseImage = NSImage(named: "bnsf")!
+                     let aspectRatio = bnsfBaseImage.size.width / bnsfBaseImage.size.height
+                     let newSize = NSSize(width: height * aspectRatio, height: height)
+                     
+                     let bnsfImage = NSImage(size: newSize)
+                     bnsfImage.lockFocus()
+                     bnsfBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
+                     bnsfImage.unlockFocus()
+                     
+                     let bnsf = NSTextAttachment()
+                     bnsf.image = bnsfImage
+                     
+                     let bnsfString = NSAttributedString(attachment: bnsf)
+                     bnsfTitle.append(bnsfString)
+                     item.attributedTitle = bnsfTitle
+                     }*/
+                    item.linkToOpen = service.link()
+                    
+                    self.metraMenu.addItem(item)
+                }
+            }
+        }
+    }
+    
+    @objc func openCTAMapWindow(_ sender: CRMenuItem) {
         mapMutex.lock()
         if let screenSize = NSScreen.main?.frame.size {
             let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
@@ -328,7 +457,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         }
                     }
                 } else {
-                    mapWindows[index].title = "Cerulean - \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000")"
+                    mapWindows[index].title = "Cerulean - CTA \(sender.trainLine?.textualRepresentation() ?? "Unknown") Line run \(sender.trainRun ?? "000")"
                     mapWindows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: timeLastUpdated)
                     mapWindows[index].center()
                     mapWindows[index].setIsVisible(true)
@@ -336,6 +465,60 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     mapWindows[index].makeKey()
                     NSApp.activate(ignoringOtherApps: true)
                 }
+            }
+        }
+        mapMutex.unlock()
+    }
+    
+    @objc func openMetraMapWindow(_ sender: MTMenuItem) {
+        mapMutex.lock()
+        if let screenSize = NSScreen.main?.frame.size {
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
+            let placemark = MTPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
+            
+            if let trainNumber = sender.trainNumber, let service = sender.service, let desiredStopName = sender.trainDesiredStop, let desiredStopID = sender.trainDesiredStopID {
+                /*placemark.route = route
+                placemark.vehicleNumber = vehicleId
+                placemark.heading = sender.vehicleHeading ?? 0
+                let direction = PTDirection.PTVehicleDirection(degrees: sender.vehicleHeading ?? 0)
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale.current
+                
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+                
+                mapWindows[index].title = "Carmine - \(route.fullName) bus \(vehicleId) \(direction.description)"
+                
+                self.mapWindows[index].contentView = PTMapView(mark: placemark, timeLastUpdated: dateFormatter.string(from: Date()), isVehicle: true)
+                self.mapWindows[index].center()
+                self.mapWindows[index].setIsVisible(true)
+                self.mapWindows[index].orderFrontRegardless()
+                self.mapWindows[index].makeKey()
+                NSApp.activate(ignoringOtherApps: true)*/
+                print("not ready yet")
+            } else if let trainNumber = sender.trainNumber, let service = sender.service {
+                print("Welcome")
+                placemark.service = service
+                placemark.trainNumber = trainNumber
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale.current
+                
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+                
+                mapWindows[index].title = "Cerulean - Metra \(service.textualRepresentation()) train \(trainNumber) to \(service.getDestination(trainString: trainNumber))"
+                
+                self.mapWindows[index].contentView = MTMapView(train: placemark, timeLastUpdated: dateFormatter.string(from: Date()))
+                self.mapWindows[index].center()
+                self.mapWindows[index].setIsVisible(true)
+                self.mapWindows[index].orderFrontRegardless()
+                self.mapWindows[index].makeKey()
+                NSApp.activate(ignoringOtherApps: true)
+            } else {
+                print("shit")
             }
         }
         mapMutex.unlock()
