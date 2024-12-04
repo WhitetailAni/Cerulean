@@ -52,6 +52,10 @@ enum MTService {
         return
     }
     
+    static func allServices() -> [MTService] {
+        return [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
+    }
+    
     func getDestination(trainString: String) -> String {
         if trainString == "RAV1" {
             return "Ravinia Park"
@@ -141,7 +145,7 @@ enum MTService {
                     switch trainNumber {
                     case 633, 643, 657:
                         return "McHenry"
-                    case 603, 607, 613, 619, 621, 627, 631, 645, 667, 669, 675, 677, 7099, 7233, 735, 711, 713, 715, 719, 735:
+                    case 603, 607, 613, 619, 621, 627, 631, 645, 667, 669, 675, 677, 7099, 7233, 735, 711, 713, 715, 719:
                         return "Crystal Lake"
                     case 609, 615, 635, 639, 651:
                         return "Des Plaines"
@@ -218,7 +222,7 @@ enum MTService {
         return min < value && value < max
     }
         
-    func textualRepresentation() -> String {
+    func apiRepresentation() -> String {
         switch self {
         case .up_w:
             return "UP-W"
@@ -247,7 +251,7 @@ enum MTService {
         }
     }
     
-    func fullTextualRepresentation() -> String {
+    func textualRepresentation() -> String {
         switch self {
         case .up_w:
             return "Union Pacific West"
@@ -348,7 +352,7 @@ enum MTService {
             }
         case .hc:
             if isNumberBetween(min: 1, max: 7, value: weekday) {
-                return !CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 45), end: CRTime(hour: 8, minute: 12)) || !CRTime.isItCurrentlyBetween(start: CRTime(hour: 15, minute: 50), end: CRTime(hour: 18, minute: 36))
+                return !(CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 45), end: CRTime(hour: 8, minute: 12)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 15, minute: 50), end: CRTime(hour: 18, minute: 36)))
             }
         case .ri:
             if isNumberBetween(min: 1, max: 7, value: weekday) {
@@ -407,7 +411,7 @@ enum MTService {
             }
         case .ncs:
             if isNumberBetween(min: 1, max: 7, value: weekday) {
-                return !CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 20), end: CRTime(hour: 10, minute: 49)) || !CRTime.isItCurrentlyBetween(start: CRTime(hour: 13, minute: 25), end: CRTime(hour: 19, minute: 40))
+                return !(CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 20), end: CRTime(hour: 10, minute: 49)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 13, minute: 25), end: CRTime(hour: 19, minute: 40)))
             }
         case .ses:
             return false
@@ -426,14 +430,14 @@ enum MTService {
             case .hc:
                 return "HC_OB_1"
             case .ri:
-                if isNumberBetween(min: 399, max: 400, value: trainNumber) || trainNumber < 200 {
+                if isNumberBetween(min: 399, max: 500, value: trainNumber) || trainNumber < 200 {
                     return "RI_OB_2"
                 } else {
                     return "RI_OB_1"
                 }
             case .me:
                 if trainNumber % 2 == 0 {
-                    return "Millennium Station"
+                    return "ME_OB_1"
                 } else {
                     if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
                         return "ME_OB_2"
@@ -463,7 +467,6 @@ enum MTService {
                 return "MD-W_OB_1"
             }
         }
-        return "MD-W_OB_1"
     }
     
     static private func isHoliday() -> Bool {

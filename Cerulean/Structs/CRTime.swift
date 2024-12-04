@@ -31,7 +31,15 @@ struct CRTime: Comparable {
         }
     }
     
-    static func apiTimeToReadabletime(string: String) -> String {
+    static func dateToReadableTime(date: Date) -> String {
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "HH:mm"
+        outputFormatter.timeZone = TimeZone.autoupdatingCurrent
+        
+        return outputFormatter.string(from: date)
+    }
+    
+    static func ctaAPITimeToReadableTime(string: String) -> String {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         inputFormatter.timeZone = TimeZone(identifier: "America/Chicago")
@@ -42,5 +50,25 @@ struct CRTime: Comparable {
         outputFormatter.timeZone = TimeZone.autoupdatingCurrent
         
         return outputFormatter.string(from: time)
+    }
+    
+    static func metraAPITimeToReadableTime(string: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        inputFormatter.timeZone = TimeZone(identifier: "UTC")
+        let time: Date = inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "HH:mm"
+        outputFormatter.timeZone = TimeZone.autoupdatingCurrent
+        
+        return outputFormatter.string(from: time)
+    }
+    
+    static func metraAPITimeToDate(string: String) -> Date {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        inputFormatter.timeZone = TimeZone(identifier: "UTC")
+        return inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
     }
 }

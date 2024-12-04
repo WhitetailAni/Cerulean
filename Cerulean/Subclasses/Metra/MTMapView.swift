@@ -83,7 +83,7 @@ class MTMapView: MKMapView {
         
         let trainAnnotation = MTPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
-        trainAnnotation.title = "\(train.service?.fullTextualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
+        trainAnnotation.title = "\(train.service?.textualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
         trainAnnotation.mark = train
         trainAnnotation.isTrainAnnotation = true
         self.addAnnotation(trainAnnotation)
@@ -100,13 +100,13 @@ class MTMapView: MKMapView {
         
         let trainAnnotation = MTPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
-        trainAnnotation.title = "\(train.service?.fullTextualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
+        trainAnnotation.title = "\(train.service?.textualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
         trainAnnotation.mark = train
         trainAnnotation.isTrainAnnotation = true
         
         let stationAnnotation = MTPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
-        stationAnnotation.title = "\(station.service?.fullTextualRepresentation() ?? "Unknown") stop \(station.stationName ?? "Unknown")"
+        stationAnnotation.title = "\(station.service?.textualRepresentation() ?? "Unknown") stop \(station.stationName ?? "Unknown")"
         stationAnnotation.mark = station
         stationAnnotation.isTrainAnnotation = false
         
@@ -132,25 +132,32 @@ class MTMapView: MKMapView {
     }
     
     @objc func refreshTrainPosition() {
-        /*DispatchQueue.global().async {
-            let instance = ChicagoTransitInterface()
-            let locationInfo = InterfaceResultProcessing.getLocationForRun(info: instance.getRunNumberInfo(run: self.train.trainRun ?? "000"))
+        DispatchQueue.global().async {
             
-            if locationInfo.0.latitude == -2, locationInfo.0.longitude == -3 {
-                return
-            }
+            let raw = METXAPI().getActiveTrains()
+            let allTrains = raw.0
+            let trains = allTrains[self.train.service?.textualRepresentation() ?? ""] ?? []
             
-            DispatchQueue.main.sync {
-                self.train = self.train.placemarkWithNewLocation(locationInfo.0)
-                self.timeLabel.stringValue = "Updated at \(locationInfo.1)"
-                
-                if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
-                    self.zoomMapToTrain()
-                } else {
-                    self.zoomMapToTrainAndStation()
+            if let specificTrain = {
+                for train in trains {
+                    if train.trainNumber == self.train.trainNumber {
+                        return train
+                    }
+                }
+                return nil
+            }() {
+                DispatchQueue.main.sync {
+                    self.train = self.train.placemarkWithNewLocation(specificTrain.location)
+                    self.timeLabel.stringValue = "Updated at \(raw.1)"
+                    
+                    if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
+                        self.zoomMapToTrain()
+                    } else {
+                        self.zoomMapToTrainAndStation()
+                    }
                 }
             }
-        }*/
+        }
     }
 }
 

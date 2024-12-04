@@ -109,7 +109,7 @@ class InterfaceResultProcessing {
         }
         
         if let latitudeString = position["lat"] as? String, let longitudeString = position["lon"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
-            return (CLLocationCoordinate2D(latitude: latitude, longitude: longitude), CRTime.apiTimeToReadabletime(string: timeString))
+            return (CLLocationCoordinate2D(latitude: latitude, longitude: longitude), CRTime.ctaAPITimeToReadableTime(string: timeString))
         }
         return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
     }

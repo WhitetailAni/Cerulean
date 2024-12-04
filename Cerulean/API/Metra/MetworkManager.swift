@@ -10,8 +10,8 @@ class MetworkManager {
     static let shared: MetworkManager = {
         let configuration = URLSessionConfiguration.default
         
-        let username = "40f17377c3c028c4a0457f93ab233eac"
-        let password = "9c5e6505fa35fb12d65bf11e79dfd7db"
+        let username = ""
+        let password = ""
         
         let authString = "\(username):\(password)"
         

@@ -39,6 +39,9 @@
 		42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A182CFE9FEA00A060A2 /* MTMapView.swift */; };
 		42D99A1B2CFEA00900A060A2 /* MTPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1A2CFEA00900A060A2 /* MTPolyline.swift */; };
 		42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1C2CFEB07100A060A2 /* MTPoint.swift */; };
+		42D99A1F2CFF783100A060A2 /* MTPrediction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */; };
+		42D99A212CFF789700A060A2 /* MTStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A202CFF789500A060A2 /* MTStop.swift */; };
+		42D99A232CFFF78400A060A2 /* MTStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A222CFFF78200A060A2 /* MTStation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +80,9 @@
 		42D99A182CFE9FEA00A060A2 /* MTMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTMapView.swift; sourceTree = "<group>"; };
 		42D99A1A2CFEA00900A060A2 /* MTPolyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPolyline.swift; sourceTree = "<group>"; };
 		42D99A1C2CFEB07100A060A2 /* MTPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPoint.swift; sourceTree = "<group>"; };
+		42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPrediction.swift; sourceTree = "<group>"; };
+		42D99A202CFF789500A060A2 /* MTStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTStop.swift; sourceTree = "<group>"; };
+		42D99A222CFFF78200A060A2 /* MTStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTStation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +183,9 @@
 		42D99A0A2CFE5E2E00A060A2 /* Metra */ = {
 			isa = PBXGroup;
 			children = (
+				42D99A222CFFF78200A060A2 /* MTStation.swift */,
+				42D99A202CFF789500A060A2 /* MTStop.swift */,
+				42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */,
 				42D99A1C2CFEB07100A060A2 /* MTPoint.swift */,
 				42D99A0C2CFE5E5600A060A2 /* MTService.swift */,
 				42D99A082CFE5BC200A060A2 /* MTConsist.swift */,
@@ -239,7 +248,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					422124BA2C5026D80062695A = {
 						CreatedOnToolsVersion = 16.0;
@@ -296,6 +305,7 @@
 				4200130A2C54B2B6007ACC67 /* Extensions.swift in Sources */,
 				42D99A1B2CFEA00900A060A2 /* MTPolyline.swift in Sources */,
 				420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */,
+				42D99A212CFF789700A060A2 /* MTStop.swift in Sources */,
 				4200130C2C54B47E007ACC67 /* CRPointAnnotation.swift in Sources */,
 				422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */,
 				42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */,
@@ -307,8 +317,10 @@
 				42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */,
 				42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */,
 				42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */,
+				42D99A1F2CFF783100A060A2 /* MTPrediction.swift in Sources */,
 				42D99A132CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift in Sources */,
 				42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */,
+				42D99A232CFFF78400A060A2 /* MTStation.swift in Sources */,
 				42D99A0F2CFE9E4000A060A2 /* MTPlacemark.swift in Sources */,
 				420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */,
 				42A41DF52C5B369E004ABBC1 /* CRTextField.swift in Sources */,
@@ -352,6 +364,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -415,6 +428,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -447,9 +461,11 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 917;
+				CURRENT_PROJECT_VERSION = 1163;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;
@@ -484,10 +500,11 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 917;
+				CURRENT_PROJECT_VERSION = 1163;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cerulean/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cerulean;

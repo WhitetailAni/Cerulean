@@ -14,8 +14,8 @@ class MTMenuItem: NSMenuItem {
     var trainNumber: String?
     var trainCoordinate: CLLocationCoordinate2D?
     
-    var trainDesiredStop: String?
-    var trainDesiredStopID: String?
+    var stationName: String?
+    var stationID: String?
     
     var timeLastUpdated: String?
     

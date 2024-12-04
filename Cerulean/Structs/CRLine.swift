@@ -58,10 +58,18 @@ enum CRLine {
     }
     
     static func gtfsIDForLineAndRun(line: CRLine, run: Int) -> Int {
-        switch line {
+        var line2 = line
+        if ChicagoTransitInterface.isPurpleExpressRunning() && line == .purple {
+            line2 = .purpleExpress
+        }
+        
+        switch line2 {
         case .red:
             return [308400007, 308400008].randomElement()!
         case .blue:
+            if run > 300 {
+                return [308400129, 308400128, 308500084, 308500128].randomElement()!
+            }
             return [308400001, 308400002, 308500002].randomElement()!
         case .blueAlternate:
             if run > 300 {

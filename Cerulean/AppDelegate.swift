@@ -42,34 +42,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         menu = NSMenu()
-
-        /*METXAPI().readGTFS(endpoint: "alerts") { result in
-            print(result)
-        }*/
-        METXAPI().readGTFS(endpoint: "tripUpdates") { result in
-            print(result)
-        }
-        
-        
-        /*let window = NSWindow(contentRect: NSMakeRect(0, 0, (NSScreen.main?.frame.size.width)! * 0.5, (NSScreen.main?.frame.size.height)! * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-        let index = mapWindows.count
-        mapWindows.append(window)
-        
-        let train = ChicagoTransitInterface().getRunNumberInfo(run: "421")
-        let location = InterfaceResultProcessing.getLocationForRun(info: train)
-        
-        let trainMark = CRPlacemark(coordinate: location.0)
-        
-        trainMark.line = .brown
-        trainMark.trainRun = "422"
-        
-        mapWindows[index].title = "Cerulean - \(CRLine.brown.textualRepresentation() ?? "Unknown") Line run 421"
-        mapWindows[index].contentView = CRMapView(train: trainMark, timeLastUpdated: location.1)
-        mapWindows[index].center()
-        mapWindows[index].setIsVisible(true)
-        mapWindows[index].orderFrontRegardless()
-        mapWindows[index].makeKey()
-        NSApp.activate(ignoringOtherApps: true)*/
         
         let ctaItem = CRMenuItem(title: "CTA", action: #selector(openLink(_:)))
         ctaItem.linkToOpen = URL(string: "https://www.transitchicago.com/traintracker/")!
@@ -192,7 +164,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     } else if trains.count == 0 {
                         subMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
                     } else {
-                        let timeLastUpdated = CRTime.apiTimeToReadabletime(string: trains[0]["requestTime"] ?? "")
+                        let timeLastUpdated = CRTime.ctaAPITimeToReadableTime(string: trains[0]["requestTime"] ?? "")
                         subMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
                         subMenu.addItem(NSMenuItem.separator())
                         if line == .purple && ChicagoTransitInterface.isPurpleExpressRunning() {
@@ -269,7 +241,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         for station in niceStats {
                                             var subSubItem: CRMenuItem!
                                             if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
+                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
                                                 subSubItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                                 subSubItem.trainLine = line2
                                                 subSubItem.trainRun = run
@@ -277,7 +249,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                                 subSubItem.trainDesiredStopID = station["nextStopID"]
                                                 subSubItem.timeLastUpdated = timeLastUpdated
                                             } else {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.apiTimeToReadabletime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
+                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
                                             }
                                             
                                             subSubMenu.addItem(subSubItem)
@@ -322,30 +294,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         metraMenu.removeAllItems()
         
         DispatchQueue.global().async {
-            let allConsists = METXAPI().getActiveTrains()
+            let rawTrainData = METXAPI().getActiveTrains()
+            let allConsists = rawTrainData.0
+            let timeLastUpdated = rawTrainData.1
             
-            let sortedConsists = Dictionary(grouping: allConsists) { $0.service.textualRepresentation() }
+            let allPredictionData = METXAPI().getStopPredictions()
             
             DispatchQueue.main.sync {
-                let services = [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
+                let services = MTService.allServices()
                 for service in services {
                     let item = CRMenuItem(title: service.textualRepresentation(), action: #selector(self.openLink(_:)))
                     
-                    let consistsNotSorted = sortedConsists[service.textualRepresentation()] ?? []
-                    let consists = consistsNotSorted.sorted { (top, bottom) -> Bool in
-                       if top.trainNumber == "RAV1" {
-                           return false
-                       }
-                       if bottom.trainNumber == "RAV1" {
-                           return true
-                       }
-                       
-                       guard let topInt = Int(top.trainNumber), let bottomInt = Int(bottom.trainNumber) else {
-                           return top.trainNumber < top.trainNumber
-                       }
-                       
-                       return topInt < bottomInt
-                    }
+                    let apiRepresentation = service.apiRepresentation()
+                    
+                    let consists = allConsists[apiRepresentation] ?? []
+                    let predictionsForService = allPredictionData[apiRepresentation] ?? []
                     
                     let trainMenu = NSMenu()
                     
@@ -354,41 +317,108 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     } else if consists.count == 0 {
                         trainMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
                     } else {
+                        trainMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
+                        trainMenu.addItem(NSMenuItem.separator())
+                        
                         for consist in consists {
-                            let trainItem = MTMenuItem(title: "\(consist.trainNumber) to \(consist.service.getDestination(trainString: consist.trainNumber))", action: #selector(self.openMetraMapWindow(_:)))
+                            let endDestination = consist.service.getDestination(trainString: consist.trainNumber)
+                            let trainItem = MTMenuItem(title: "\(consist.trainNumber) to \(endDestination)", action: #selector(self.openMetraMapWindow(_:)))
                             trainItem.trainCoordinate = consist.location
                             trainItem.trainNumber = consist.trainNumber
                             trainItem.service = service
+                            
+                            let stopMenu = NSMenu()
+                            
+                            let titleItem = MTMenuItem(title: "\(service.textualRepresentation()) train \(consist.trainNumber) to \(endDestination)", action: #selector(self.openMetraMapWindow(_:)))
+                            titleItem.trainCoordinate = consist.location
+                            titleItem.trainNumber = consist.trainNumber
+                            titleItem.service = service
+                            
+                            stopMenu.addItem(titleItem)
+                            stopMenu.addItem(NSMenuItem.separator())
+                            
+                            if let trainSpecificPredictions: MTPrediction = {
+                                for prediction in predictionsForService {
+                                    if consist.trainNumber == prediction.trainNumber {
+                                        return prediction
+                                    }
+                                }
+                                return nil
+                            }() {
+                                let stops = trainSpecificPredictions.stops
+                                
+                                if stops.count > 0 {
+                                    for stop in stops {
+                                        let purifiedName = MTStop.purifyApiName(name: stop.apiName)
+                                        if stop.arrivalTime == stop.departureTime {
+                                            let stopItem = MTMenuItem(title: "\(purifiedName) at \(CRTime.dateToReadableTime(date: stop.arrivalTime))", action: #selector(self.openMetraMapWindow(_:)))
+                                            stopItem.trainNumber = consist.trainNumber
+                                            stopItem.service = service
+                                            stopItem.stationID = stop.apiName
+                                            stopItem.stationName = purifiedName
+                                            stopItem.trainCoordinate = consist.location
+                                            
+                                            stopMenu.addItem(stopItem)
+                                        } else {
+                                            let arriveItem = MTMenuItem(title: "Arrives \(purifiedName) at \(CRTime.dateToReadableTime(date: stop.arrivalTime))", action: #selector(self.openMetraMapWindow(_:)))
+                                            arriveItem.trainNumber = consist.trainNumber
+                                            arriveItem.service = service
+                                            arriveItem.stationID = stop.apiName
+                                            arriveItem.stationName = purifiedName
+                                            arriveItem.trainCoordinate = consist.location
+                                            
+                                            let departItem = MTMenuItem(title: "Departs \(purifiedName) at \(CRTime.dateToReadableTime(date: stop.departureTime))", action: #selector(self.openMetraMapWindow(_:)))
+                                            departItem.trainNumber = consist.trainNumber
+                                            departItem.service = service
+                                            departItem.stationID = stop.apiName
+                                            departItem.stationName = purifiedName
+                                            departItem.trainCoordinate = consist.location
+                                            
+                                            stopMenu.addItem(arriveItem)
+                                            stopMenu.addItem(departItem)
+                                        }
+                                    }
+                                } else {
+                                    let stopItem = MTMenuItem(title: "Arrived at terminal", action: nil)
+                                    
+                                    stopMenu.addItem(stopItem)
+                                }
+                            }
+                            
+                            trainItem.submenu = stopMenu
+                            
                             trainMenu.addItem(trainItem)
                         }
                     }
                     
                     item.submenu = trainMenu
                     
-                    /*if service == .bnsf {
-                     let bnsfTitle = NSMutableAttributedString(string: "")
-                     
-                     let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
-                     let bnsfBaseImage = NSImage(named: "bnsf")!
-                     let aspectRatio = bnsfBaseImage.size.width / bnsfBaseImage.size.height
-                     let newSize = NSSize(width: height * aspectRatio, height: height)
-                     
-                     let bnsfImage = NSImage(size: newSize)
-                     bnsfImage.lockFocus()
-                     bnsfBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
-                     bnsfImage.unlockFocus()
-                     
-                     let bnsf = NSTextAttachment()
-                     bnsf.image = bnsfImage
-                     
-                     let bnsfString = NSAttributedString(attachment: bnsf)
-                     bnsfTitle.append(bnsfString)
-                     item.attributedTitle = bnsfTitle
-                     }*/
+                    if service == .bnsf {
+                         let bnsfTitle = NSMutableAttributedString(string: "")
+                         
+                         let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+                         let bnsfBaseImage = NSImage(named: "bnsf")!
+                         let aspectRatio = bnsfBaseImage.size.width / bnsfBaseImage.size.height
+                         let newSize = NSSize(width: height * aspectRatio, height: height)
+                         
+                         let bnsfImage = NSImage(size: newSize)
+                         bnsfImage.lockFocus()
+                         bnsfBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
+                         bnsfImage.unlockFocus()
+                         
+                         let bnsf = NSTextAttachment()
+                         bnsf.image = bnsfImage
+                         
+                         let bnsfString = NSAttributedString(attachment: bnsf)
+                         bnsfTitle.append(bnsfString)
+                         item.attributedTitle = bnsfTitle
+                    }
                     item.linkToOpen = service.link()
                     
                     self.metraMenu.addItem(item)
                 }
+                self.metraMenu.addItem(NSMenuItem.separator())
+                self.metraMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshMetraInfo), keyEquivalent: "r"))
             }
         }
     }
@@ -479,28 +509,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let placemark = MTPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
             
-            if let trainNumber = sender.trainNumber, let service = sender.service, let desiredStopName = sender.trainDesiredStop, let desiredStopID = sender.trainDesiredStopID {
-                /*placemark.route = route
-                placemark.vehicleNumber = vehicleId
-                placemark.heading = sender.vehicleHeading ?? 0
-                let direction = PTDirection.PTVehicleDirection(degrees: sender.vehicleHeading ?? 0)
+            if let trainNumber = sender.trainNumber, let service = sender.service, let stationName = sender.stationName, let stationID = sender.stationID {
+                placemark.service = service
+                placemark.trainNumber = trainNumber
+                
+                let station = METXAPI.stations.getStop(service: service, apiName: stationID)
+                
+                let stopMark = MTPlacemark(coordinate: station.location)
+                stopMark.stationName = stationName
+                stopMark.service = service
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.locale = Locale.current
                 
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
                 
-                mapWindows[index].title = "Carmine - \(route.fullName) bus \(vehicleId) \(direction.description)"
+                mapWindows[index].title = "Cerulean - Metra \(service.apiRepresentation()) train \(trainNumber) to \(service.getDestination(trainString: trainNumber))"
                 
-                self.mapWindows[index].contentView = PTMapView(mark: placemark, timeLastUpdated: dateFormatter.string(from: Date()), isVehicle: true)
+                self.mapWindows[index].contentView = MTMapView(train: placemark, station: stopMark, timeLastUpdated: dateFormatter.string(from: Date()))
                 self.mapWindows[index].center()
                 self.mapWindows[index].setIsVisible(true)
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
-                NSApp.activate(ignoringOtherApps: true)*/
-                print("not ready yet")
+                NSApp.activate(ignoringOtherApps: true)
             } else if let trainNumber = sender.trainNumber, let service = sender.service {
-                print("Welcome")
                 placemark.service = service
                 placemark.trainNumber = trainNumber
                 
@@ -509,7 +541,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
                 
-                mapWindows[index].title = "Cerulean - Metra \(service.textualRepresentation()) train \(trainNumber) to \(service.getDestination(trainString: trainNumber))"
+                mapWindows[index].title = "Cerulean - Metra \(service.apiRepresentation()) train \(trainNumber) to \(service.getDestination(trainString: trainNumber))"
                 
                 self.mapWindows[index].contentView = MTMapView(train: placemark, timeLastUpdated: dateFormatter.string(from: Date()))
                 self.mapWindows[index].center()
@@ -517,8 +549,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
-            } else {
-                print("shit")
             }
         }
         mapMutex.unlock()

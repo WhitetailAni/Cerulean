@@ -31,7 +31,7 @@ class MTMarkerAnnotationView: MKMarkerAnnotationView {
                 if let train = annotation.mark?.trainNumber {
                     markerTintColor = service.color()
                     glyphText = train
-                } else if let stationName = annotation.mark?.stationName {
+                } else if annotation.mark?.stationName != nil {
                     glyphImage = .metra
                     markerTintColor = service.color()
                 }
