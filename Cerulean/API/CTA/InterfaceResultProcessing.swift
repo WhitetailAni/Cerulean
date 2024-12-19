@@ -102,6 +102,28 @@ class InterfaceResultProcessing {
         return estimatedEtaArray
     }
     
+    ///secrets!
+    class func debugCleanUpRunInfo(info: [String: Any]) -> [(run: String, coordinate: CLLocationCoordinate2D, terminus: String, timeLastUpdated: String)] {
+        guard let ctatt = info["ctatt"] as? [String: Any], let route = ctatt["route"] as? [[String: Any]], let trains = route[0]["train"] as? [[String: Any]] else {
+            return []
+        }
+        
+        var locationArray: [(run: String, coordinate: CLLocationCoordinate2D, terminus: String, timeLastUpdated: String)] = []
+        
+        let timeLastUpdatedRaw = ctatt["tmst"] as? String ?? "1970-01-01T00:00:00"
+        let timeLastUpdated = CRTime.ctaAPITimeToReadableTime(string: timeLastUpdatedRaw)
+        
+        for train in trains {
+            let run: String = train["rn"] as? String ?? "0"
+            let terminus: String = train["destNm"] as? String ?? "Unknown"
+            let latitudeString: String = train["lat"] as? String ?? "0.0"
+            let longitudeString: String = train["lon"] as? String ?? "0.0"
+            
+            locationArray.append((run: run, coordinate: CLLocationCoordinate2D(latitude: Double(latitudeString) ?? 2.1, longitude: Double(longitudeString) ?? 7.3), terminus: terminus, timeLastUpdated: timeLastUpdated))
+        }
+        return locationArray
+    }
+    
     ///Gets the current location and time for a given CTA run
     class func getLocationForRun(info: [String: Any]) -> (CLLocationCoordinate2D, String) {
         guard let ctatt = info["ctatt"] as? [String: Any], let position = ctatt["position"] as? [String: Any], let timeString = ctatt["tmst"] as? String else {

@@ -65,6 +65,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
+        if Bundle.main.infoDictionary?["CRDebug"] as? Bool ?? false {
+            let debugItem = NSMenuItem(title: "Debug", action: #selector(openAboutWindow), keyEquivalent: "d")
+            debugItem.keyEquivalentModifierMask = [.command]
+            menu.addItem(debugItem)
+            
+            let debugMenu = NSMenu()
+            
+            let trackerMapItem = CRMenuItem(title: "Overview", action: #selector(openDebugMapWindow(_:)))
+            debugMenu.addItem(trackerMapItem)
+            
+            debugItem.submenu = debugMenu
+            
+            menu.addItem(NSMenuItem.separator())
+        }
+        
         let aboutItem = NSMenuItem(title: "About", action: #selector(openAboutWindow), keyEquivalent: "a")
         aboutItem.keyEquivalentModifierMask = [.command]
         menu.addItem(aboutItem)
@@ -122,8 +137,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @MainActor @objc func refreshCTAInfo() {
         ctaMenu.removeAllItems()
-        let validLines = [CRLine.red, CRLine.blue, CRLine.brown, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow]
-        for line in validLines {
+        for line in CRLine.allLines {
             let item = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
             item.linkToOpen = line.link()
             if line == .yellow {
@@ -301,7 +315,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let allPredictionData = METXAPI().getStopPredictions()
             
             DispatchQueue.main.sync {
-                let services = MTService.allServices()
+                let services = MTService.allServices
                 for service in services {
                     let item = CRMenuItem(title: service.textualRepresentation(), action: #selector(self.openLink(_:)))
                     
@@ -550,6 +564,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
             }
+        }
+        mapMutex.unlock()
+    }
+    
+    @objc func openDebugMapWindow(_ sender: CRMenuItem) {
+        mapMutex.lock()
+        if let screenSize = NSScreen.main?.frame.size {
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            formatter.timeZone = TimeZone.autoupdatingCurrent
+            
+            let timeLastUpdated = formatter.string(from: Date())
+            
+            mapWindows[index].title = "Cerulean"
+            mapWindows[index].contentView = CRDMapView(timeLastUpdated: timeLastUpdated)
+            mapWindows[index].center()
+            mapWindows[index].setIsVisible(true)
+            mapWindows[index].orderFrontRegardless()
+            mapWindows[index].makeKey()
+            NSApp.activate(ignoringOtherApps: true)
         }
         mapMutex.unlock()
     }

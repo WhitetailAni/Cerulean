@@ -52,9 +52,7 @@ enum MTService {
         return
     }
     
-    static func allServices() -> [MTService] {
-        return [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
-    }
+    static var allServices = [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
     
     func getDestination(trainString: String) -> String {
         if trainString == "RAV1" {
@@ -339,7 +337,7 @@ enum MTService {
     }
     
     func outOfService() -> Bool {
-        var weekday = Calendar.current.component(.weekday, from: Date())
+        /*var weekday = Calendar.current.component(.weekday, from: Date())
         if MTService.isHoliday() {
             weekday = 1
         }
@@ -354,6 +352,7 @@ enum MTService {
             if isNumberBetween(min: 1, max: 7, value: weekday) {
                 return !(CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 45), end: CRTime(hour: 8, minute: 12)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 15, minute: 50), end: CRTime(hour: 18, minute: 36)))
             }
+            return false
         case .ri:
             if isNumberBetween(min: 1, max: 7, value: weekday) {
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 56), end: CRTime(hour: 6, minute: 05))
@@ -415,7 +414,7 @@ enum MTService {
             }
         case .ses:
             return false
-        }
+        }*/
         return false
     }
     

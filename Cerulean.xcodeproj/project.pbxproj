@@ -42,6 +42,8 @@
 		42D99A1F2CFF783100A060A2 /* MTPrediction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */; };
 		42D99A212CFF789700A060A2 /* MTStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A202CFF789500A060A2 /* MTStop.swift */; };
 		42D99A232CFFF78400A060A2 /* MTStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A222CFFF78200A060A2 /* MTStation.swift */; };
+		42F3F7D42D0CA1DE00B9B9DB /* CRDMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */; };
+		42F3F7D62D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +85,8 @@
 		42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTPrediction.swift; sourceTree = "<group>"; };
 		42D99A202CFF789500A060A2 /* MTStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTStop.swift; sourceTree = "<group>"; };
 		42D99A222CFFF78200A060A2 /* MTStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTStation.swift; sourceTree = "<group>"; };
+		42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDMapView.swift; sourceTree = "<group>"; };
+		42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDMarkerAnnotationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +207,8 @@
 				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
 				4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */,
 				42A41DF42C5B369C004ABBC1 /* CRTextField.swift */,
+				42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */,
+				42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */,
 			);
 			path = CTA;
 			sourceTree = "<group>";
@@ -294,6 +300,7 @@
 				420013062C54B1F1007ACC67 /* CRLine.swift in Sources */,
 				422124BF2C5026D80062695A /* AppDelegate.swift in Sources */,
 				42D99A092CFE5BC800A060A2 /* MTConsist.swift in Sources */,
+				42F3F7D62D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift in Sources */,
 				420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */,
 				4200132C2C54E846007ACC67 /* AutomaticRefresh.swift in Sources */,
 				420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */,
@@ -317,6 +324,7 @@
 				42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */,
 				42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */,
 				42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */,
+				42F3F7D42D0CA1DE00B9B9DB /* CRDMapView.swift in Sources */,
 				42D99A1F2CFF783100A060A2 /* MTPrediction.swift in Sources */,
 				42D99A132CFE9E5E00A060A2 /* MTMarkerAnnotationview.swift in Sources */,
 				42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */,
@@ -461,7 +469,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1163;
+				CURRENT_PROJECT_VERSION = 1184;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -479,7 +487,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -500,7 +508,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1163;
+				CURRENT_PROJECT_VERSION = 1184;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -518,7 +526,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

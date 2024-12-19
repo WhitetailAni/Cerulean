@@ -80,7 +80,7 @@ class METXAPI: NSObject {
         
         var consistDict: [String: [MTConsist]] = [:]
         
-        for service in MTService.allServices() {
+        for service in MTService.allServices {
             let consistsNotSorted = sortedConsists[service.apiRepresentation()] ?? []
             
             let consists = consistsNotSorted.sorted { (top, bottom) -> Bool in
@@ -176,7 +176,7 @@ class METXAPI: NSObject {
             //western ave part of md-n
             //clybourn part of up-n
             
-            for service in MTService.allServices() {
+            for service in MTService.allServices {
                 print(service)
                 let stations = sortedByService[service.apiRepresentation()] ?? []
                 var stationArray: [MTStation] = []
@@ -276,7 +276,7 @@ class METXAPI: NSObject {
                 return ((entry["trip_update"] as? [String: Any] ?? [:])["trip"] as? [String: Any] ?? [:])["route_id"] as? String ?? "" //yea its awful cope
             }
             
-            for service in MTService.allServices() {
+            for service in MTService.allServices {
                 let activeTrains = sortedByService[service.apiRepresentation()] ?? []
                 
                 var predictionArray: [MTPrediction] = []

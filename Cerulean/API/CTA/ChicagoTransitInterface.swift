@@ -28,7 +28,8 @@ class ChicagoTransitInterface: NSObject {
     
     ///Checks if service has ended for the day for a given CTA line
     class func hasServiceEnded(line: CRLine) -> Bool {
-        var weekday = Calendar.current.component(.weekday, from: Date())
+        return false
+        /*var weekday = Calendar.current.component(.weekday, from: Date())
         if isHoliday() {
             weekday = 1
         }
@@ -79,7 +80,7 @@ class ChicagoTransitInterface: NSObject {
             } else {
                 return CRTime.isItCurrentlyBetween(start: CRTime(hour: 23, minute: 15), end: CRTime(hour: 4, minute: 40))
             }
-        }
+        }*/
     }
     
     class private func isHoliday() -> Bool {

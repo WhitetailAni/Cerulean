@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
+	<key>CRDebug</key>
+	<false/>
 	<key>CRRefreshInterval</key>
 	<integer>360</integer>
 	<key>NSAppTransportSecurity</key>

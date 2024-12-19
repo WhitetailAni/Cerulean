@@ -21,6 +21,8 @@ enum CRLine {
     case purpleExpress
     case yellow
     
+    static var allLines: [CRLine] = [.red, .blue, .brown, .green, .orange, .pink, .purple, .yellow]
+    
     static func lineForGTFSID(id: Int) -> CRLine {
         switch id {
         case 308400009, 308500011, 308500009:
@@ -65,31 +67,31 @@ enum CRLine {
         
         switch line2 {
         case .red:
-            return [308400007, 308400008].randomElement()!
+            return 308400007/*, 308400008].randomElement()!*/
         case .blue:
             if run > 300 {
-                return [308400129, 308400128, 308500084, 308500128].randomElement()!
+                return 308400129/*, 308400128, 308500084, 308500128].randomElement()!*/
             }
-            return [308400001, 308400002, 308500002].randomElement()!
+            return 308400001/*, 308400002, 308500002].randomElement()!*/
         case .blueAlternate:
             if run > 300 {
-                return [308400129, 308400128, 308500084, 308500128].randomElement()!
+                return 308400129/*, 308400128, 308500084, 308500128].randomElement()!*/
             }
-            return [308500053, 308500074].randomElement()!
+            return 308500053/*, 308500074].randomElement()!*/
         case .green:
-            return [308400009, 308500011, 308500009].randomElement()!
+            return 308400009/*, 308500011, 308500009].randomElement()!*/
         case .greenAlternate:
-            return [308400012, 308400010, 308500010].randomElement()!
+            return 308400012/*, 308400010, 308500010].randomElement()!*/
         case .brown:
-            return [308400017, 308500017].randomElement()!
+            return 308400017/*, 308500017].randomElement()!*/
         case .orange:
-            return [308400034, 308500034].randomElement()!
+            return 308400034/*, 308500034].randomElement()!*/
         case .pink:
-            return [308400035, 308500035].randomElement()!
+            return 308400035/*, 308500035].randomElement()!*/
         case .purple:
-            return [308500036, 308500025, 308400025, 308400102, 308400026, 308500026, 308500102, 308400036].randomElement()!
+            return 308500036/*, 308500025, 308400025, 308400102, 308400026, 308500026, 308500102, 308400036].randomElement()!*/
         case .purpleExpress:
-            return [308500024, 308400024, 308500026].randomElement()!
+            return 308500024/*, 308400024, 308500026].randomElement()!*/
         case .yellow:
             return 308400033
         }

@@ -175,7 +175,8 @@ struct MTStop {
             return "111th Street/Pullman"
         case "107TH-UP":
             return "107th Street"
-        #warning("Missing 103rd - currently closed")
+        case "103RD-UP": #warning("103rd probably inaccurate")
+            return "103rd Street"
         case "95TH-UP":
             return "95th Street"
         case "91ST-UP":
@@ -184,7 +185,8 @@ struct MTStop {
             return "87th Street"
         case "83RD-UP":
             return "83rd Street"
-        #warning("Missing 79th - currently closed")
+        case "79TH-UP":
+            return "79th Street"
         case "75TH-UP":
             return "75th Street"
             //south chicago branch
@@ -433,7 +435,7 @@ struct MTStop {
             return "Highland Park"
         case "RAVINIA":
             return "Ravinia"
-            #warning("Missing Ravinia Park")
+        #warning("Missing Ravinia Park")
         case "BRAESIDE":
             return "Braeside"
         case "GLENCOE":

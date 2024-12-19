@@ -85,7 +85,6 @@ class CRMapView: MKMapView {
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
         trainAnnotation.mark = train
-        trainAnnotation.isTrainAnnotation = true
         self.addAnnotation(trainAnnotation)
         
         let coordinate = train.coordinate
@@ -102,13 +101,11 @@ class CRMapView: MKMapView {
         trainAnnotation.coordinate = train.coordinate
         trainAnnotation.title = "\(train.line?.textualRepresentation() ?? "Unknown") Line run \(train.trainRun ?? "000")"
         trainAnnotation.mark = train
-        trainAnnotation.isTrainAnnotation = true
         
         let stationAnnotation = CRPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
         stationAnnotation.title = "\(station.line?.textualRepresentation() ?? "Unknown") Line stop \(station.stationName ?? "Unknown")"
         stationAnnotation.mark = station
-        stationAnnotation.isTrainAnnotation = false
         
         self.addAnnotations([trainAnnotation, stationAnnotation])
         
