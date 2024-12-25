@@ -12,6 +12,8 @@ class CRPlacemark: MKPlacemark, @unchecked Sendable {
     var trainRun: String?
     var stationName: String?
     
+    var isBrownge: Bool?
+    
     func placemarkWithNewLocation(_ location: CLLocationCoordinate2D) -> CRPlacemark {
         let mark = CRPlacemark(coordinate: location)
         mark.line = self.line

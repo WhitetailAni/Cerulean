@@ -125,6 +125,16 @@ class CRMapView: MKMapView {
             let overlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: self.train.line ?? CRLine.red, run: Int(self.train.trainRun ?? "000") ?? 0)
             overlayArray.append(overlay)
             
+            if self.train.isBrownge ?? false {
+                if self.train.line == .orange {
+                    let qverlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: .brown, run: Int(self.train.trainRun ?? "000") ?? 0)
+                    overlayArray.append(qverlay)
+                } else {
+                    let qverlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: .orange, run: Int(self.train.trainRun ?? "000") ?? 0)
+                    overlayArray.append(qverlay)
+                }
+            }
+            
             if self.train.line == .green {
                 if InterfaceResultProcessing.cleanUpRunInfo(info: ChicagoTransitInterface().getRunNumberInfo(run: self.train.trainRun ?? "000"))[0]["finalStation"] == "Harlem/Lake" {
                     let pverlay = ChicagoTransitInterface.polyline.getPolylineForLine(line: CRLine.greenAlternate, run: Int(self.train.trainRun ?? "000") ?? 0)

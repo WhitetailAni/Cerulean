@@ -15,6 +15,8 @@ class CRMenuItem: NSMenuItem {
     var trainDesiredStop: String?
     var trainDesiredStopID: String?
     
+    var isBrownge: Bool?
+    
     var trainEndStop: String?
     var trainEndStopID: String?
     var trainHasReachedEnd: Bool?

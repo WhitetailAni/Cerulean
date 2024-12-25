@@ -27,6 +27,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var aboutWindowDelegate: AboutWindowDelegate!
     var aboutMutex = NSLock()
     
+    var actuallyBrown: [CRMenuItem] = []
+    var brownReady = false
+    var orangeReady = false
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
@@ -137,171 +141,234 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @MainActor @objc func refreshCTAInfo() {
         ctaMenu.removeAllItems()
-        for line in CRLine.allLines {
-            let item = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
-            item.linkToOpen = line.link()
-            if line == .yellow {
-                let yellowLineTitle = NSMutableAttributedString(string: line.textualRepresentation())
-                
-                let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
-                let skokieSwiftBaseImage = NSImage(named: "skokieSwift")!
-                let aspectRatio = skokieSwiftBaseImage.size.width / skokieSwiftBaseImage.size.height
-                let newSize = NSSize(width: height * aspectRatio, height: height)
-                    
-                let skokieSwiftImage = NSImage(size: newSize)
-                skokieSwiftImage.lockFocus()
-                skokieSwiftBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
-                skokieSwiftImage.unlockFocus()
-                
-                let skokieSwift = NSTextAttachment()
-                skokieSwift.image = skokieSwiftImage
-                
-                let skokieSwiftString = NSAttributedString(attachment: skokieSwift)
-                yellowLineTitle.append(NSAttributedString(string: " "))
-                yellowLineTitle.append(skokieSwiftString)
-                item.attributedTitle = yellowLineTitle
-            }
-            item.trainLine = line
-            
-            let subMenu = NSMenu()
-            subMenu.addItem(NSMenuItem.progressWheel())
-            
-            let instance = ChicagoTransitInterface()
-            DispatchQueue.global().async {
-                let trains = InterfaceResultProcessing.cleanUpLineInfo(info: instance.getRunsForLine(line: line))
-                
-                DispatchQueue.main.sync {
-                    subMenu.removeItem(at: 0)
-                    
-                    if ChicagoTransitInterface.hasServiceEnded(line: line) {
-                        subMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
-                    } else if trains.count == 0 {
-                        subMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
-                    } else {
-                        let timeLastUpdated = CRTime.ctaAPITimeToReadableTime(string: trains[0]["requestTime"] ?? "")
-                        subMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
-                        subMenu.addItem(NSMenuItem.separator())
-                        if line == .purple && ChicagoTransitInterface.isPurpleExpressRunning() {
-                            let purpleExpressStatusItem = CRMenuItem(title: "Express service active", action: #selector(self.openLink(_:)))
-                            purpleExpressStatusItem.linkToOpen = URL(string: "https://www.transitchicago.com/assets/1/6/rail-tt_purple.pdf")
-                            subMenu.addItem(purpleExpressStatusItem)
-                        }
-                        for train in trains {
-                            var line2 = line
-                            if line == .green && train["destinationStation"] == "Cottage Grove" {
-                                line2 = .greenAlternate
-                            }
-                            if line == .blue && train["destinationStation"] == "UIC-Halsted" {
-                                line2 = .blueAlternate
-                            }
-                            var subItem: CRMenuItem!
-                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: #selector(self.openCTAMapWindow(_:)))
-                                subItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                
-                                subItem.trainLine = line2
-                                subItem.trainRun = train["run"] ?? "Unknown Run"
-                                
-                                subItem.timeLastUpdated = timeLastUpdated
-                            } else {
-                                subItem = CRMenuItem(title: "\(train["run"] ?? "Unknown Run") to \(train["destinationStation"] ?? "Unknown Station")", action: nil)
-                            }
-                            
-                            let subSubMenu = NSMenu()
-                            subSubMenu.addItem(NSMenuItem.progressWheel())
-                            subItem.submenu = subSubMenu
-                            subMenu.addItem(subItem)
-                            
-                            #warning("Station prediction for train starts here")
-                            let instance = ChicagoTransitInterface()
-                            DispatchQueue.global().async {
-                                let run = train["run"] ?? "000"
-                                let niceStats = InterfaceResultProcessing.cleanUpRunInfo(info: instance.getRunNumberInfo(run: run))
-                                
-                                DispatchQueue.main.sync {
-                                    subSubMenu.removeItem(at: 0)
-                                    
-                                    var title: CRMenuItem!
-                                    if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
-                                        title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: #selector(self.openCTAMapWindow(_:)))
-                                        title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                        title.trainLine = line2
-                                        
-                                        title.trainRun = train["run"] ?? "Unknown Run"
-                                        title.trainDesiredStop = train["destinationStation"] ?? "Bryn Mawr"
-                                        title.trainEndStop = train["destinationStation"] ?? "Bryn Mawr"
-                                        title.trainEndStopID = train["destinationStationID"] ?? "30267"
-                                        title.timeLastUpdated = timeLastUpdated
-                                        if niceStats.count == 0 {
-                                            title.trainHasReachedEnd = true
-                                        }
-                                    } else {
-                                        title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: nil)
-                                    }
-                                    
-                                    subSubMenu.addItem(title)
-                                    subSubMenu.addItem(NSMenuItem.separator())
-                                    
-                                    if niceStats.count == 0 {
-                                        if train["destNm"] == "Error" {
-                                            let errorString = train["lat"] ?? "An unknown error occurred"
-                                            let errorItem = NSMenuItem(title: errorString, action: nil)
-                                            subSubMenu.addItem(errorItem)
-                                        } else {
-                                            subSubMenu.addItem(NSMenuItem(title: "No predictions available", action: nil))
-                                        }
-                                    } else {
-                                        #warning("Adding items to subSubMenu is the station predictions")
-                                        for station in niceStats {
-                                            var subSubItem: CRMenuItem!
-                                            if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
-                                                subSubItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                                subSubItem.trainLine = line2
-                                                subSubItem.trainRun = run
-                                                subSubItem.trainDesiredStop = station["nextStation"]
-                                                subSubItem.trainDesiredStopID = station["nextStopID"]
-                                                subSubItem.timeLastUpdated = timeLastUpdated
-                                            } else {
-                                                subSubItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
-                                            }
-                                            
-                                            subSubMenu.addItem(subSubItem)
-                                            
-                                            let subSubSubMenu = NSMenu()
-                                            let alertLink = URL(string: "https://www.transitchicago.com/alerts/")
-                                            let delayItem = CRMenuItem(title: "Delayed: \(station["isDelayed"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                            delayItem.linkToOpen = alertLink
-                                            
-                                            let faultItem = CRMenuItem(title: "Fault detected: \(station["isBreakingDown"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                            faultItem.linkToOpen = alertLink
-                                            
-                                            let approachingItem = CRMenuItem(title: "Scheduled: \(station["isScheduled"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                            approachingItem.linkToOpen = alertLink
-                                            
-                                            subSubSubMenu.addItem(delayItem)
-                                            subSubSubMenu.addItem(faultItem)
-                                            subSubSubMenu.addItem(approachingItem)
-                                            
-                                            subSubItem.submenu = subSubSubMenu
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            item.submenu = subMenu
+        actuallyBrown = []
+        for line in [CRLine.red, CRLine.blue, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow] {
+            let item = populateCTAMenuItem(line: line)
             ctaMenu.addItem(item)
         }
+        
+        let item = populateCTAMenuItem(line: .brown)
+        ctaMenu.insertItem(item, at: 2)
         
         ctaMenu.addItem(NSMenuItem.separator())
         
         let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshCTAInfo), keyEquivalent: "r")
         refreshItem.keyEquivalentModifierMask = [.command]
         ctaMenu.addItem(refreshItem)
+    }
+    
+    @MainActor private func populateCTAMenuItem(line: CRLine) -> CRMenuItem {
+        let lineItem = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
+        lineItem.linkToOpen = line.link()
+        if line == .yellow {
+            let yellowLineTitle = NSMutableAttributedString(string: line.textualRepresentation())
+            
+            let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+            let skokieSwiftBaseImage = NSImage(named: "skokieSwift")!
+            let aspectRatio = skokieSwiftBaseImage.size.width / skokieSwiftBaseImage.size.height
+            let newSize = NSSize(width: height * aspectRatio, height: height)
+                
+            let skokieSwiftImage = NSImage(size: newSize)
+            skokieSwiftImage.lockFocus()
+            skokieSwiftBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
+            skokieSwiftImage.unlockFocus()
+            
+            let skokieSwift = NSTextAttachment()
+            skokieSwift.image = skokieSwiftImage
+            
+            let skokieSwiftString = NSAttributedString(attachment: skokieSwift)
+            yellowLineTitle.append(NSAttributedString(string: " "))
+            yellowLineTitle.append(skokieSwiftString)
+            lineItem.attributedTitle = yellowLineTitle
+        }
+        lineItem.trainLine = line
+        
+        let trainMenu = NSMenu()
+        trainMenu.addItem(NSMenuItem.progressWheel())
+        
+        let instance = ChicagoTransitInterface()
+        DispatchQueue.global().async {
+            let trains = InterfaceResultProcessing.cleanUpLineInfo(info: instance.getRunsForLine(line: line))
+            
+            DispatchQueue.main.sync {
+                trainMenu.removeItem(at: 0)
+                
+                if ChicagoTransitInterface.hasServiceEnded(line: line) {
+                    trainMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
+                } else if trains.count == 0 {
+                    trainMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
+                } else {
+                    let timeLastUpdated = CRTime.ctaAPITimeToReadableTime(string: trains[0]["requestTime"] ?? "")
+                    trainMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
+                    trainMenu.addItem(NSMenuItem.separator())
+                    if line == .purple && ChicagoTransitInterface.isPurpleExpressRunning() {
+                        let purpleExpressStatusItem = CRMenuItem(title: "Express service active", action: #selector(self.openLink(_:)))
+                        purpleExpressStatusItem.linkToOpen = URL(string: "https://www.transitchicago.com/assets/1/6/rail-tt_purple.pdf")
+                        trainMenu.addItem(purpleExpressStatusItem)
+                    }
+                    for train in trains {
+                        let destination = train["destinationStation"] ?? "Unknown Station"
+                        var line2 = line
+                        if line == .green && destination == "Cottage Grove" {
+                            line2 = .greenAlternate
+                        }
+                        if line == .blue && destination == "UIC-Halsted" {
+                            line2 = .blueAlternate
+                        }
+                        if line == .orange && destination == "Kimball" {
+                            line2 = .brown
+                        }
+                        let run = train["run"] ?? "Unknown Run"
+                        
+                        var trainItem: CRMenuItem!
+                        if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
+                            
+                            trainItem = CRMenuItem(title: "\(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
+                            trainItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                            
+                            if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7 {
+                                trainItem.isBrownge = true
+                            }
+                            
+                            trainItem.trainLine = line2
+                            trainItem.trainRun = train["run"] ?? "Unknown Run"
+                            
+                            trainItem.timeLastUpdated = timeLastUpdated
+                        } else {
+                            trainItem = CRMenuItem(title: "\(run) to \(destination)", action: nil)
+                        }
+                        
+                        let stationMenu = NSMenu()
+                        stationMenu.addItem(NSMenuItem.progressWheel())
+                        trainItem.submenu = stationMenu
+                        
+                        trainMenu.addItem(trainItem)
+                        
+                        #warning("Station prediction for train starts here")
+                        let instance = ChicagoTransitInterface()
+                        DispatchQueue.global().async {
+                            let run = train["run"] ?? "000"
+                            let niceStats = InterfaceResultProcessing.cleanUpRunInfo(info: instance.getRunNumberInfo(run: run))
+                            
+                            DispatchQueue.main.sync {
+                                stationMenu.removeItem(at: 0)
+                                //let destination = train["destinationStation"] ?? "Unknown Station"
+                                
+                                var title: CRMenuItem!
+                                if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
+                                    
+                                    title = CRMenuItem(title: "\(line2.textualRepresentation()) Line run \(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
+                                    title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                    title.trainLine = line2
+                                    
+                                    if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7 {
+                                        title.isBrownge = true
+                                    }
+                                    
+                                    title.trainRun = train["run"] ?? "Unknown Run"
+                                    title.trainDesiredStop = train["destinationStation"] ?? "Bryn Mawr"
+                                    title.trainEndStop = train["destinationStation"] ?? "Bryn Mawr"
+                                    title.trainEndStopID = train["destinationStationID"] ?? "30267"
+                                    title.timeLastUpdated = timeLastUpdated
+                                    if niceStats.count == 0 {
+                                        title.trainHasReachedEnd = true
+                                    }
+                                } else {
+                                    title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: nil)
+                                    if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7  {
+                                        title.isBrownge = true
+                                    }
+                                }
+                                
+                                stationMenu.addItem(title)
+                                stationMenu.addItem(NSMenuItem.separator())
+                                
+                                if niceStats.count == 0 {
+                                    if train["destNm"] == "Error" {
+                                        let errorString = train["lat"] ?? "An unknown error occurred"
+                                        let errorItem = NSMenuItem(title: errorString, action: nil)
+                                        stationMenu.addItem(errorItem)
+                                    } else {
+                                        stationMenu.addItem(NSMenuItem(title: "No predictions available", action: nil))
+                                    }
+                                } else {
+                                    for station in niceStats {
+                                        var stationItem: CRMenuItem!
+                                        if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
+                                            stationItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
+                                            stationItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                            stationItem.trainLine = line2
+                                            stationItem.trainRun = run
+                                            stationItem.trainDesiredStop = station["nextStation"]
+                                            stationItem.trainDesiredStopID = station["nextStopID"]
+                                            stationItem.timeLastUpdated = timeLastUpdated
+                                            
+                                            if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7  {
+                                                stationItem.isBrownge = true
+                                            }
+                                            
+                                        } else {
+                                            stationItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: nil)
+                                        }
+                                        
+                                        stationMenu.addItem(stationItem)
+                                        
+                                        let moreInfoMenu = NSMenu()
+                                        let alertLink = URL(string: "https://www.transitchicago.com/alerts/")
+                                        let delayItem = CRMenuItem(title: "Delayed: \(station["isDelayed"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                        delayItem.linkToOpen = alertLink
+                                        
+                                        let faultItem = CRMenuItem(title: "Fault detected: \(station["isBreakingDown"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                        faultItem.linkToOpen = alertLink
+                                        
+                                        let approachingItem = CRMenuItem(title: "Scheduled: \(station["isScheduled"] ?? "Unknown")", action: #selector(self.openLink(_:)))
+                                        approachingItem.linkToOpen = alertLink
+                                        
+                                        moreInfoMenu.addItem(delayItem)
+                                        moreInfoMenu.addItem(faultItem)
+                                        moreInfoMenu.addItem(approachingItem)
+                                        
+                                        stationItem.submenu = moreInfoMenu
+                                    }
+                                }
+                                self.orangeReady = true
+                            }
+                        }
+                    }
+                    
+                    //brownge trains do not obey the rules, so i have to make them obey the rules
+                    DispatchQueue.global().async {
+                        if line == .orange {
+                            while !self.orangeReady { usleep(10) }
+                            DispatchQueue.main.sync {
+                                for i in 0..<trainMenu.items.count {
+                                    let item = trainMenu.items[i] as? CRMenuItem ?? CRMenuItem()
+                                    if item.title.suffix(7) == "Kimball" {
+                                        self.actuallyBrown.append(item)
+                                        self.brownReady = true
+                                        trainMenu.removeItem(at: i)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    DispatchQueue.global().async {
+                        if line == .brown {
+                            while !self.brownReady { usleep(10) }
+                            DispatchQueue.main.sync {
+                                for item in self.actuallyBrown {
+                                    trainMenu.addItem(item)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        lineItem.submenu = trainMenu
+        
+        return lineItem
     }
     
     @MainActor @objc func refreshMetraInfo() {
@@ -325,6 +392,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let predictionsForService = allPredictionData[apiRepresentation] ?? []
                     
                     let trainMenu = NSMenu()
+                    
+                    if service == .bnsf {
+                         let bnsfTitle = NSMutableAttributedString(string: "")
+                         
+                         let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+                         let bnsfBaseImage = NSImage(named: "bnsf")!
+                         let aspectRatio = bnsfBaseImage.size.width / bnsfBaseImage.size.height
+                         let newSize = NSSize(width: height * aspectRatio, height: height)
+                         
+                         let bnsfImage = NSImage(size: newSize)
+                         bnsfImage.lockFocus()
+                         bnsfBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
+                         bnsfImage.unlockFocus()
+                         
+                         let bnsf = NSTextAttachment()
+                         bnsf.image = bnsfImage
+                         
+                         let bnsfString = NSAttributedString(attachment: bnsf)
+                         bnsfTitle.append(bnsfString)
+                         item.attributedTitle = bnsfTitle
+                    }
+                    item.linkToOpen = service.link()
+                    
+                    self.metraMenu.addItem(item)
                     
                     if service.outOfService() {
                         trainMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
@@ -406,30 +497,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                     
                     item.submenu = trainMenu
-                    
-                    if service == .bnsf {
-                         let bnsfTitle = NSMutableAttributedString(string: "")
-                         
-                         let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
-                         let bnsfBaseImage = NSImage(named: "bnsf")!
-                         let aspectRatio = bnsfBaseImage.size.width / bnsfBaseImage.size.height
-                         let newSize = NSSize(width: height * aspectRatio, height: height)
-                         
-                         let bnsfImage = NSImage(size: newSize)
-                         bnsfImage.lockFocus()
-                         bnsfBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
-                         bnsfImage.unlockFocus()
-                         
-                         let bnsf = NSTextAttachment()
-                         bnsf.image = bnsfImage
-                         
-                         let bnsfString = NSAttributedString(attachment: bnsf)
-                         bnsfTitle.append(bnsfString)
-                         item.attributedTitle = bnsfTitle
-                    }
-                    item.linkToOpen = service.link()
-                    
-                    self.metraMenu.addItem(item)
                 }
                 self.metraMenu.addItem(NSMenuItem.separator())
                 self.metraMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshMetraInfo), keyEquivalent: "r"))
@@ -451,6 +518,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 trainMark.line = line
                 trainMark.trainRun = run
                 trainMark.stationName = stationName
+                
+                trainMark.isBrownge = sender.isBrownge
                 
                 let instance = ChicagoTransitInterface()
                 if let id = sender.trainDesiredStopID {

@@ -58,7 +58,7 @@ enum MTService {
         if trainString == "RAV1" {
             return "Ravinia Park"
         } else {
-            let trainNumber = Int(trainString) ?? 0
+            let trainNumber = Int(trainString.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
             switch self {
             case .up_w:
                 if trainNumber % 2 == 0 {
@@ -83,7 +83,7 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "LaSalle Street Station"
                 } else {
-                    if trainNumber < 400 || trainNumber > 600 {
+                    if (trainNumber > 300 && trainNumber < 400) || trainNumber > 600 {
                         return "Blue Island - Vermont"
                     } else {
                         return "Joliet"
@@ -109,8 +109,16 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "Chicago Union Station"
                 } else {
+                    let today = Date()
+                    let month = Calendar.current.component(.month, from: today)
+                    let day = Calendar.current.component(.day, from: today)
+                    
                     if trainNumber > 2700 {
-                        return "Elgin"
+                        if month == 12 && (day == 24 || day == 31) {
+                            return "Big Timber Road"
+                        } else {
+                            return "Elgin"
+                        }
                     } else if trainNumber > 2400 || trainNumber == 2229 {
                         return "Franklin Park"
                     } else if trainNumber == 2233 {

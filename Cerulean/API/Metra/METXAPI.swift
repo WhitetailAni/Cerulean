@@ -106,9 +106,7 @@ class METXAPI: NSObject {
     
     func getStop(service: MTService, apiName: String) -> MTStation {
         let stations = storedStations[service.apiRepresentation()] ?? []
-        print(apiName)
         for station in stations {
-            print(station)
             if station.apiName == apiName {
                 return station
             }
@@ -177,7 +175,6 @@ class METXAPI: NSObject {
             //clybourn part of up-n
             
             for service in MTService.allServices {
-                print(service)
                 let stations = sortedByService[service.apiRepresentation()] ?? []
                 var stationArray: [MTStation] = []
                 
