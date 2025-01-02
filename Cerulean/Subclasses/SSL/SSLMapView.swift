@@ -8,21 +8,22 @@
 import AppKit
 import MapKit
 import SwiftUI
+import SouthShoreTracker
 
-class MTMapView: MKMapView {
-    var train: MTPlacemark
-    var station: MTPlacemark
+class SSLMapView: MKMapView {
+    var train: SSLPlacemark
+    var station: SSLPlacemark
     var timeLastUpdated: String
     var timeLabel: NSTextField!
     
-    init(train: MTPlacemark, timeLastUpdated: String) {
+    init(train: SSLPlacemark, timeLastUpdated: String) {
         self.train = train
-        self.station = MTPlacemark(coordinate: CLLocationCoordinate2D(latitude: 52.31697130005335, longitude: 4.746418131532647))
+        self.station = SSLPlacemark(coordinate: CLLocationCoordinate2D(latitude: 52.31697130005335, longitude: 4.746418131532647))
         self.timeLastUpdated = timeLastUpdated
         super.init(frame: .zero)
     }
     
-    init(train: MTPlacemark, station: MTPlacemark, timeLastUpdated: String) {
+    init(train: SSLPlacemark, station: SSLPlacemark, timeLastUpdated: String) {
         self.train = train
         self.station = station
         self.timeLastUpdated = timeLastUpdated
@@ -38,7 +39,7 @@ class MTMapView: MKMapView {
         
         self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
         
-        self.register(MTMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+        self.register(SSLMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         self.delegate = self
         
         timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
@@ -77,13 +78,15 @@ class MTMapView: MKMapView {
     }
     
     private func zoomMapToTrain() {
+        print("here")
+        
         applyLineOverlay()
         
         self.removeAnnotations(self.annotations)
         
-        let trainAnnotation = MTPointAnnotation()
+        let trainAnnotation = SSLPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
-        trainAnnotation.title = "\(train.service?.textualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
+        trainAnnotation.title = "Train \(train.trainNumber ?? "000")"
         trainAnnotation.mark = train
         trainAnnotation.isTrainAnnotation = true
         self.addAnnotation(trainAnnotation)
@@ -94,19 +97,21 @@ class MTMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation() {
+        print("there")
+        
         applyLineOverlay()
         
         self.removeAnnotations(self.annotations)
         
-        let trainAnnotation = MTPointAnnotation()
+        let trainAnnotation = SSLPointAnnotation()
         trainAnnotation.coordinate = train.coordinate
-        trainAnnotation.title = "\(train.service?.textualRepresentation() ?? "Unknown") train \(train.trainNumber ?? "000")"
+        trainAnnotation.title = "Train \(train.trainNumber ?? "000")"
         trainAnnotation.mark = train
         trainAnnotation.isTrainAnnotation = true
         
-        let stationAnnotation = MTPointAnnotation()
+        let stationAnnotation = SSLPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
-        stationAnnotation.title = "\(station.service?.textualRepresentation() ?? "Unknown") stop \(station.stationName ?? "Unknown")"
+        stationAnnotation.title = station.stationName
         stationAnnotation.mark = station
         stationAnnotation.isTrainAnnotation = false
         
@@ -123,10 +128,10 @@ class MTMapView: MKMapView {
     
     private func applyLineOverlay() {
         DispatchQueue.global().async {
-            let overlays = METXAPI.polyline.getPolylineForKey(key: (self.train.service?.getPolylineKey(number: self.train.trainNumber!))!)
+            let overlay = SSLTracker().getOverlay()
                 
             DispatchQueue.main.sync {
-                self.addOverlays(overlays)
+                self.addOverlay(overlay)
             }
         }
     }
@@ -134,11 +139,9 @@ class MTMapView: MKMapView {
     @objc func refreshTrainPosition() {
         DispatchQueue.global().async {
             
-            let raw = METXAPI().getActiveTrains()
-            let allTrains = raw.0
-            let trains = allTrains[self.train.service?.apiRepresentation() ?? ""] ?? []
+            let trains = SSLTracker().getVehicles()
             
-            if let specificTrain = {
+            if let specificTrain: SSLVehicle = {
                 for train in trains {
                     if train.trainNumber == self.train.trainNumber {
                         return train
@@ -148,7 +151,7 @@ class MTMapView: MKMapView {
             }() {
                 DispatchQueue.main.sync {
                     self.train = self.train.placemarkWithNewLocation(specificTrain.location)
-                    self.timeLabel.stringValue = "Updated at \(raw.1)"
+                    self.timeLabel.stringValue = "Updated at \(specificTrain.timeLastUpdated)"
                     
                     if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
                         self.zoomMapToTrain()
@@ -161,11 +164,11 @@ class MTMapView: MKMapView {
     }
 }
 
-extension MTMapView: MKMapViewDelegate {
+extension SSLMapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if let polyline = overlay as? MTPolyline {
+        if let polyline = overlay as? MKPolyline {
             let polylineRenderer = MKPolylineRenderer(polyline: polyline)
-            polylineRenderer.strokeColor = train.service?.color(branch: train.service?.getBranch(trainString: train.trainNumber ?? "000") ?? .none) ?? NSColor.black
+            polylineRenderer.strokeColor = SSLTracker.colors.beige
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
         }

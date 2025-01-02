@@ -165,7 +165,7 @@ struct MTStop {
         case "WPULLMAN":
             return "West Pullman"
         case "STEWARTRID":
-            return "Steward Ridge"
+            return "Stewart Ridge"
         case "STATEST":
             return "State Street"
             //mainline
@@ -175,7 +175,7 @@ struct MTStop {
             return "111th Street/Pullman"
         case "107TH-UP":
             return "107th Street"
-        case "103RD-UP": #warning("103rd probably inaccurate")
+        case "103RD-UP": #warning("103rd maybe inaccurate")
             return "103rd Street"
         case "95TH-UP":
             return "95th Street"

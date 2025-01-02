@@ -359,14 +359,69 @@ class METXAPI: NSObject {
         semaphore.wait()
     }
     
-    func getPolylineForKey(key: String) -> MTPolyline {
+    func getPolylineForKey(key: String) -> [MTPolyline] {
         var coordinateArray: [CLLocationCoordinate2D] = []
         
         for point in storedPolylines[key] ?? [] {
             coordinateArray.append(point.coordinate)
         }
         
-        return MTPolyline(coordinates: coordinateArray, count: coordinateArray.count)
+        return [MTPolyline(coordinates: coordinateArray, count: coordinateArray.count)]
+    }
+    
+    func getAllPolylines() -> [MTPolyline] {
+        var array: [MTPolyline] = []
+        
+        for key in ["MD-W_OB_1", "NCS_OB_1", "SWS_OB_1", "UP-N_OB_1", "BNSF_OB_1", "UP-NW_OB_1", "UP-NW_OB_2", "MD-N_OB_1", "ME_OB_1", "ME_OB_2", "ME_OB_3", "RI_OB_1", "RI_OB_2", "UP-W_OB_1", "HC_OB_1"] {
+            var coordinateArray: [CLLocationCoordinate2D] = []
+            
+            for point in storedPolylines[key] ?? [] {
+                coordinateArray.append(point.coordinate)
+            }
+            
+            let polyline = MTPolyline(coordinates: coordinateArray, count: coordinateArray.count)
+            polyline.service = {
+                switch key {
+                case "MD-W_OB_1":
+                    return .md_w
+                case "MD-N_OB_1":
+                    return .md_n
+                case "UP-W_OB_1":
+                    return .up_w
+                case "UP-NW_OB_1":
+                    return .up_nw
+                case "UP-N_OB_1":
+                    return .up_n
+                case "SWS_OB_1":
+                    return .sws
+                case "BNSF_OB_1":
+                    return .bnsf
+                case "HC_OB_1":
+                    return .hc
+                case "RI_OB_1", "RI_OB_2":
+                    return .ri
+                case "ME_OB_1", "ME_OB_2", "ME_OB_3":
+                    return .me
+                default:
+                    return .ses
+                }
+            }()
+            polyline.branch = {
+                switch key {
+                case "ME_OB_2":
+                    return .blue_island
+                case "ME_OB_3":
+                    return .south_chicago
+                case "RI_OB_2":
+                    return .beverly
+                default:
+                    return MTServiceBranch.none
+                }
+            }()
+            array.append(polyline)
+        }
+        
+        return array
     }
     
     func readGTFS(endpoint: String, completion: @escaping ([[String: Any]]) -> Void) {

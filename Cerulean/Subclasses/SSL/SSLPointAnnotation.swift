@@ -8,9 +8,7 @@
 import AppKit
 import MapKit
 
-class MTPointAnnotation: MKPointAnnotation {
-    var mark: MTPlacemark?
+class SSLPointAnnotation: MKPointAnnotation {
+    var mark: SSLPlacemark?
     var isTrainAnnotation: Bool?
-    var service: MTService?
-    var branch: MTServiceBranch?
 }

@@ -11,6 +11,7 @@ import Foundation
 import CoreLocation
 import MapKit
 import SwiftUI
+import SouthShoreTracker
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -18,6 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var menu: NSMenu!
     var ctaMenu: NSMenu!
     var metraMenu: NSMenu!
+    var sslMenu: NSMenu!
     var autoRefresh: AutomaticRefresh!
     
     var mapWindows: [NSWindow] = []
@@ -28,8 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var aboutMutex = NSLock()
     
     var actuallyBrown: [CRMenuItem] = []
-    var brownReady = false
-    var orangeReady = false
+    var brown = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -65,8 +66,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(metraItem)
         
-        refreshInfo()
+        let sslItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
+        sslItem.linkToOpen = URL(string: "https://mysouthshoreline.com/")!
+        let sslTitle = prependImageToString(imageName: "ssl", title: "")
+        sslItem.attributedTitle = sslTitle
+        sslMenu = NSMenu()
+        sslItem.submenu = sslMenu
         
+        menu.addItem(sslItem)
+        
+        refreshInfo()
         menu.addItem(NSMenuItem.separator())
         
         if Bundle.main.infoDictionary?["CRDebug"] as? Bool ?? false {
@@ -96,7 +105,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         quitItem.keyEquivalentModifierMask = [.command]
         menu.addItem(quitItem)
         
-        
         autoRefresh = AutomaticRefresh(interval: Bundle.main.infoDictionary?["CRRefreshInterval"] as? Double ?? 360.0) {
             self.refreshInfo()
         }
@@ -109,8 +117,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
     
-    func prependImageToString(imageName: String, title: String) -> NSMutableAttributedString {
-        let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
+    func prependImageToString(imageName: String, title: String, ssl: Bool = false) -> NSMutableAttributedString {
+        var coefficient: CGFloat = 5.0
+        if ssl {
+            coefficient = -10.0
+        }
+        let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - coefficient
         let baseImage = NSImage(named: imageName)!
         
         let aspectRatio = baseImage.size.width / baseImage.size.height
@@ -137,6 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor @objc func refreshInfo() {
         refreshCTAInfo()
         refreshMetraInfo()
+        refreshSSLInfo()
     }
     
     @MainActor @objc func refreshCTAInfo() {
@@ -193,9 +206,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.sync {
                 trainMenu.removeItem(at: 0)
                 
-                if ChicagoTransitInterface.hasServiceEnded(line: line) {
-                    trainMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
-                } else if trains.count == 0 {
+                if trains.count == 0 {
                     trainMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
                 } else {
                     let timeLastUpdated = CRTime.ctaAPITimeToReadableTime(string: trains[0]["requestTime"] ?? "")
@@ -294,8 +305,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 } else {
                                     for station in niceStats {
                                         var stationItem: CRMenuItem!
+                                        
                                         if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
-                                            stationItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))", action: #selector(self.openCTAMapWindow(_:)))
+                                            
+                                            var dueString = ""
+                                            let approaching = station["isApproachingNextStation"] ?? "0"
+                                            if approaching == "1" {
+                                                dueString = " (Due)"
+                                            } else if approaching != "0" {
+                                                print("UNEXPECTED APPROACHING VALUE \(approaching)")
+                                            }
+                                            
+                                            stationItem = CRMenuItem(title: "\(station["nextStation"] ?? "Unknown station") at \(CRTime.ctaAPITimeToReadableTime(string: station["nextStationArrivalTime"] ?? ""))\(dueString)", action: #selector(self.openCTAMapWindow(_:)))
                                             stationItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                             stationItem.trainLine = line2
                                             stationItem.trainRun = run
@@ -313,51 +334,72 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         
                                         stationMenu.addItem(stationItem)
                                         
+                                        
                                         let moreInfoMenu = NSMenu()
                                         let alertLink = URL(string: "https://www.transitchicago.com/alerts/")
-                                        let delayItem = CRMenuItem(title: "Delayed: \(station["isDelayed"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                        delayItem.linkToOpen = alertLink
                                         
-                                        let faultItem = CRMenuItem(title: "Fault detected: \(station["isBreakingDown"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                        faultItem.linkToOpen = alertLink
+                                        let delay = station["isDelayed"] ?? "0"
+                                        let brokenDown = station["isBreakingDown"] ?? "0"
+                                        let scheduledDeparture = station["isScheduled"] ?? "0"
                                         
-                                        let approachingItem = CRMenuItem(title: "Scheduled: \(station["isScheduled"] ?? "Unknown")", action: #selector(self.openLink(_:)))
-                                        approachingItem.linkToOpen = alertLink
+                                        if delay == "1" {
+                                            let delayItem = CRMenuItem(title: "Delayed", action: #selector(self.openLink(_:)))
+                                            delayItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(delayItem)
+                                        } else if delay != "0" {
+                                            let delayItem = CRMenuItem(title: "UNEXPECTED STATE OF DELAYED: \(delay)", action: #selector(self.openLink(_:)))
+                                            delayItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(delayItem)
+                                        }
                                         
-                                        moreInfoMenu.addItem(delayItem)
-                                        moreInfoMenu.addItem(faultItem)
-                                        moreInfoMenu.addItem(approachingItem)
+                                        if brokenDown == "1" {
+                                            let faultItem = CRMenuItem(title: "Fault detected", action: #selector(self.openLink(_:)))
+                                            faultItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(faultItem)
+                                        } else if brokenDown != "0" {
+                                            let faultItem = CRMenuItem(title: "UNEXPECTED STATE OF FAULT: \(brokenDown)", action: #selector(self.openLink(_:)))
+                                            faultItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(faultItem)
+                                        }
                                         
-                                        stationItem.submenu = moreInfoMenu
+                                        if scheduledDeparture == "1" {
+                                            let scheduledItem = CRMenuItem(title: "Scheduled arrival", action: #selector(self.openLink(_:)))
+                                            scheduledItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(scheduledItem)
+                                        } else if scheduledDeparture != "0" {
+                                            let scheduledItem = CRMenuItem(title: "UNEXPECTED STATE OF SCHEDULE: \(scheduledDeparture)", action: #selector(self.openLink(_:)))
+                                            scheduledItem.linkToOpen = alertLink
+                                            moreInfoMenu.addItem(scheduledItem)
+                                        }
+                                        
+                                        if moreInfoMenu.items.count > 0 {
+                                            stationItem.submenu = moreInfoMenu
+                                        }
                                     }
                                 }
-                                self.orangeReady = true
-                            }
-                        }
-                    }
-                    
-                    //brownge trains do not obey the rules, so i have to make them obey the rules
-                    DispatchQueue.global().async {
-                        if line == .orange {
-                            while !self.orangeReady { usleep(10) }
-                            DispatchQueue.main.sync {
-                                for i in 0..<trainMenu.items.count {
-                                    let item = trainMenu.items[i] as? CRMenuItem ?? CRMenuItem()
-                                    if item.title.suffix(7) == "Kimball" {
-                                        self.actuallyBrown.append(item)
-                                        self.brownReady = true
-                                        trainMenu.removeItem(at: i)
+                                
+                                #warning("this probably doesnt work, time window for brownge in NL is approximately 12:52 to 15:48")
+                                if line == .orange {
+                                    for i in 0..<trainMenu.items.count - 1 {
+                                        if let item = trainMenu.items[i] as? CRMenuItem {
+                                            if item.title.suffix(7) == "Kimball" {
+                                                self.actuallyBrown.append(item)
+                                                trainMenu.removeItem(at: i)
+                                            }
+                                        }
                                     }
+                                    self.brown = true
                                 }
-                            }
-                        }
-                    }
-                    DispatchQueue.global().async {
-                        if line == .brown {
-                            while !self.brownReady { usleep(10) }
-                            DispatchQueue.main.sync {
-                                for item in self.actuallyBrown {
-                                    trainMenu.addItem(item)
+                                
+                                if line == .brown {
+                                    DispatchQueue.global().async {
+                                        while !self.brown { }
+                                        for item in self.actuallyBrown {
+                                            DispatchQueue.main.sync {
+                                                trainMenu.addItem(item)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -417,9 +459,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     
                     self.metraMenu.addItem(item)
                     
-                    if service.outOfService() {
-                        trainMenu.addItem(NSMenuItem(title: "Line not in service", action: nil))
-                    } else if consists.count == 0 {
+                    if consists.count == 0 {
                         trainMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
                     } else {
                         trainMenu.addItem(NSMenuItem(title: "Last updated at \(timeLastUpdated)", action: nil))
@@ -500,6 +540,71 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 self.metraMenu.addItem(NSMenuItem.separator())
                 self.metraMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshMetraInfo), keyEquivalent: "r"))
+            }
+        }
+    }
+    
+    @MainActor @objc func refreshSSLInfo() {
+        sslMenu.removeAllItems()
+        
+        DispatchQueue.global().async {
+            let stops = SSLTracker().getStops()
+            let vehicles = SSLTracker().getVehiclesAndArrivals()
+            
+            DispatchQueue.main.sync {
+                if vehicles.count == 0 {
+                    self.sslMenu.addItem(NSMenuItem(title: "No active trains", action: nil))
+                } else {
+                    self.sslMenu.addItem(NSMenuItem(title: "Last updated at \(vehicles[0].timeLastUpdated)", action: nil))
+                    self.sslMenu.addItem(NSMenuItem.separator())
+                    
+                    for vehicle in vehicles {
+                        let trainItem = SSLMenuItem(title: "\(vehicle.trainNumber) to \(vehicle.endStop.name)", action: #selector(self.openSSLMapWindow(_:)))
+                        trainItem.trainCoordinate = vehicle.location
+                        trainItem.trainNumber = vehicle.trainNumber
+                        
+                        let stopMenu = NSMenu()
+                        
+                        let titleItem = SSLMenuItem(title: "Train \(vehicle.trainNumber) to \(vehicle.endStop.name)", action: #selector(self.openSSLMapWindow(_:)))
+                        titleItem.trainCoordinate = vehicle.location
+                        titleItem.trainNumber = vehicle.trainNumber
+                        
+                        stopMenu.addItem(titleItem)
+                        stopMenu.addItem(NSMenuItem.separator())
+                        
+                        let arrivals = vehicle.arrivals
+                        
+                        if arrivals.count > 0 {
+                            for arrival in arrivals {
+                                if arrival.actualArrivalTime == arrival.scheduledArrivalTime {
+                                    let stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openMetraMapWindow(_:)))
+                                    stopItem.trainNumber = vehicle.trainNumber
+                                    stopItem.stop = arrival.stop
+                                    stopItem.trainCoordinate = vehicle.location
+                                    
+                                    stopMenu.addItem(stopItem)
+                                } else {
+                                    let stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime) (scheduled at \(arrival.scheduledArrivalTime))", action: #selector(self.openSSLMapWindow(_:)))
+                                    stopItem.trainNumber = vehicle.trainNumber
+                                    stopItem.stop = arrival.stop
+                                    stopItem.trainCoordinate = vehicle.location
+                                    
+                                    stopMenu.addItem(stopItem)
+                                }
+                            }
+                        } else {
+                            let stopItem = MTMenuItem(title: "Arrived at terminal", action: nil)
+                            
+                            stopMenu.addItem(stopItem)
+                        }
+                        
+                        trainItem.submenu = stopMenu
+                        
+                        self.sslMenu.addItem(trainItem)
+                    }
+                }
+                self.sslMenu.addItem(NSMenuItem.separator())
+                self.sslMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshMetraInfo), keyEquivalent: "r"))
             }
         }
     }
@@ -627,6 +732,55 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 mapWindows[index].title = "Cerulean - Metra \(service.apiRepresentation()) train \(trainNumber) to \(service.getDestination(trainString: trainNumber))"
                 
                 self.mapWindows[index].contentView = MTMapView(train: placemark, timeLastUpdated: dateFormatter.string(from: Date()))
+                self.mapWindows[index].center()
+                self.mapWindows[index].setIsVisible(true)
+                self.mapWindows[index].orderFrontRegardless()
+                self.mapWindows[index].makeKey()
+                NSApp.activate(ignoringOtherApps: true)
+            }
+        }
+        mapMutex.unlock()
+    }
+    
+    @objc func openSSLMapWindow(_ sender: SSLMenuItem) {
+        mapMutex.lock()
+        if let screenSize = NSScreen.main?.frame.size {
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
+            let placemark = SSLPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
+            
+            if let trainNumber = sender.trainNumber, let stop = sender.stop {
+                placemark.trainNumber = trainNumber
+                
+                let stopMark = SSLPlacemark(coordinate: stop.location)
+                stopMark.stationName = stop.name
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale.current
+                
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+                
+                mapWindows[index].title = "Cerulean - South Shore Line train \(trainNumber) to \(SSLStop.getStopForId(id: SSLStop.getEndStopIdForTrain(trainNumber: trainNumber), stops: SSLTracker().getStops()).name)"
+                
+                self.mapWindows[index].contentView = SSLMapView(train: placemark, station: stopMark, timeLastUpdated: dateFormatter.string(from: Date()))
+                self.mapWindows[index].center()
+                self.mapWindows[index].setIsVisible(true)
+                self.mapWindows[index].orderFrontRegardless()
+                self.mapWindows[index].makeKey()
+                NSApp.activate(ignoringOtherApps: true)
+            } else if let trainNumber = sender.trainNumber {
+                placemark.trainNumber = trainNumber
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale.current
+                
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+                
+                mapWindows[index].title = "Cerulean - South Shore Line train \(trainNumber) to \(SSLStop.getStopForId(id: SSLStop.getEndStopIdForTrain(trainNumber: trainNumber), stops: SSLTracker().getStops()).name)"
+                
+                self.mapWindows[index].contentView = SSLMapView(train: placemark, timeLastUpdated: dateFormatter.string(from: Date()))
                 self.mapWindows[index].center()
                 self.mapWindows[index].setIsVisible(true)
                 self.mapWindows[index].orderFrontRegardless()

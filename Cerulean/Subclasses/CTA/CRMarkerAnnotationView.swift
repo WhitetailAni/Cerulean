@@ -42,6 +42,9 @@ class CRMarkerAnnotationView: MKMarkerAnnotationView {
                     if stationName == "King Drive" || stationName == "Cottage Grove" {
                         glyphTintColor = CRLine.green.color()
                         markerTintColor = .white
+                    } else if stationName == "UIC-Halsted" && annotation.mark?.line == .blueAlternate {
+                        glyphTintColor = CRLine.blue.color()
+                        markerTintColor = .white
                     } else {
                         markerTintColor = line.color()
                     }

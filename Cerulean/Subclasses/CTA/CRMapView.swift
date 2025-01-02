@@ -136,9 +136,14 @@ class CRMapView: MKMapView {
             }
             
             if self.train.line == .green {
-                if InterfaceResultProcessing.cleanUpRunInfo(info: ChicagoTransitInterface().getRunNumberInfo(run: self.train.trainRun ?? "000"))[0]["finalStation"] == "Harlem/Lake" {
-                    let pverlay = ChicagoTransitInterface.polyline.getPolylineForLine(line: CRLine.greenAlternate, run: Int(self.train.trainRun ?? "000") ?? 0)
-                    overlayArray.append(pverlay)
+                let info = ChicagoTransitInterface().getRunNumberInfo(run: self.train.trainRun ?? "000")
+                let cleanedUp = InterfaceResultProcessing.cleanUpRunInfo(info: info)
+                if cleanedUp.count > 0 {
+                    let first = cleanedUp[0]
+                    if first["finalStation"] == "Harlem/Lake" {
+                        let pverlay = ChicagoTransitInterface.polyline.getPolylineForLine(line: CRLine.greenAlternate, run: Int(self.train.trainRun ?? "000") ?? 0)
+                        overlayArray.append(pverlay)
+                    }
                 }
             }
             

@@ -8,8 +8,9 @@
 import AppKit
 import MapKit
 import Foundation
+import SouthShoreTracker
 
-class MTMarkerAnnotationView: MKMarkerAnnotationView {
+class SSLMarkerAnnotationView: MKMarkerAnnotationView {
     
     override var annotation: MKAnnotation? {
         didSet { configure(for: annotation) }
@@ -25,18 +26,18 @@ class MTMarkerAnnotationView: MKMarkerAnnotationView {
     }
     
     func configure(for annotation: MKAnnotation?) {
-        if annotation is MTPointAnnotation {
-            let annotation: MTPointAnnotation = annotation as! MTPointAnnotation
-            if let service = annotation.mark?.service {
-                if let train = annotation.mark?.trainNumber {
-                    markerTintColor = service.color()
-                    glyphText = train
-                } else if annotation.mark?.stationName != nil {
-                    glyphImage = .metra
-                    markerTintColor = service.color()
-                }
-                displayPriority = .required
+        if annotation is SSLPointAnnotation {
+            let annotation: SSLPointAnnotation = annotation as! SSLPointAnnotation
+            if let train = annotation.mark?.trainNumber {
+                markerTintColor = SSLTracker.colors.maroon
+                glyphTintColor = SSLTracker.colors.beige
+                glyphText = train
+            } else if annotation.mark?.stationName != nil {
+                markerTintColor = SSLTracker.colors.maroon
+                glyphTintColor = SSLTracker.colors.beige
+                //glyphImage = .ssl2
             }
+            displayPriority = .required
         }
     }
 }

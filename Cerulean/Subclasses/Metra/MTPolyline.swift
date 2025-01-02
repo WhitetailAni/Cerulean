@@ -9,4 +9,5 @@ import MapKit
 
 class MTPolyline: MKPolyline {
     var service: MTService?
+    var branch: MTServiceBranch?
 }

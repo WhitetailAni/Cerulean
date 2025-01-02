@@ -82,8 +82,11 @@ class CRDMapView: MKMapView {
             let overlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: line, run: Int(run) ?? 000)
             overlayArray.append(overlay)
             
+            let pverlays = METXAPI().getAllPolylines()
+            
             DispatchQueue.main.sync {
                 self.addOverlays(overlayArray)
+                self.addOverlays(pverlays)
             }
         }
     }
@@ -162,6 +165,12 @@ extension CRDMapView: MKMapViewDelegate {
         if let polyline = overlay as? CRPolyline {
             let polylineRenderer = MKPolylineRenderer(polyline: polyline)
             polylineRenderer.strokeColor = polyline.line?.color()
+            polylineRenderer.lineWidth = 3.0
+            return polylineRenderer
+        }
+        if let polyline = overlay as? MTPolyline {
+            let polylineRenderer = MKPolylineRenderer(polyline: polyline)
+            polylineRenderer.strokeColor = polyline.service?.color(branch: polyline.branch!)
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
         }

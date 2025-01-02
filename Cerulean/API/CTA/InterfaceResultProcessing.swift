@@ -38,6 +38,7 @@ class InterfaceResultProcessing {
             return []
         }
         
+        
         var estimatedEtaArray: [[String: String]] = []
         
         for eta in etas {
@@ -53,41 +54,11 @@ class InterfaceResultProcessing {
             let trainDirection: String = eta["trDr"] as? String ?? "2"
             let timeToArrive: String = eta["arrT"] as? String ?? "1970-01-01T00:00:00"
             
-            switch isDelayed {
-            case "0":
-                estimatedEta["isDelayed"] = "No"
-            case "1":
-                estimatedEta["isDelayed"] = "Yes"
-            default:
-                estimatedEta["isDelayed"] = "Unknown"
-            }
+            estimatedEta["isDelayed"] = isDelayed
+            estimatedEta["isBreakingDown"] = isBreakingDown
+            estimatedEta["isApproachingNextStation"] = isApproachingNextStation
+            estimatedEta["isScheduled"] = isScheduled
             
-            switch isBreakingDown {
-            case "0":
-                estimatedEta["isBreakingDown"] = "No"
-            case "1":
-                estimatedEta["isBreakingDown"] = "Yes"
-            default:
-                estimatedEta["isBreakingDown"] = "Unknown"
-            }
-            
-            switch isApproachingNextStation {
-            case "0":
-                estimatedEta["isApproachingNextStation"] = "No"
-            case "1":
-                estimatedEta["isApproachingNextStation"] = "Yes"
-            default:
-                estimatedEta["isApproachingNextStation"] = "Unknown"
-            }
-            
-            switch isScheduled {
-            case "0":
-                estimatedEta["isScheduled"] = "No"
-            case "1":
-                estimatedEta["isScheduled"] = "Yes"
-            default:
-                estimatedEta["isScheduled"] = "Unknown"
-            }
             
             estimatedEta["nextStation"] = nextStation
             estimatedEta["nextStopID"] = nextStopID

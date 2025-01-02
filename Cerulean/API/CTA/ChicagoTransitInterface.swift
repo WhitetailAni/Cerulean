@@ -11,8 +11,8 @@ import CoreLocation
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject {
     let semaphore = DispatchSemaphore(value: 0)
-    private let trainTrackerAPIKey = ""
-    private let chicagoDataPortalAppToken = ""
+    private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
+    private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
     
     var polylines: [Int: [CRPoint]] = [:]
     public static var polyline = ChicagoTransitInterface(polyline: true)
@@ -24,63 +24,6 @@ class ChicagoTransitInterface: NSObject {
     init(polyline: Bool) {
         super.init()
         storePolylines()
-    }
-    
-    ///Checks if service has ended for the day for a given CTA line
-    class func hasServiceEnded(line: CRLine) -> Bool {
-        return false
-        /*var weekday = Calendar.current.component(.weekday, from: Date())
-        if isHoliday() {
-            weekday = 1
-        }
-        switch line {
-        case .red, .blue, .blueAlternate:
-            return false
-        case .brown:
-            if weekday == 1 {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 40), end: CRTime(hour: 4, minute: 00))
-            } else {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 10), end: CRTime(hour: 4, minute: 00))
-            }
-        case .green, .greenAlternate:
-            if weekday == 1 || weekday == 7 {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 08), end: CRTime(hour: 4, minute: 45))
-            } else {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 08), end: CRTime(hour: 3, minute: 45))
-            }
-        case .orange:
-            switch weekday {
-            case 1:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 4, minute: 30))
-            case 7:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 4, minute: 00))
-            default:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 34), end: CRTime(hour: 3, minute: 30))
-            }
-        case .pink:
-            if weekday == 1 || weekday == 7 {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 5, minute: 00))
-            } else {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 31), end: CRTime(hour: 4, minute: 00))
-            }
-        case .purple, .purpleExpress:
-            switch weekday {
-            case 1:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 37), end: CRTime(hour: 6, minute: 05))
-            case 6:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 07), end: CRTime(hour: 4, minute: 28))
-            case 7:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 2, minute: 07), end: CRTime(hour: 5, minute: 08))
-            default:
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 1, minute: 27), end: CRTime(hour: 4, minute: 28))
-            }
-        case .yellow:
-            if weekday == 1 || weekday == 7 {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 23, minute: 15), end: CRTime(hour: 6, minute: 00))
-            } else {
-                return CRTime.isItCurrentlyBetween(start: CRTime(hour: 23, minute: 15), end: CRTime(hour: 4, minute: 40))
-            }
-        }*/
     }
     
     class private func isHoliday() -> Bool {
