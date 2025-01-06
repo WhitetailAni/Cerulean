@@ -27,7 +27,7 @@
 		42A41DF52C5B369E004ABBC1 /* CRTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A41DF42C5B369C004ABBC1 /* CRTextField.swift */; };
 		42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */; };
 		42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FD2CFD823700A060A2 /* CRPoint.swift */; };
-		42D99A002CFD82D700A060A2 /* shapes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42D999FF2CFD82D700A060A2 /* shapes.csv */; };
+		42D99A002CFD82D700A060A2 /* cta.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42D999FF2CFD82D700A060A2 /* cta.csv */; };
 		42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A012CFD8B4400A060A2 /* CRPolyline.swift */; };
 		42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A062CFE50C400A060A2 /* MetworkManager.swift */; };
 		42D99A092CFE5BC800A060A2 /* MTConsist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D99A082CFE5BC200A060A2 /* MTConsist.swift */; };
@@ -48,6 +48,17 @@
 		42F0BC182D27168600F834DF /* SSLMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC142D27168600F834DF /* SSLMapView.swift */; };
 		42F0BC192D27168600F834DF /* SSLMarkerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC122D27168600F834DF /* SSLMarkerAnnotationView.swift */; };
 		42F0BC1A2D27168600F834DF /* SSLPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC112D27168600F834DF /* SSLPointAnnotation.swift */; };
+		42F0BC1C2D28CA6300F834DF /* CRDPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC1B2D28CA6300F834DF /* CRDPointAnnotation.swift */; };
+		42F0BC1F2D28D91400F834DF /* Amtraker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC1E2D28D91200F834DF /* Amtraker.swift */; };
+		42F0BC222D28D98400F834DF /* AMTrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC212D28D98200F834DF /* AMTrain.swift */; };
+		42F0BC242D28D9BC00F834DF /* AMStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC232D28D9BA00F834DF /* AMStop.swift */; };
+		42F0BC262D28DACF00F834DF /* AMStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC252D28DACD00F834DF /* AMStation.swift */; };
+		42F0BC2B2D28E56900F834DF /* AMMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC2A2D28E56600F834DF /* AMMenuItem.swift */; };
+		42F0BC2F2D28FDC300F834DF /* amtrak.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42F0BC2E2D28FDC300F834DF /* amtrak.csv */; };
+		42F0BC352D29BA8900F834DF /* AMMarkerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC312D29BA8900F834DF /* AMMarkerAnnotationView.swift */; };
+		42F0BC372D29BA8900F834DF /* AMPlacemark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC332D29BA8900F834DF /* AMPlacemark.swift */; };
+		42F0BC382D29BA8900F834DF /* AMMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC302D29BA8900F834DF /* AMMapView.swift */; };
+		42F0BC392D29BA8900F834DF /* AMPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0BC342D29BA8900F834DF /* AMPointAnnotation.swift */; };
 		42F3F7D42D0CA1DE00B9B9DB /* CRDMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */; };
 		42F3F7D62D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */; };
 /* End PBXBuildFile section */
@@ -93,7 +104,7 @@
 		42A41DF42C5B369C004ABBC1 /* CRTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRTextField.swift; sourceTree = "<group>"; };
 		42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = METXAPI.swift; sourceTree = "<group>"; };
 		42D999FD2CFD823700A060A2 /* CRPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPoint.swift; sourceTree = "<group>"; };
-		42D999FF2CFD82D700A060A2 /* shapes.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = shapes.csv; sourceTree = "<group>"; };
+		42D999FF2CFD82D700A060A2 /* cta.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = cta.csv; sourceTree = "<group>"; };
 		42D99A012CFD8B4400A060A2 /* CRPolyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPolyline.swift; sourceTree = "<group>"; };
 		42D99A062CFE50C400A060A2 /* MetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetworkManager.swift; sourceTree = "<group>"; };
 		42D99A082CFE5BC200A060A2 /* MTConsist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTConsist.swift; sourceTree = "<group>"; };
@@ -114,6 +125,17 @@
 		42F0BC122D27168600F834DF /* SSLMarkerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSLMarkerAnnotationView.swift; sourceTree = "<group>"; };
 		42F0BC132D27168600F834DF /* SSLPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSLPlacemark.swift; sourceTree = "<group>"; };
 		42F0BC142D27168600F834DF /* SSLMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSLMapView.swift; sourceTree = "<group>"; };
+		42F0BC1B2D28CA6300F834DF /* CRDPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDPointAnnotation.swift; sourceTree = "<group>"; };
+		42F0BC1E2D28D91200F834DF /* Amtraker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amtraker.swift; sourceTree = "<group>"; };
+		42F0BC212D28D98200F834DF /* AMTrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTrain.swift; sourceTree = "<group>"; };
+		42F0BC232D28D9BA00F834DF /* AMStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMStop.swift; sourceTree = "<group>"; };
+		42F0BC252D28DACD00F834DF /* AMStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMStation.swift; sourceTree = "<group>"; };
+		42F0BC2A2D28E56600F834DF /* AMMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMMenuItem.swift; sourceTree = "<group>"; };
+		42F0BC2E2D28FDC300F834DF /* amtrak.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = amtrak.csv; sourceTree = "<group>"; };
+		42F0BC302D29BA8900F834DF /* AMMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMMapView.swift; sourceTree = "<group>"; };
+		42F0BC312D29BA8900F834DF /* AMMarkerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMMarkerAnnotationView.swift; sourceTree = "<group>"; };
+		42F0BC332D29BA8900F834DF /* AMPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMPlacemark.swift; sourceTree = "<group>"; };
+		42F0BC342D29BA8900F834DF /* AMPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMPointAnnotation.swift; sourceTree = "<group>"; };
 		42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDMapView.swift; sourceTree = "<group>"; };
 		42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDMarkerAnnotationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -145,6 +167,7 @@
 			children = (
 				42F0BBD52D267BBD00F834DF /* CTA */,
 				42D99A0A2CFE5E2E00A060A2 /* Metra */,
+				42F0BC202D28D97800F834DF /* Amtrak */,
 				420013072C54B1FB007ACC67 /* CRTime.swift */,
 			);
 			path = Structs;
@@ -171,11 +194,13 @@
 		422124BD2C5026D80062695A /* Cerulean */ = {
 			isa = PBXGroup;
 			children = (
-				42D999FF2CFD82D700A060A2 /* shapes.csv */,
+				42D999FF2CFD82D700A060A2 /* cta.csv */,
+				42F0BC2E2D28FDC300F834DF /* amtrak.csv */,
 				420013042C54B1EC007ACC67 /* Structs */,
 				420012FE2C5367A5007ACC67 /* UserInfo.swift */,
 				420013002C536B93007ACC67 /* AboutWindowDelegate.swift */,
 				420012EE2C50B9B5007ACC67 /* Subclasses */,
+				42F0BC292D28E55F00F834DF /* Amtrak */,
 				422124CB2C5026F20062695A /* API */,
 				422124DB2C502E6D0062695A /* Info.plist */,
 				422124D92C502D900062695A /* CeruleanApp.swift */,
@@ -194,6 +219,7 @@
 			children = (
 				42D99A042CFE4F2200A060A2 /* CTA */,
 				42D99A032CFE4F1E00A060A2 /* Metra */,
+				42F0BC1D2D28D90500F834DF /* Amtrak */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -240,6 +266,7 @@
 				42D99A012CFD8B4400A060A2 /* CRPolyline.swift */,
 				42A41DF42C5B369C004ABBC1 /* CRTextField.swift */,
 				42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */,
+				42F0BC1B2D28CA6300F834DF /* CRDPointAnnotation.swift */,
 				42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */,
 			);
 			path = CTA;
@@ -292,6 +319,36 @@
 				42F0BC112D27168600F834DF /* SSLPointAnnotation.swift */,
 			);
 			path = SSL;
+			sourceTree = "<group>";
+		};
+		42F0BC1D2D28D90500F834DF /* Amtrak */ = {
+			isa = PBXGroup;
+			children = (
+				42F0BC1E2D28D91200F834DF /* Amtraker.swift */,
+			);
+			path = Amtrak;
+			sourceTree = "<group>";
+		};
+		42F0BC202D28D97800F834DF /* Amtrak */ = {
+			isa = PBXGroup;
+			children = (
+				42F0BC252D28DACD00F834DF /* AMStation.swift */,
+				42F0BC232D28D9BA00F834DF /* AMStop.swift */,
+				42F0BC212D28D98200F834DF /* AMTrain.swift */,
+			);
+			path = Amtrak;
+			sourceTree = "<group>";
+		};
+		42F0BC292D28E55F00F834DF /* Amtrak */ = {
+			isa = PBXGroup;
+			children = (
+				42F0BC302D29BA8900F834DF /* AMMapView.swift */,
+				42F0BC312D29BA8900F834DF /* AMMarkerAnnotationView.swift */,
+				42F0BC332D29BA8900F834DF /* AMPlacemark.swift */,
+				42F0BC342D29BA8900F834DF /* AMPointAnnotation.swift */,
+				42F0BC2A2D28E56600F834DF /* AMMenuItem.swift */,
+			);
+			path = Amtrak;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -370,7 +427,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42D99A002CFD82D700A060A2 /* shapes.csv in Resources */,
+				42F0BC2F2D28FDC300F834DF /* amtrak.csv in Resources */,
+				42D99A002CFD82D700A060A2 /* cta.csv in Resources */,
 				422124C12C5026DA0062695A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,6 +444,7 @@
 				422124BF2C5026D80062695A /* AppDelegate.swift in Sources */,
 				42D99A092CFE5BC800A060A2 /* MTConsist.swift in Sources */,
 				42F3F7D62D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift in Sources */,
+				42F0BC1F2D28D91400F834DF /* Amtraker.swift in Sources */,
 				420012F22C50B9C5007ACC67 /* CRPlacemark.swift in Sources */,
 				4200132C2C54E846007ACC67 /* AutomaticRefresh.swift in Sources */,
 				420013012C536B95007ACC67 /* AboutWindowDelegate.swift in Sources */,
@@ -398,11 +457,15 @@
 				42D99A1B2CFEA00900A060A2 /* MTPolyline.swift in Sources */,
 				42F0BC0D2D27110300F834DF /* SSLMenuItem.swift in Sources */,
 				42F0BC162D27168600F834DF /* SSLPlacemark.swift in Sources */,
+				42F0BC2B2D28E56900F834DF /* AMMenuItem.swift in Sources */,
 				42F0BC182D27168600F834DF /* SSLMapView.swift in Sources */,
 				42F0BC192D27168600F834DF /* SSLMarkerAnnotationView.swift in Sources */,
 				42F0BC1A2D27168600F834DF /* SSLPointAnnotation.swift in Sources */,
 				420012F02C50B9BF007ACC67 /* CRMenuItem.swift in Sources */,
 				42D99A212CFF789700A060A2 /* MTStop.swift in Sources */,
+				42F0BC262D28DACF00F834DF /* AMStation.swift in Sources */,
+				42F0BC242D28D9BC00F834DF /* AMStop.swift in Sources */,
+				42F0BC1C2D28CA6300F834DF /* CRDPointAnnotation.swift in Sources */,
 				4200130C2C54B47E007ACC67 /* CRPointAnnotation.swift in Sources */,
 				422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */,
 				42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */,
@@ -411,8 +474,13 @@
 				42D99A172CFE9EBA00A060A2 /* MTMenuItem.swift in Sources */,
 				42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */,
 				42D99A0D2CFE5E5800A060A2 /* MTService.swift in Sources */,
+				42F0BC222D28D98400F834DF /* AMTrain.swift in Sources */,
 				42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */,
 				42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */,
+				42F0BC352D29BA8900F834DF /* AMMarkerAnnotationView.swift in Sources */,
+				42F0BC372D29BA8900F834DF /* AMPlacemark.swift in Sources */,
+				42F0BC382D29BA8900F834DF /* AMMapView.swift in Sources */,
+				42F0BC392D29BA8900F834DF /* AMPointAnnotation.swift in Sources */,
 				42D99A072CFE50C400A060A2 /* MetworkManager.swift in Sources */,
 				42F3F7D42D0CA1DE00B9B9DB /* CRDMapView.swift in Sources */,
 				42D99A1F2CFF783100A060A2 /* MTPrediction.swift in Sources */,

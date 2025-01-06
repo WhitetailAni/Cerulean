@@ -1,5 +1,5 @@
 //
-//  MapViewController.swift
+//  CRDMapView.swift
 //  Cerulean
 //
 //  Created by WhitetailAni on 7/23/24.
@@ -8,10 +8,12 @@
 import AppKit
 import MapKit
 import SwiftUI
+import SouthShoreTracker
 
 class CRDMapView: MKMapView {
     var timeLastUpdated: String
     var timeLabel: NSTextField!
+    var annotes: [CRDPointAnnotation] = []
     
     init(timeLastUpdated: String) {
         self.timeLastUpdated = timeLastUpdated
@@ -28,8 +30,9 @@ class CRDMapView: MKMapView {
         
         self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
         
-        self.register(CRMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         self.delegate = self
+        print("Delegate set to: \(String(describing: self.delegate))")
+        self.register(CRDMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
         timeLabel.font = NSFont.systemFont(ofSize: 12)
@@ -41,6 +44,13 @@ class CRDMapView: MKMapView {
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(timeLabel)
+        
+        let testAnnotation = CRDPointAnnotation()
+            testAnnotation.coordinate = CLLocationCoordinate2D(latitude: 41.8781, longitude: -87.6298) // Chicago coordinates
+            testAnnotation.markerTint = .red
+            testAnnotation.text = "TEST"
+        
+        self.addAnnotation(testAnnotation)
         
         NSLayoutConstraint.activate([
             timeLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
@@ -64,34 +74,50 @@ class CRDMapView: MKMapView {
     
     private func zoomMap() {
         for line in CRLine.allLines {
-            applyLineOverlay(line: line, run: "001")
+            applyCTAOverlay(line: line, run: "001")
         }
-        applyLineOverlay(line: .greenAlternate, run: "001")
+        applyCTAOverlay(line: .greenAlternate, run: "001")
         
+        DispatchQueue.global().async {
+            var overlayArray: [MKOverlay] = [SSLTracker().getOverlay()]
+            let pverlays = METXAPI().getAllPolylines()
+            for pverlay in pverlays {
+                overlayArray.append(pverlay)
+            }
+                
+            DispatchQueue.main.sync {
+                self.addOverlays(overlayArray)
+            }
+        }
+        
+        self.annotes = []
         self.removeAnnotations(self.annotations)
         
-        let marksTwo = refreshTrainPosition()
+        let marksTwo = refreshCTAPosition()
+        let marksThree = refreshMetraPosition()
+        let marksFour = refreshSSLPosition()
         
-        zoomToTrains(marksTwo)
+        let marksNine = marksTwo + marksThree + marksFour
+        
+        self.addAnnotations(annotes)
+        
+        zoomToTrains(marksNine)
     }
     
-    private func applyLineOverlay(line: CRLine, run: String) {
+    private func applyCTAOverlay(line: CRLine, run: String) {
         DispatchQueue.global().async {
             var overlayArray: [MKOverlay] = []
             
             let overlay: CRPolyline = ChicagoTransitInterface.polyline.getPolylineForLine(line: line, run: Int(run) ?? 000)
             overlayArray.append(overlay)
             
-            let pverlays = METXAPI().getAllPolylines()
-            
             DispatchQueue.main.sync {
                 self.addOverlays(overlayArray)
-                self.addOverlays(pverlays)
             }
         }
     }
     
-    private func zoomToTrains(_ placemarks: [CRPlacemark]) {
+    private func zoomToTrains(_ placemarks: [MKPlacemark]) {
        let coordinates = placemarks.map { $0.coordinate }
        
        let totalLat = coordinates.reduce(0) { $0 + $1.latitude }
@@ -121,9 +147,13 @@ class CRDMapView: MKMapView {
         self.setRegion(MKCoordinateRegion(center: midpoint, span: span), animated: true)
     }
     
-    @discardableResult @objc func refreshTrainPosition() -> [CRPlacemark] {
-        self.removeAnnotations(self.annotations)
-        
+    @objc func refreshTrainPosition() {
+        refreshCTAPosition()
+        refreshMetraPosition()
+        refreshSSLPosition()
+    }
+    
+    @discardableResult func refreshCTAPosition() -> [CRPlacemark] {
         var annotationArray: [CRPointAnnotation] = []
         var markArray: [CRPlacemark] = []
         
@@ -154,9 +184,107 @@ class CRDMapView: MKMapView {
             }
         }
         
-        self.addAnnotations(annotationArray)
+        for annotation in annotationArray {
+            var annote = CRDPointAnnotation()
+            annote.mark = annotation.mark
+            if let line = annotation.mark?.line {
+                if let run = annotation.mark?.trainRun {
+                    if line == .blueAlternate || line == .greenAlternate {
+                        annote.markerTint = .white
+                        annote.text = run
+                        annote.glyphTint = line.color()
+                    } else {
+                        annote.markerTint = line.color()
+                        annote.text = run
+                    }
+                } else if let stationName = annotation.mark?.stationName {
+                    annote.image = .ctaTrain
+                    if stationName == "King Drive" || stationName == "Cottage Grove" {
+                        annote.glyphTint = CRLine.green.color()
+                        annote.markerTint = .white
+                    } else {
+                        annote.markerTint = line.color()
+                    }
+                }
+            }
+            
+            annotes.append(annote)
+        }
         
         return markArray
+    }
+    
+    @discardableResult func refreshMetraPosition() -> [MTPlacemark] {
+        let consistDict = METXAPI().getActiveTrains()
+        var marks: [MTPlacemark] = []
+        var annotationArray: [MTPointAnnotation] = []
+        
+        for collection in consistDict.0 {
+            let service = MTService(fromAPI: collection.key)
+            
+            for consist in collection.value {
+                let mark = MTPlacemark(coordinate: consist.location)
+                mark.service = service
+                
+                let annote = MTPointAnnotation()
+                annote.mark = mark
+                annote.service = service
+                
+                marks.append(mark)
+                annotationArray.append(annote)
+            }
+        }
+        
+        for annotation in annotationArray {
+            var annote = CRDPointAnnotation()
+            annote.mark = annotation.mark
+            
+            if let service = annotation.mark?.service {
+                if let train = annotation.mark?.trainNumber {
+                    annote.markerTint = service.color(branch: service.getBranch(trainString: train))
+                    annote.text = train
+                } else if let stationName = annotation.mark?.stationName {
+                    annote.image = .metra
+                    annote.markerTint = service.color(branch: MTStation.getBranch(name: stationName))
+                }
+            }
+            
+            annotes.append(annote)
+        }
+        
+        return marks
+    }
+    
+    @discardableResult func refreshSSLPosition() -> [SSLPlacemark] {
+        let vehicles = SSLTracker().getVehicles()
+        var marks: [SSLPlacemark] = []
+        var annotationArray: [SSLPointAnnotation] = []
+        
+        for vehicle in vehicles {
+            let mbrk = SSLPlacemark(coordinate: vehicle.location)
+            marks.append(mbrk)
+            let annote = SSLPointAnnotation()
+            annote.mark = mbrk
+            annotationArray.append(annote)
+        }
+        
+        for annotation in annotationArray {
+            var annote = CRDPointAnnotation()
+            annote.mark = annotation.mark
+            
+            if let train = annotation.mark?.trainNumber {
+                annote.markerTint = SSLTracker.colors.maroon
+                annote.glyphTint = SSLTracker.colors.beige
+                annote.text = train
+            } else if annotation.mark?.stationName != nil {
+                annote.markerTint = SSLTracker.colors.maroon
+                annote.glyphTint = SSLTracker.colors.beige
+            }
+            
+            annotes.append(annote)
+        }
+        
+        return marks
     }
 }
 
@@ -167,13 +295,47 @@ extension CRDMapView: MKMapViewDelegate {
             polylineRenderer.strokeColor = polyline.line?.color()
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
-        }
-        if let polyline = overlay as? MTPolyline {
+        } else if let polyline = overlay as? MTPolyline {
             let polylineRenderer = MKPolylineRenderer(polyline: polyline)
             polylineRenderer.strokeColor = polyline.service?.color(branch: polyline.branch!)
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
+        } else if let polyline = overlay as? MKPolyline {
+            let polylineRenderer = MKPolylineRenderer(polyline: polyline)
+            polylineRenderer.strokeColor = SSLTracker.colors.beige
+            polylineRenderer.lineWidth = 3.0
+            return polylineRenderer
         }
         return MKOverlayRenderer(overlay: overlay)
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        print("Requesting view for annotation: \(annotation)")
+        
+        guard let pointAnnotation = annotation as? CRDPointAnnotation else {
+            print("Not a CRDPointAnnotation")
+            return nil
+        }
+        
+        let identifier = "CRDMarkerAnnotationView"
+        var view: CRDMarkerAnnotationView
+        
+        if let dequeuedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? CRDMarkerAnnotationView {
+            view = dequeuedView
+        } else {
+            view = CRDMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        }
+        
+        // Force configure the view here
+        view.configure(for: pointAnnotation)
+        return view
+    }
+    
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        print("Map finished loading")
+    }
+
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        print("Added \(views.count) annotation views")
     }
 }

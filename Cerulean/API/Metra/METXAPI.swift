@@ -318,10 +318,10 @@ class METXAPI: NSObject {
     
     func storePolylines() {
         readGTFS(endpoint: "schedule/shapes") { result in
-            let sortedByService = Dictionary(grouping: result.filter { entry in
+            let sortedByService = Dictionary(grouping: result/*.filter { entry in
                 guard let shapeId = entry["shape_id"] as? String else { return false }
                 return !shapeId.contains("IB")
-            }) { entry in
+            }*/) { entry in
                 return entry["shape_id"] as? String ?? ""
             }
 
@@ -372,7 +372,9 @@ class METXAPI: NSObject {
     func getAllPolylines() -> [MTPolyline] {
         var array: [MTPolyline] = []
         
-        for key in ["MD-W_OB_1", "NCS_OB_1", "SWS_OB_1", "UP-N_OB_1", "BNSF_OB_1", "UP-NW_OB_1", "UP-NW_OB_2", "MD-N_OB_1", "ME_OB_1", "ME_OB_2", "ME_OB_3", "RI_OB_1", "RI_OB_2", "UP-W_OB_1", "HC_OB_1"] {
+        storePolylines()
+        
+        for key in ["NCS_OB_1", "MD-W_OB_1", "SWS_OB_1", "BNSF_OB_1", "UP-NW_OB_1", "UP-NW_OB_2", "UP-N_OB_1", "MD-N_OB_1", "ME_OB_3", "ME_OB_2", "ME_OB_1", "RI_OB_1", "RI_OB_2", "UP-W_OB_1", "HC_OB_1"] {
             var coordinateArray: [CLLocationCoordinate2D] = []
             
             for point in storedPolylines[key] ?? [] {
@@ -388,7 +390,7 @@ class METXAPI: NSObject {
                     return .md_n
                 case "UP-W_OB_1":
                     return .up_w
-                case "UP-NW_OB_1":
+                case "UP-NW_OB_1", "UP-NW_OB_2":
                     return .up_nw
                 case "UP-N_OB_1":
                     return .up_n
@@ -402,6 +404,8 @@ class METXAPI: NSObject {
                     return .ri
                 case "ME_OB_1", "ME_OB_2", "ME_OB_3":
                     return .me
+                case "NCS_OB_1":
+                    return .ncs
                 default:
                     return .ses
                 }
@@ -412,7 +416,7 @@ class METXAPI: NSObject {
                     return .blue_island
                 case "ME_OB_3":
                     return .south_chicago
-                case "RI_OB_2":
+                case "RI_OB_1":
                     return .beverly
                 default:
                     return MTServiceBranch.none

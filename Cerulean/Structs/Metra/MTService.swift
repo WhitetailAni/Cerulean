@@ -112,7 +112,7 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "Millennium Station"
                 } else {
-                    if (isNumberBetween(min: 100, max: 200, value: trainNumber) && trainNumber != 165) || trainNumber == 711 || isNumberBetween(min: 800, max: 900, value: trainNumber) {
+                    if (isNumberBetween(min: 100, max: 200, value: trainNumber) && trainNumber != 165) || isNumberBetween(min: 700, max: 711, value: trainNumber) || isNumberBetween(min: 800, max: 900, value: trainNumber) {
                         return "University Park"
                     } else if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
                         return "Blue Island"
@@ -120,7 +120,7 @@ enum MTService {
                         return "93rd Street/South Chicago"
                     } else if isNumberBetween(min: 600, max: 700, value: trainNumber) {
                         return "115th Street/Kensington"
-                    } else if (isNumberBetween(min: 700, max: 800, value: trainNumber) && trainNumber != 711) || trainNumber == 165 {
+                    } else if isNumberBetween(min: 712, max: 800, value: trainNumber) || trainNumber == 165 {
                         return "Homewood"
                     }
                 }
@@ -376,47 +376,52 @@ enum MTService {
     }
     
     func getPolylineKey(number: String) -> String {
+        let trainNumber = Int(number) ?? 0
+        var inOut = "OB"
+        if trainNumber % 2 == 0 {
+            inOut = "IB"
+        }
         if number == "RAV1" {
-            return "UP-N_OB_1"
+            return "UP-N_\(inOut)_1"
         } else {
-            let trainNumber = Int(number) ?? 0
+            
             switch self {
             case .up_w:
-                return "UP-W_OB_1"
+                return "UP-W_\(inOut)_1"
             case .hc:
-                return "HC_OB_1"
+                return "HC_\(inOut)_1"
             case .ri:
                 if isNumberBetween(min: 400, max: 500, value: trainNumber) || trainNumber < 200 {
-                    return "RI_OB_2"
+                    return "RI_\(inOut)_2"
                 } else {
-                    return "RI_OB_1"
+                    return "RI_\(inOut)_1"
                 }
             case .me:
                 if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
-                    return "ME_OB_2"
+                    return "ME_\(inOut)_2"
                 } else if isNumberBetween(min: 300, max: 400, value: trainNumber) || isNumberBetween(min: 8300, max: 8400, value: trainNumber) {
-                    return "ME_OB_3"
+                    return "ME_\(inOut)_3"
                 }
-                return "ME_OB_1"
+                return "ME_\(inOut)_1"
             case .md_w:
-                return "MD-W_OB_1"
+                return "MD-W_\(inOut)_1"
             case .md_n:
-                return "MD-N_OB_1"
+                return "MD-N_\(inOut)_1"
             case .up_nw:
                 if [610, 624, 633, 636, 643, 657].contains(trainNumber) {
-                     return "UP-NW_OB_2"
+                     return "UP-NW_\(inOut)_2"
                 }
-                return "UP-NW_OB_1"
+                return "UP-NW_\(inOut)_1"
             case .bnsf:
-                return "BNSF_OB_1"
+                return "BNSF_\(inOut)_1"
             case .up_n:
-                return "UP-N_OB_1"
+                return "UP-N_\(inOut)_1"
             case .sws:
-                return "SWS_OB_1"
+                return "SWS_\(inOut)_1"
             case .ncs:
-                return "NCS_OB_1"
+                return "NCS_\(inOut)_1"
             case .ses:
-                return "MD-W_OB_1"
+                return "MD-W_\(inOut)_1"
             }
         }
     }

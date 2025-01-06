@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
-class ChicagoTransitInterface: NSObject {
+class ChicagoTransitInterface: NSObject, Sendable {
     let semaphore = DispatchSemaphore(value: 0)
     private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
     private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
@@ -156,7 +156,7 @@ class ChicagoTransitInterface: NSObject {
     func storePolylines() {
         var pointArray: [CRPoint] = []
         
-        guard let filePath = Bundle.main.path(forResource: "shapes", ofType: "csv") else {
+        guard let filePath = Bundle.main.path(forResource: "cta", ofType: "csv") else {
             return
         }
         

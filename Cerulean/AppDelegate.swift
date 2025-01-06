@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var ctaMenu: NSMenu!
     var metraMenu: NSMenu!
     var sslMenu: NSMenu!
+    var amtrakMenu: NSMenu!
     var autoRefresh: AutomaticRefresh!
     
     var mapWindows: [NSWindow] = []
@@ -68,12 +69,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let sslItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
         sslItem.linkToOpen = URL(string: "https://mysouthshoreline.com/")!
-        let sslTitle = prependImageToString(imageName: "ssl", title: "")
+        let sslTitle = prependImageToString(imageName: "ssl", title: "", ssl: true)
         sslItem.attributedTitle = sslTitle
         sslMenu = NSMenu()
         sslItem.submenu = sslMenu
         
         menu.addItem(sslItem)
+        
+        /*let amtrakItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
+        amtrakItem.linkToOpen = URL(string: "https://amtrak.com/")!
+        let amtrakTitle = prependImageToString(imageName: "amtrak", title: "Amtrak", ssl: false)
+        amtrakItem.attributedTitle = amtrakTitle
+        amtrakMenu = NSMenu()
+        amtrakItem.submenu = amtrakMenu
+        
+        menu.addItem(amtrakItem)*/
         
         refreshInfo()
         menu.addItem(NSMenuItem.separator())
@@ -120,7 +130,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func prependImageToString(imageName: String, title: String, ssl: Bool = false) -> NSMutableAttributedString {
         var coefficient: CGFloat = 5.0
         if ssl {
-            coefficient = -10.0
+            coefficient = -2
         }
         let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - coefficient
         let baseImage = NSImage(named: imageName)!
@@ -150,6 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         refreshCTAInfo()
         refreshMetraInfo()
         refreshSSLInfo()
+        //refreshAmtrakInfo()
     }
     
     @MainActor @objc func refreshCTAInfo() {
@@ -237,7 +248,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             trainItem = CRMenuItem(title: "\(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
                             trainItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                             
-                            if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7 {
+                            if destination == "Downtown, Kimball" || (line2 == .brown && ((Int(run) ?? 000) / 100) % 10 == 7) {
                                 trainItem.isBrownge = true
                             }
                             
@@ -272,8 +283,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                     title.trainLine = line2
                                     
-                                    if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7 {
-                                        title.isBrownge = true
+                                    if destination == "Downtown, Kimball" || (line2 == .brown && ((Int(run) ?? 000) / 100) % 10 == 7) {
+                                        trainItem.isBrownge = true
                                     }
                                     
                                     title.trainRun = train["run"] ?? "Unknown Run"
@@ -575,22 +586,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         let arrivals = vehicle.arrivals
                         
                         if arrivals.count > 0 {
-                            for arrival in arrivals {
+                            for i in 0..<arrivals.count {
+                                var stopItem: SSLMenuItem!
+                                let arrival = arrivals[i]
+                                
                                 if arrival.actualArrivalTime == arrival.scheduledArrivalTime {
-                                    let stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openMetraMapWindow(_:)))
+                                    stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openSSLMapWindow(_:)))
                                     stopItem.trainNumber = vehicle.trainNumber
                                     stopItem.stop = arrival.stop
                                     stopItem.trainCoordinate = vehicle.location
-                                    
-                                    stopMenu.addItem(stopItem)
                                 } else {
-                                    let stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime) (scheduled at \(arrival.scheduledArrivalTime))", action: #selector(self.openSSLMapWindow(_:)))
+                                    stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime) (scheduled at \(arrival.scheduledArrivalTime))", action: #selector(self.openSSLMapWindow(_:)))
                                     stopItem.trainNumber = vehicle.trainNumber
                                     stopItem.stop = arrival.stop
                                     stopItem.trainCoordinate = vehicle.location
-                                    
-                                    stopMenu.addItem(stopItem)
                                 }
+                                stopMenu.addItem(stopItem)
                             }
                         } else {
                             let stopItem = MTMenuItem(title: "Arrived at terminal", action: nil)
@@ -604,8 +615,71 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                 }
                 self.sslMenu.addItem(NSMenuItem.separator())
-                self.sslMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshMetraInfo), keyEquivalent: "r"))
+                self.sslMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshSSLInfo), keyEquivalent: "r"))
             }
+        }
+    }
+    
+    @MainActor @objc func refreshAmtrakInfo() {
+        Amtraker().storePolylines()
+        amtrakMenu.removeAllItems()
+        
+        DispatchQueue.global().async {
+            let rawTrains = Amtraker().getAllTrains()
+            let routes = Amtraker.sortTrains(trains: rawTrains)
+            
+            DispatchQueue.main.sync {
+                for key in routes.keys.sorted() {
+                    let trains = routes[key] ?? []
+                    let trainMenu = NSMenu()
+                    
+                    let routeItem = AMMenuItem(title: key, action: #selector(self.nop))
+                    
+                    for train in trains {
+                        let trainItem = AMMenuItem(title: "\(train.trainNumber) to \(train.destinationStationName)", action: #selector(self.openAmtrakMapWindow(_:)))
+                        trainItem.train = train
+                        trainMenu.addItem(trainItem)
+                        
+                        let stopMenu = NSMenu()
+                        let trainTitleItem = AMMenuItem(title: "\(train.trainName) \(train.trainNumber) to \(train.destinationStationName)", action: #selector(self.openAmtrakMapWindow(_:)))
+                        trainTitleItem.train = train
+                        stopMenu.addItem(trainTitleItem)
+                        stopMenu.addItem(NSMenuItem.separator())
+                        
+                        if train.stops.count == 0 {
+                            stopMenu.addItem(NSMenuItem(title: "No arrivals available", action: nil))
+                        } else {
+                            for stop in train.stops {
+                                var stopItem: AMMenuItem!
+                                if stop.scheduledArrival == stop.scheduledDeparture || stop.actualArrival == stop.actualDeparture {
+                                    if stop.scheduledArrival == stop.actualArrival {
+                                        stopItem = AMMenuItem(title: "\(stop.name) at \(stop.actualArrival)", action: #selector(self.openAmtrakMapWindow(_:)))
+                                    } else {
+                                        stopItem = AMMenuItem(title: "\(stop.name) at \(stop.actualArrival) (scheduled at \(stop.scheduledArrival))", action: #selector(self.openAmtrakMapWindow(_:)))
+                                    }
+                                } else {
+                                    var arrival = "\(stop.name) at \(stop.actualArrival)"
+                                    if stop.scheduledArrival != stop.actualArrival {
+                                        arrival = "\(stop.name) at \(stop.actualArrival) (scheduled at \(stop.scheduledArrival))"
+                                    }
+                                    var departure = "\(stop.name) at \(stop.actualDeparture)"
+                                    if stop.scheduledDeparture != stop.actualDeparture {
+                                        departure = "\(stop.name) at \(stop.actualDeparture) (scheduled at \(stop.scheduledDeparture))"
+                                    }
+                                    stopItem = AMMenuItem(title: "Arrives \(arrival), departs \(departure)", action: #selector(self.openAmtrakMapWindow(_:)))
+                                }
+                                stopMenu.addItem(stopItem)
+                            }
+                        }
+                        
+                        trainItem.submenu = stopMenu
+                    }
+                    
+                    routeItem.submenu = trainMenu
+                    self.amtrakMenu.addItem(routeItem)
+                }
+            }
+            
         }
     }
     
@@ -786,6 +860,52 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
+            }
+        }
+        mapMutex.unlock()
+    }
+    
+    @objc func openAmtrakMapWindow(_ sender: AMMenuItem) {
+        mapMutex.lock()
+        if let screenSize = NSScreen.main?.frame.size {
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
+            
+            if let train = sender.train {
+                let placemark = AMPlacemark(coordinate: train.location)
+                placemark.train = train
+                
+                if let stop = sender.stop {
+                    /*placemark
+                    
+                    let stopMark = SSLPlacemark(coordinate: stop.location)
+                    stopMark.stationName = stop.name
+                    
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.locale = Locale.current
+                    
+                    dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+                    
+                    mapWindows[index].title = "Cerulean - Amtrak train \(train.trainNumber) to \(train.destinationStationName)"
+                    
+                    self.mapWindows[index].contentView = SSLMapView(train: placemark, station: stopMark, timeLastUpdated: dateFormatter.string(from: Date()))
+                    self.mapWindows[index].center()
+                    self.mapWindows[index].setIsVisible(true)
+                    self.mapWindows[index].orderFrontRegardless()
+                    self.mapWindows[index].makeKey()
+                    NSApp.activate(ignoringOtherApps: true)*/
+                } else {
+                    mapWindows[index].title = "Cerulean - Amtrak train \(train.trainNumber) to \(train.destinationStationName)"
+                    
+                    self.mapWindows[index].contentView = AMMapView(train: placemark, timeLastUpdated: train.timeLastUpdated)
+                    self.mapWindows[index].center()
+                    self.mapWindows[index].setIsVisible(true)
+                    self.mapWindows[index].orderFrontRegardless()
+                    self.mapWindows[index].makeKey()
+                    NSApp.activate(ignoringOtherApps: true)
+                }
             }
         }
         mapMutex.unlock()

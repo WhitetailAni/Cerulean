@@ -175,20 +175,20 @@ struct MTStop {
             return "111th Street/Pullman"
         case "107TH-UP":
             return "107th Street"
-        case "103RD-UP": #warning("103rd maybe inaccurate")
-            return "103rd Street"
+        case "103RD-UP":
+            return "103rd Street/Rosemoor"
         case "95TH-UP":
-            return "95th Street"
+            return "95th Street/CSU"
         case "91ST-UP":
-            return "91st Street"
+            return "91st Street/Chesterfield"
         case "87TH-UP":
-            return "87th Street"
+            return "87th Street/Woodruff"
         case "83RD-UP":
-            return "83rd Street"
+            return "83rd Street/Avalon Park"
         case "79TH-UP":
-            return "79th Street"
+            return "79th Street/Chatham"
         case "75TH-UP":
-            return "75th Street"
+            return "75th Street/Grand Crossing"
             //south chicago branch
         case "93RD-SC":
             return "93rd Street/South Chicago"
@@ -210,7 +210,7 @@ struct MTStop {
         case "63RD-UP":
             return "63rd Street"
         case "59TH-UP":
-            return "59th Street"
+            return "59th Street, University of Chicago"
         case "55-56-57TH":
             return "55th-56th-57th Street"
         case "51ST-53RD":

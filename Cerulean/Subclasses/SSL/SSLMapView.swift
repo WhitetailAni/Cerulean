@@ -78,8 +78,6 @@ class SSLMapView: MKMapView {
     }
     
     private func zoomMapToTrain() {
-        print("here")
-        
         applyLineOverlay()
         
         self.removeAnnotations(self.annotations)
@@ -97,8 +95,6 @@ class SSLMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation() {
-        print("there")
-        
         applyLineOverlay()
         
         self.removeAnnotations(self.annotations)

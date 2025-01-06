@@ -71,4 +71,29 @@ struct CRTime: Comparable {
         inputFormatter.timeZone = TimeZone(identifier: "UTC")
         return inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
     }
+    
+    static func amtrakAPITimeToReadableTime(string: String, timeZone: TimeZone, actual: Bool = false) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXX"
+        inputFormatter.timeZone = timeZone//TimeZone(identifier: "UTC")
+        let time: Date = inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
+        
+        if time < Date() && actual {
+            return "ALREADYHAPPEN"
+        }
+        
+        let testFormatter = DateFormatter()
+        testFormatter.dateFormat = "MM-dd"
+        testFormatter.timeZone = TimeZone.autoupdatingCurrent
+        
+        let outputFormatter = DateFormatter()
+        if testFormatter.string(from: time) == testFormatter.string(from: Date()) {
+            outputFormatter.dateFormat = "HH:mm"
+        } else {
+            outputFormatter.dateFormat = "MM-dd HH:mm"
+        }
+        outputFormatter.timeZone = TimeZone.autoupdatingCurrent
+        
+        return outputFormatter.string(from: time)
+    }
 }

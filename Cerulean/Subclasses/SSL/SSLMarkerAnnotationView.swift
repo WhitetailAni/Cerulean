@@ -33,9 +33,9 @@ class SSLMarkerAnnotationView: MKMarkerAnnotationView {
                 glyphTintColor = SSLTracker.colors.beige
                 glyphText = train
             } else if annotation.mark?.stationName != nil {
+                glyphImage = .ssl2
                 markerTintColor = SSLTracker.colors.maroon
                 glyphTintColor = SSLTracker.colors.beige
-                //glyphImage = .ssl2
             }
             displayPriority = .required
         }
