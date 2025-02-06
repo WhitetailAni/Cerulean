@@ -185,7 +185,7 @@ class CRDMapView: MKMapView {
         }
         
         for annotation in annotationArray {
-            var annote = CRDPointAnnotation()
+            let annote = CRDPointAnnotation()
             annote.mark = annotation.mark
             if let line = annotation.mark?.line {
                 if let run = annotation.mark?.trainRun {
@@ -236,7 +236,7 @@ class CRDMapView: MKMapView {
         }
         
         for annotation in annotationArray {
-            var annote = CRDPointAnnotation()
+            let annote = CRDPointAnnotation()
             annote.mark = annotation.mark
             
             if let service = annotation.mark?.service {
@@ -269,7 +269,7 @@ class CRDMapView: MKMapView {
         }
         
         for annotation in annotationArray {
-            var annote = CRDPointAnnotation()
+            let annote = CRDPointAnnotation()
             annote.mark = annotation.mark
             
             if let train = annotation.mark?.trainNumber {

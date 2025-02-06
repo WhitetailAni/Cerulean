@@ -64,9 +64,9 @@ enum MTService {
     func getBranch(trainString: String) -> MTServiceBranch {
         let trainNumber = Int(trainString.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
         if self == .me {
-            if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
+            if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                 return .blue_island
-            } else if isNumberBetween(min: 300, max: 400, value: trainNumber) || isNumberBetween(min: 8300, max: 8400, value: trainNumber) {
+            } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) {
                 return .south_chicago
             }
         }
@@ -102,7 +102,9 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "LaSalle Street Station"
                 } else {
-                    if (trainNumber > 300 && trainNumber < 400) || trainNumber > 600 {
+                    if (trainNumber > 300 && trainNumber < 400) {
+                        return "Tinley Park"
+                    } else if trainNumber > 600 {
                         return "Blue Island/Vermont Street"
                     } else {
                         return "Joliet"
@@ -112,15 +114,15 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "Millennium Station"
                 } else {
-                    if (isNumberBetween(min: 100, max: 200, value: trainNumber) && trainNumber != 165) || isNumberBetween(min: 700, max: 711, value: trainNumber) || isNumberBetween(min: 800, max: 900, value: trainNumber) {
+                    if (isNumberBetween(min: 100, max: 199, value: trainNumber) && trainNumber != 165) || isNumberBetween(min: 700, max: 711, value: trainNumber) || isNumberBetween(min: 800, max: 899, value: trainNumber) {
                         return "University Park"
-                    } else if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
+                    } else if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                         return "Blue Island"
-                    } else if isNumberBetween(min: 300, max: 400, value: trainNumber) || isNumberBetween(min: 8300, max: 8400, value: trainNumber) {
+                    } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) {
                         return "93rd Street/South Chicago"
-                    } else if isNumberBetween(min: 600, max: 700, value: trainNumber) {
+                    } else if isNumberBetween(min: 600, max: 699, value: trainNumber) {
                         return "115th Street/Kensington"
-                    } else if isNumberBetween(min: 712, max: 800, value: trainNumber) || trainNumber == 165 {
+                    } else if isNumberBetween(min: 712, max: 799, value: trainNumber) || trainNumber == 165 {
                         return "Homewood"
                     }
                 }
@@ -391,15 +393,15 @@ enum MTService {
             case .hc:
                 return "HC_\(inOut)_1"
             case .ri:
-                if isNumberBetween(min: 400, max: 500, value: trainNumber) || trainNumber < 200 {
+                if isNumberBetween(min: 300, max: 499, value: trainNumber) || trainNumber < 200 {
                     return "RI_\(inOut)_2"
                 } else {
                     return "RI_\(inOut)_1"
                 }
             case .me:
-                if isNumberBetween(min: 200, max: 300, value: trainNumber) || trainNumber > 8500 {
+                if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                     return "ME_\(inOut)_2"
-                } else if isNumberBetween(min: 300, max: 400, value: trainNumber) || isNumberBetween(min: 8300, max: 8400, value: trainNumber) {
+                } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8400, value: trainNumber) {
                     return "ME_\(inOut)_3"
                 }
                 return "ME_\(inOut)_1"

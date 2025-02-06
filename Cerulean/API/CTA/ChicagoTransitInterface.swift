@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
-class ChicagoTransitInterface: NSObject, Sendable {
+class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     let semaphore = DispatchSemaphore(value: 0)
     private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
     private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
@@ -87,12 +87,18 @@ class ChicagoTransitInterface: NSObject, Sendable {
 
         return false
     }
-
     
     ///Checks if Purple Line Express service is running
     class func isPurpleExpressRunning() -> Bool {
-        let weekday = Calendar.current.component(.weekday, from: Date())
-        return CRTime.isItCurrentlyBetween(start: CRTime(hour: 5, minute: 05), end: CRTime(hour: 10, minute: 08)) || CRTime.isItCurrentlyBetween(start: CRTime(hour: 14, minute: 18), end: CRTime(hour: 19, minute: 17)) && !(weekday == 1 || weekday == 7 || isHoliday())
+        let rawTrains = ChicagoTransitInterface().getRunsForLine(line: .purple)
+        let trains = InterfaceResultProcessing.cleanUpLineInfo(info: rawTrains)
+        for train in trains {
+            let latitude = Double(train["latitude"] ?? "") ?? 90.0
+            if latitude < 42.01663 || train["destinationStation"] == "Loop" {
+                return true
+            }
+        }
+        return false
     }
     
     ///Gets information about a given CTA stop ID

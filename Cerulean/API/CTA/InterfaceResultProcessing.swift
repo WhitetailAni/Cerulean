@@ -38,7 +38,6 @@ class InterfaceResultProcessing {
             return []
         }
         
-        
         var estimatedEtaArray: [[String: String]] = []
         
         for eta in etas {

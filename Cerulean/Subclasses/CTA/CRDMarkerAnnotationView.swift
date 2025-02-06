@@ -27,8 +27,7 @@ class CRDMarkerAnnotationView: MKMarkerAnnotationView {
     }
     
     func configure(for annotation: MKAnnotation?) {
-        print("start")
-        print(annotation.self)
+        
         if annotation is CRDPointAnnotation {
             let annotation: CRDPointAnnotation = annotation as! CRDPointAnnotation
             if let markerTint = annotation.markerTint, let glyphTint = annotation.glyphTint {

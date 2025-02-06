@@ -106,7 +106,7 @@ class MTMapView: MKMapView {
         
         let stationAnnotation = MTPointAnnotation()
         stationAnnotation.coordinate = station.coordinate
-        stationAnnotation.title = "\(station.service?.textualRepresentation() ?? "Unknown") stop \(station.stationName ?? "Unknown")"
+        stationAnnotation.title = /*"\(station.service?.textualRepresentation() ?? "Unknown") stop \(station.stationName ?? "Unknown")"*/ station.stationName ?? "Unknown"
         stationAnnotation.mark = station
         stationAnnotation.isTrainAnnotation = false
         

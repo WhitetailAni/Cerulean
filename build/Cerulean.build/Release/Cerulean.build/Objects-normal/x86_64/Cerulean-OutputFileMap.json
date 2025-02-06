@@ -1,0 +1,265 @@
+{
+  "" : {
+    "const-values" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master.swiftconstvalues",
+    "dependencies" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master.d",
+    "diagnostics" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master.dia",
+    "emit-module-dependencies" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master-emit-module.dia",
+    "swift-dependencies" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Cerulean-master.swiftdeps"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/API/Amtrak/Amtraker.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Amtraker.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Amtraker.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Amtraker.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/API/CTA/ChicagoTransitInterface.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/ChicagoTransitInterface.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/ChicagoTransitInterface.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/ChicagoTransitInterface.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/API/CTA/InterfaceResultProcessing.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/InterfaceResultProcessing.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/InterfaceResultProcessing.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/InterfaceResultProcessing.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/API/Metra/METXAPI.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/METXAPI.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/METXAPI.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/METXAPI.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/API/Metra/MetworkManager.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MetworkManager.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MetworkManager.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MetworkManager.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/AboutView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/AboutWindowDelegate.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutWindowDelegate.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutWindowDelegate.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AboutWindowDelegate.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Amtrak/AMMapView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMapView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMapView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMapView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Amtrak/AMMarkerAnnotationView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMarkerAnnotationView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMarkerAnnotationView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMarkerAnnotationView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Amtrak/AMMenuItem.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMenuItem.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMenuItem.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMMenuItem.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Amtrak/AMPlacemark.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPlacemark.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPlacemark.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPlacemark.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Amtrak/AMPointAnnotation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPointAnnotation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPointAnnotation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMPointAnnotation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/AppDelegate.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AppDelegate.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/AutomaticRefresh.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AutomaticRefresh.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AutomaticRefresh.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AutomaticRefresh.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/CeruleanApp.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CeruleanApp.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CeruleanApp.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CeruleanApp.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Extensions.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Extensions.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Extensions.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/Extensions.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Amtrak/AMStation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Amtrak/AMStop.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStop.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStop.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMStop.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Amtrak/AMTrain.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMTrain.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMTrain.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/AMTrain.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/CRTime.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTime.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTime.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTime.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/CTA/CRLine.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRLine.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRLine.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRLine.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/CTA/CRPoint.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPoint.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPoint.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPoint.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTConsist.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTConsist.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTConsist.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTConsist.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTPoint.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPoint.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPoint.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPoint.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTPrediction.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPrediction.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPrediction.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPrediction.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTService.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTService.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTService.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTService.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTStation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Structs/Metra/MTStop.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStop.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStop.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTStop.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRDMapView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMapView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMapView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMapView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRDMarkerAnnotationView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMarkerAnnotationView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMarkerAnnotationView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDMarkerAnnotationView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRDPointAnnotation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDPointAnnotation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDPointAnnotation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRDPointAnnotation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRMapView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMapView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMapView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMapView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRMarkerAnnotationView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMarkerAnnotationView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMarkerAnnotationView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMarkerAnnotationView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRMenuItem.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMenuItem.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMenuItem.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRMenuItem.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRPlacemark.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPlacemark.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPlacemark.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPlacemark.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRPointAnnotation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPointAnnotation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPointAnnotation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPointAnnotation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRPolyline.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPolyline.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPolyline.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRPolyline.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/CTA/CRTextField.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTextField.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTextField.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/CRTextField.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTMapView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMapView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMapView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMapView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTMarkerAnnotationView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMarkerAnnotationView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMarkerAnnotationView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMarkerAnnotationView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTMenuItem.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMenuItem.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMenuItem.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTMenuItem.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTPlacemark.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPlacemark.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPlacemark.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPlacemark.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTPointAnnotation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPointAnnotation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPointAnnotation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPointAnnotation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/Metra/MTPolyline.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPolyline.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPolyline.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/MTPolyline.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/SSL/SSLMapView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMapView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMapView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMapView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/SSL/SSLMarkerAnnotationView.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMarkerAnnotationView.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMarkerAnnotationView.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMarkerAnnotationView.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/SSL/SSLMenuItem.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMenuItem.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMenuItem.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLMenuItem.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/SSL/SSLPlacemark.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPlacemark.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPlacemark.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPlacemark.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/Subclasses/SSL/SSLPointAnnotation.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPointAnnotation.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPointAnnotation.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/SSLPointAnnotation.o"
+  },
+  "/Users/whitetailani/Cerulean/Cerulean/UserInfo.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/UserInfo.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/UserInfo.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/UserInfo.o"
+  },
+  "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/whitetailani/Cerulean/build/Cerulean.build/Release/Cerulean.build/Objects-normal/x86_64/GeneratedAssetSymbols.o"
+  }
+}

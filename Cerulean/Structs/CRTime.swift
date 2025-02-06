@@ -21,7 +21,8 @@ struct CRTime: Comparable {
     
     static func isItCurrentlyBetween(start: CRTime, end: CRTime) -> Bool {
         let now = Date()
-        let calendar = Calendar.current
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "America/Chicago")!
         let current = CRTime(hour: calendar.component(.hour, from: now), minute: calendar.component(.minute, from: now))
         
         if start < end {

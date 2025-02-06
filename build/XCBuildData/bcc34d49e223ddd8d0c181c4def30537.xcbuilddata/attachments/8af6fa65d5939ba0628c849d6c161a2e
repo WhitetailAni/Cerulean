@@ -1,0 +1,6 @@
+framework module SouthShoreTracker {
+  umbrella header "SouthShoreTracker.h"
+  export *
+
+  module * { export * }
+}
