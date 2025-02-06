@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'Cerulean' in project 'Cerulean'
-➜ Explicit dependency on target 'SouthShoreTracker' in project 'SouthShoreTracker'
-Target 'SouthShoreTracker' in project 'SouthShoreTracker' (no dependencies)
