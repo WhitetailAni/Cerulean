@@ -103,6 +103,10 @@ enum MTService {
                     return "LaSalle Street Station"
                 } else {
                     if (trainNumber > 300 && trainNumber < 400) {
+                        let day = Calendar.current.dateComponents(in: TimeZone(identifier: "America/Chicago")!, from: Date()).weekday
+                        if day == 1 || day == 7 {
+                            return "Blue Island/Vermont Street"
+                        }
                         return "Tinley Park"
                     } else if trainNumber > 600 {
                         return "Blue Island/Vermont Street"
@@ -374,6 +378,22 @@ enum MTService {
             return NSColor(r: 146, g: 100, b: 204)
         case .ses:
             return NSColor(r: 0, g: 0, b: 0)
+        }
+    }
+    
+    func textColor(branch: MTServiceBranch) -> NSColor {
+        switch self {
+        case .up_w, .md_w, .up_nw, .me, .bnsf:
+            if self == .me {
+                if [.south_chicago, .blue_island].contains(branch) {
+                    return NSColor(r: 0, g: 0, b: 0)
+                } else {
+                    return NSColor(r: 255, g: 255, b: 255)
+                }
+            }
+            return NSColor(r: 0, g: 0, b: 0)
+        default:
+            return NSColor(r: 255, g: 255, b: 255)
         }
     }
     

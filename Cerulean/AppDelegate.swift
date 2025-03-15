@@ -31,7 +31,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var aboutMutex = NSLock()
     
     var actuallyBrown: [CRMenuItem] = []
-    var brown = false
+    var brownFlagged = false
+    var brownWaiting = DispatchSemaphore(value: 0)
+    
+    var actuallyOrange: [CRMenuItem] = []
+    var orangeFlagged = false
+    var orangeWaiting = DispatchSemaphore(value: 0)
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -204,6 +209,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             yellowLineTitle.append(NSAttributedString(string: " "))
             yellowLineTitle.append(skokieSwiftString)
             lineItem.attributedTitle = yellowLineTitle
+        } else if line == .orange {
+            self.brownFlagged = false
+        } else if line == .brown {
+            self.orangeFlagged = false
         }
         lineItem.trainLine = line
         
@@ -237,9 +246,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         if line == .blue && destination == "UIC-Halsted" {
                             line2 = .blueAlternate
                         }
-                        if line == .orange && destination == "Kimball" {
-                            line2 = .brown
-                        }
+                    
                         let run = train["run"] ?? "Unknown Run"
                         
                         var trainItem: CRMenuItem!
@@ -247,9 +254,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             
                             trainItem = CRMenuItem(title: "\(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
                             trainItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                            
-                            if destination == "Downtown, Kimball" || (line2 == .brown && ((Int(run) ?? 000) / 100) % 10 == 7) {
-                                trainItem.isBrownge = true
+                            //print(line2)
+                            if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
+                                //print("hello brown")
+                                trainItem.isBrownge = .brown
+                            }
+                            if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
+                                //print("hello orange")
+                                trainItem.isBrownge = .orange
                             }
                             
                             trainItem.trainLine = line2
@@ -264,9 +276,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         stationMenu.addItem(NSMenuItem.progressWheel())
                         trainItem.submenu = stationMenu
                         
-                        trainMenu.addItem(trainItem)
+                        //print(destination)
+                        if trainItem.isBrownge == .brown {
+                            self.brownFlagged = true
+                            //print("putting in brownge")
+                            self.actuallyBrown.append(trainItem)
+                            line2 = .brown
+                        } else if trainItem.isBrownge == .orange {
+                            self.orangeFlagged = true
+                            //print("putting in brownge")
+                            self.actuallyOrange.append(trainItem)
+                            line2 = .orange
+                        } else {
+                            //print("handling normal")
+                            trainMenu.addItem(trainItem)
+                        }
                         
-                        #warning("Station prediction for train starts here")
                         let instance = ChicagoTransitInterface()
                         DispatchQueue.global().async {
                             let run = train["run"] ?? "000"
@@ -283,8 +308,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                     title.trainLine = line2
                                     
-                                    if destination == "Downtown, Kimball" || (line2 == .brown && ((Int(run) ?? 000) / 100) % 10 == 7) {
-                                        trainItem.isBrownge = true
+                                    if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
+                                        //print("good morning")
+                                        self.brownFlagged = true
+                                        trainItem.isBrownge = .brown
+                                    }
+                                    if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
+                                        //print("gm")
+                                        self.orangeFlagged = true
+                                        trainItem.isBrownge = .orange
                                     }
                                     
                                     title.trainRun = train["run"] ?? "Unknown Run"
@@ -297,8 +329,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     }
                                 } else {
                                     title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: nil)
-                                    if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7  {
-                                        title.isBrownge = true
+                                    if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
+                                        //print("gayming")
+                                        self.brownFlagged = true
+                                        title.isBrownge = .brown
+                                    }
+                                    if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
+                                        //print("waow")
+                                        self.orangeFlagged = true
+                                        trainItem.isBrownge = .orange
                                     }
                                 }
                                 
@@ -306,8 +345,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 stationMenu.addItem(NSMenuItem.separator())
                                 
                                 if niceStats.count == 0 {
-                                    if train["destNm"] == "Error" {
-                                        let errorString = train["lat"] ?? "An unknown error occurred"
+                                    if train["destinationStation"] == "Error" {
+                                        let errorString = train["latitude"] ?? "An unknown error occurred"
                                         let errorItem = NSMenuItem(title: errorString, action: nil)
                                         stationMenu.addItem(errorItem)
                                     } else {
@@ -335,8 +374,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             stationItem.trainDesiredStopID = station["nextStopID"]
                                             stationItem.timeLastUpdated = timeLastUpdated
                                             
-                                            if destination == "Downtown, Kimball" || ((Int(run) ?? 000) / 100) % 10 == 7  {
-                                                stationItem.isBrownge = true
+                                            if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
+                                                //print("WHY")
+                                                stationItem.isBrownge = .brown
+                                            }
+                                            if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
+                                                //print("pain")
+                                                self.orangeFlagged = true
+                                                trainItem.isBrownge = .orange
                                             }
                                             
                                         } else {
@@ -349,9 +394,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         let moreInfoMenu = NSMenu()
                                         let alertLink = URL(string: "https://www.transitchicago.com/alerts/")
                                         
-                                        let delay = station["isDelayed"] ?? "0"
-                                        let brokenDown = station["isBreakingDown"] ?? "0"
-                                        let scheduledDeparture = station["isScheduled"] ?? "0"
+                                        let delay = station["isDelayed"] ?? "7"
+                                        let brokenDown = station["isBreakingDown"] ?? "7"
+                                        let scheduledDeparture = station["isScheduled"] ?? "7"
+                                        /*print(delay)
+                                        print(brokenDown)
+                                        print(scheduledDeparture)*/
                                         
                                         if delay == "1" {
                                             let delayItem = CRMenuItem(title: "Delayed", action: #selector(self.openLink(_:)))
@@ -388,30 +436,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         }
                                     }
                                 }
-                                
-                                #warning("this probably doesnt work, time window for brownge in NL is approximately 12:52 to 15:48")
-                                if line == .orange {
-                                    for i in 0..<trainMenu.items.count - 1 {
-                                        if let item = trainMenu.items[i] as? CRMenuItem {
-                                            if item.title.suffix(7) == "Kimball" {
-                                                self.actuallyBrown.append(item)
-                                                trainMenu.removeItem(at: i)
-                                            }
-                                        }
-                                    }
-                                    self.brown = true
+                                if line == .orange {//self.brownFlagged {
+                                    self.brownWaiting.signal()
                                 }
-                                
-                                if line == .brown {
-                                    DispatchQueue.global().async {
-                                        while !self.brown { }
-                                        for item in self.actuallyBrown {
-                                            DispatchQueue.main.sync {
-                                                trainMenu.addItem(item)
-                                            }
-                                        }
-                                    }
+                                if line == .brown {//self.orangeFlagged {
+                                    self.orangeWaiting.signal()
                                 }
+                            }
+                        }
+                    }
+                    if line == .brown {
+                        DispatchQueue.global().async {
+                            self.brownWaiting.wait()
+                            for item in self.actuallyBrown {
+                                item.trainLine = .brown
+                                trainMenu.addItem(item)
+                            }
+                        }
+                    }
+                    if line == .orange {
+                        DispatchQueue.global().async {
+                            self.orangeWaiting.wait()
+                            for item in self.actuallyOrange {
+                                item.trainLine = .orange
+                                trainMenu.addItem(item)
                             }
                         }
                     }
@@ -559,7 +607,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         sslMenu.removeAllItems()
         
         DispatchQueue.global().async {
-            let stops = SSLTracker().getStops()
             let vehicles = SSLTracker().getVehiclesAndArrivals()
             
             DispatchQueue.main.sync {
@@ -617,69 +664,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.sslMenu.addItem(NSMenuItem.separator())
                 self.sslMenu.addItem(NSMenuItem(title: "Refresh", action: #selector(self.refreshSSLInfo), keyEquivalent: "r"))
             }
-        }
-    }
-    
-    @MainActor @objc func refreshAmtrakInfo() {
-        Amtraker().storePolylines()
-        amtrakMenu.removeAllItems()
-        
-        DispatchQueue.global().async {
-            let rawTrains = Amtraker().getAllTrains()
-            let routes = Amtraker.sortTrains(trains: rawTrains)
-            
-            DispatchQueue.main.sync {
-                for key in routes.keys.sorted() {
-                    let trains = routes[key] ?? []
-                    let trainMenu = NSMenu()
-                    
-                    let routeItem = AMMenuItem(title: key, action: #selector(self.nop))
-                    
-                    for train in trains {
-                        let trainItem = AMMenuItem(title: "\(train.trainNumber) to \(train.destinationStationName)", action: #selector(self.openAmtrakMapWindow(_:)))
-                        trainItem.train = train
-                        trainMenu.addItem(trainItem)
-                        
-                        let stopMenu = NSMenu()
-                        let trainTitleItem = AMMenuItem(title: "\(train.trainName) \(train.trainNumber) to \(train.destinationStationName)", action: #selector(self.openAmtrakMapWindow(_:)))
-                        trainTitleItem.train = train
-                        stopMenu.addItem(trainTitleItem)
-                        stopMenu.addItem(NSMenuItem.separator())
-                        
-                        if train.stops.count == 0 {
-                            stopMenu.addItem(NSMenuItem(title: "No arrivals available", action: nil))
-                        } else {
-                            for stop in train.stops {
-                                var stopItem: AMMenuItem!
-                                if stop.scheduledArrival == stop.scheduledDeparture || stop.actualArrival == stop.actualDeparture {
-                                    if stop.scheduledArrival == stop.actualArrival {
-                                        stopItem = AMMenuItem(title: "\(stop.name) at \(stop.actualArrival)", action: #selector(self.openAmtrakMapWindow(_:)))
-                                    } else {
-                                        stopItem = AMMenuItem(title: "\(stop.name) at \(stop.actualArrival) (scheduled at \(stop.scheduledArrival))", action: #selector(self.openAmtrakMapWindow(_:)))
-                                    }
-                                } else {
-                                    var arrival = "\(stop.name) at \(stop.actualArrival)"
-                                    if stop.scheduledArrival != stop.actualArrival {
-                                        arrival = "\(stop.name) at \(stop.actualArrival) (scheduled at \(stop.scheduledArrival))"
-                                    }
-                                    var departure = "\(stop.name) at \(stop.actualDeparture)"
-                                    if stop.scheduledDeparture != stop.actualDeparture {
-                                        departure = "\(stop.name) at \(stop.actualDeparture) (scheduled at \(stop.scheduledDeparture))"
-                                    }
-                                    stopItem = AMMenuItem(title: "Arrives \(arrival), departs \(departure)", action: #selector(self.openAmtrakMapWindow(_:)))
-                                }
-                                stopMenu.addItem(stopItem)
-                            }
-                        }
-                        
-                        trainItem.submenu = stopMenu
-                    }
-                    
-                    routeItem.submenu = trainMenu
-                    self.amtrakMenu.addItem(routeItem)
-                }
-            }
-            
         }
     }
     

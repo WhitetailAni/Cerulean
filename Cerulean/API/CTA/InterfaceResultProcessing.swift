@@ -95,13 +95,22 @@ class InterfaceResultProcessing {
     }
     
     ///Gets the current location and time for a given CTA run
-    class func getLocationForRun(info: [String: Any]) -> (CLLocationCoordinate2D, String) {
-        guard let ctatt = info["ctatt"] as? [String: Any], let position = ctatt["position"] as? [String: Any], let timeString = ctatt["tmst"] as? String else {
+    class func getLocationForRun(info: [String: Any], gtfs: Bool = false) -> (CLLocationCoordinate2D, String) {
+        guard let ctatt = info["ctatt"] as? [String: Any], let position = ctatt["position"] as? [String: Any], var timeString = ctatt["tmst"] as? String else {
             return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
         }
         
+        if gtfs {
+            guard let eta = ctatt["eta"]  as? [[String: Any]] else {
+                return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
+            }
+            timeString = eta[0]["destNm"] as? String ?? "Unknown"
+        } else {
+            timeString = CRTime.ctaAPITimeToReadableTime(string: timeString)
+        }
+        
         if let latitudeString = position["lat"] as? String, let longitudeString = position["lon"] as? String, let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
-            return (CLLocationCoordinate2D(latitude: latitude, longitude: longitude), CRTime.ctaAPITimeToReadableTime(string: timeString))
+            return (CLLocationCoordinate2D(latitude: latitude, longitude: longitude), timeString)
         }
         return (CLLocationCoordinate2D(latitude: -2, longitude: -3), "")
     }

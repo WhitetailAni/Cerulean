@@ -11,8 +11,8 @@ import CoreLocation
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     let semaphore = DispatchSemaphore(value: 0)
-    private let trainTrackerAPIKey = "e7a27d1443d8412b957e3c4ff7a655c2"
-    private let chicagoDataPortalAppToken = "ZBIgPAfk5Mt5twmWHYWw1yDVd"
+    private let trainTrackerAPIKey = ""
+    private let chicagoDataPortalAppToken = ""
     
     var polylines: [Int: [CRPoint]] = [:]
     public static var polyline = ChicagoTransitInterface(polyline: true)

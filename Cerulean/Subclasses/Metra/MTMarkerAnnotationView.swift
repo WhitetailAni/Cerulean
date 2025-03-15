@@ -29,10 +29,12 @@ class MTMarkerAnnotationView: MKMarkerAnnotationView {
             let annotation: MTPointAnnotation = annotation as! MTPointAnnotation
             if let service = annotation.mark?.service {
                 if let train = annotation.mark?.trainNumber {
-                    markerTintColor = service.color(branch: service.getBranch(trainString: train))
                     glyphText = train
+                    glyphTintColor = service.textColor(branch: service.getBranch(trainString: train))
+                    markerTintColor = service.color(branch: service.getBranch(trainString: train))
                 } else if let stationName = annotation.mark?.stationName {
                     glyphImage = .metra
+                    //glyphTintColor = service.textColor(branch: MTStation.getBranch(name: stationName))
                     markerTintColor = service.color(branch: MTStation.getBranch(name: stationName))
                 }
                 displayPriority = .required

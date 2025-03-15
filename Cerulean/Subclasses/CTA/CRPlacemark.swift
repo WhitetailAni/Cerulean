@@ -12,7 +12,7 @@ class CRPlacemark: MKPlacemark, @unchecked Sendable {
     var trainRun: String?
     var stationName: String?
     
-    var isBrownge: Bool?
+    var isBrownge: CRLine?
     
     func placemarkWithNewLocation(_ location: CLLocationCoordinate2D) -> CRPlacemark {
         let mark = CRPlacemark(coordinate: location)

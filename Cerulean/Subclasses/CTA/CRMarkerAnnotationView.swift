@@ -36,6 +36,9 @@ class CRMarkerAnnotationView: MKMarkerAnnotationView {
                     } else {
                         markerTintColor = line.color()
                         glyphText = run
+                        if line == .yellow {
+                            glyphTintColor = .black
+                        }
                     }
                 } else if let stationName = annotation.mark?.stationName {
                     glyphImage = .ctaTrain
@@ -47,6 +50,9 @@ class CRMarkerAnnotationView: MKMarkerAnnotationView {
                         markerTintColor = .white
                     } else {
                         markerTintColor = line.color()
+                        if line == .yellow {
+                            glyphTintColor = .black
+                        }
                     }
                 }
                 displayPriority = .required
