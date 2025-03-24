@@ -34,7 +34,7 @@ class MTMarkerAnnotationView: MKMarkerAnnotationView {
                     markerTintColor = service.color(branch: service.getBranch(trainString: train))
                 } else if let stationName = annotation.mark?.stationName {
                     glyphImage = .metra
-                    //glyphTintColor = service.textColor(branch: MTStation.getBranch(name: stationName))
+                    glyphTintColor = service.textColor(branch: MTStation.getBranch(name: stationName))
                     markerTintColor = service.color(branch: MTStation.getBranch(name: stationName))
                 }
                 displayPriority = .required

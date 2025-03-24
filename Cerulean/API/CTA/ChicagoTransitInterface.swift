@@ -181,12 +181,7 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         for i in 0..<rows.count {
             let columns = rows[i].split(separator: ",")
             if columns.count > 0 {
-                let id = Int(columns[0])!
-                if id > 308000000 {
-                    if ![308400053, 308500129, 308500007, 308500038, 308500029, 308500008, 308500012, 308500001, 308400036, 308500022, 308500039, 308500040].contains(id) {
-                        pointArray.append(CRPoint(routeId: Int(columns[0])!, coordinate: CLLocationCoordinate2D(latitude: Double(columns[1])!, longitude: Double(columns[2])!), sequencePosition: Int(columns[3])!))
-                    }
-                }
+                pointArray.append(CRPoint(routeId: Int(columns[0])!, coordinate: CLLocationCoordinate2D(latitude: Double(columns[1])!, longitude: Double(columns[2])!), sequencePosition: Int(columns[3])!))
             }
         }
         let sorted = Dictionary(grouping: pointArray) { $0.routeId }
@@ -208,6 +203,24 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         overlay.line = line
         
         return overlay
+    }
+    
+    func getRedAlerts() -> [String: Any] {
+        let baseURL = "http://www.transitchicago.com/api/1.0/alerts.aspx"
+        var returnedData: [String: Any] = [:]
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "routeid", value: "red"),
+            URLQueryItem(name: "outputType", value: "JSON")
+        ]
+        
+        contactDowntown(components: components) { result in
+            returnedData = result
+            self.semaphore.signal()
+        }
+        semaphore.wait()
+        return returnedData
     }
     
     private func contactDowntown(components: URLComponents?, completion: @escaping ([String: Any]) -> Void) {

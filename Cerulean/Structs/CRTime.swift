@@ -53,6 +53,15 @@ struct CRTime: Comparable {
         return outputFormatter.string(from: time)
     }
     
+    static func ctaAPITimeToDate(string: String) -> Date {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        inputFormatter.timeZone = TimeZone(identifier: "America/Chicago")
+        let time: Date = inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
+        
+        return time
+    }
+    
     static func metraAPITimeToReadableTime(string: String) -> String {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"

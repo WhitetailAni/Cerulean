@@ -10,6 +10,7 @@ import AppKit
 
 enum CRLine {
     case red
+    case redAlternate
     case blue
     case blueAlternate
     case brown
@@ -46,6 +47,8 @@ enum CRLine {
             return CRLine.orange
         case 308400007, 308400008:
             return CRLine.red
+        case 308600001:
+            return CRLine.redAlternate
         case 308500022: //part of brownge
             return CRLine.brown
         case 308400129, 308400128, 308500084, 308500128:
@@ -74,6 +77,8 @@ enum CRLine {
         switch line2 {
         case .red:
             return 308400007/*, 308400008].randomElement()!*/
+        case .redAlternate:
+            return 308600001
         case .blue:
             if run > 300 {
                 return 308400129/*, 308400128, 308500084, 308500128].randomElement()!*/
@@ -105,7 +110,7 @@ enum CRLine {
     
     func textualRepresentation() -> String {
         switch self {
-        case .red:
+        case .red, .redAlternate:
             return "Red"
         case .blue, .blueAlternate:
             return "Blue"
@@ -126,7 +131,7 @@ enum CRLine {
     
     func apiRepresentation() -> String {
         switch self {
-        case .red:
+        case .red, .redAlternate:
             return "Red"
         case .blue, .blueAlternate:
             return "Blue"
@@ -147,7 +152,7 @@ enum CRLine {
     
     func color() -> NSColor {
         switch self {
-        case .red:
+        case .red, .redAlternate:
             return NSColor(r: 227, g: 25, b: 55)
         case .blue, .blueAlternate:
             return NSColor(r: 0, g: 157, b: 220)
@@ -168,7 +173,7 @@ enum CRLine {
     
     func link() -> URL {
         switch self {
-        case .red:
+        case .red, .redAlternate:
             return URL(string: "https://www.transitchicago.com/redline/")!
         case .blue, .blueAlternate:
             return URL(string: "https://www.transitchicago.com/blueline/")!

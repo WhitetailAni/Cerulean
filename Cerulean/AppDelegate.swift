@@ -38,6 +38,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var orangeFlagged = false
     var orangeWaiting = DispatchSemaphore(value: 0)
     
+    var redSouthUpTop = false
+    var redNorthUpTop = false
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
@@ -50,6 +53,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             image.isTemplate = true
             button.image = image
             button.imagePosition = .imageLeft
+        }
+        redSouthUpTop = false
+        redNorthUpTop = false
+        
+        print(MTStop.purifyApiName(name: "IRVINGPK"))
+        
+        let alerts = ChicagoTransitInterface().getRedAlerts()
+        let alertsTwo = alerts["CTAAlerts"] as? [String: Any] ?? [:]
+        let alertsThree = alertsTwo["Alert"] as? [[String: Any]] ?? []
+        for alert in alertsThree {
+            let start = CRTime.ctaAPITimeToDate(string: alert["EventStart"] as? String ?? "")
+            let end = CRTime.ctaAPITimeToDate(string: alert["EventEnd"] as? String ?? "")
+            let isHappening = Date.now >= start && Date.now <= end
+            
+            if isHappening {
+                let desc = alert["ShortDescription"] as? String ?? ""
+                if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && desc.contains("elevated") {
+                    redSouthUpTop = true
+                }
+                if (desc.contains("Howard") || desc.contains("north")) && desc.contains("elevated") {
+                    redNorthUpTop = true
+                }
+                
+                if desc.contains("Red") && desc.contains("both") && desc.contains("elevated") {
+                    redSouthUpTop = true
+                    redNorthUpTop = true
+                }
+            }
         }
         
         menu = NSMenu()
@@ -80,15 +111,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         sslItem.submenu = sslMenu
         
         menu.addItem(sslItem)
-        
-        /*let amtrakItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
-        amtrakItem.linkToOpen = URL(string: "https://amtrak.com/")!
-        let amtrakTitle = prependImageToString(imageName: "amtrak", title: "Amtrak", ssl: false)
-        amtrakItem.attributedTitle = amtrakTitle
-        amtrakMenu = NSMenu()
-        amtrakItem.submenu = amtrakMenu
-        
-        menu.addItem(amtrakItem)*/
         
         refreshInfo()
         menu.addItem(NSMenuItem.separator())
@@ -211,8 +233,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             lineItem.attributedTitle = yellowLineTitle
         } else if line == .orange {
             self.brownFlagged = false
+            self.actuallyBrown = []
         } else if line == .brown {
             self.orangeFlagged = false
+            self.actuallyOrange = []
         }
         lineItem.trainLine = line
         
@@ -245,6 +269,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         }
                         if line == .blue && destination == "UIC-Halsted" {
                             line2 = .blueAlternate
+                        }
+                        if (destination == "95th/Dan Ryan" || destination == "130th") && self.redSouthUpTop {
+                            line2 = .redAlternate
+                        }
+                        if destination == "Howard" && self.redNorthUpTop {
+                            line2 = .redAlternate
                         }
                     
                         let run = train["run"] ?? "Unknown Run"
@@ -844,52 +874,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
-            }
-        }
-        mapMutex.unlock()
-    }
-    
-    @objc func openAmtrakMapWindow(_ sender: AMMenuItem) {
-        mapMutex.lock()
-        if let screenSize = NSScreen.main?.frame.size {
-            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-            let index = mapWindows.count
-            mapWindows.append(window)
-            
-            
-            if let train = sender.train {
-                let placemark = AMPlacemark(coordinate: train.location)
-                placemark.train = train
-                
-                if let stop = sender.stop {
-                    /*placemark
-                    
-                    let stopMark = SSLPlacemark(coordinate: stop.location)
-                    stopMark.stationName = stop.name
-                    
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.locale = Locale.current
-                    
-                    dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
-                    
-                    mapWindows[index].title = "Cerulean - Amtrak train \(train.trainNumber) to \(train.destinationStationName)"
-                    
-                    self.mapWindows[index].contentView = SSLMapView(train: placemark, station: stopMark, timeLastUpdated: dateFormatter.string(from: Date()))
-                    self.mapWindows[index].center()
-                    self.mapWindows[index].setIsVisible(true)
-                    self.mapWindows[index].orderFrontRegardless()
-                    self.mapWindows[index].makeKey()
-                    NSApp.activate(ignoringOtherApps: true)*/
-                } else {
-                    mapWindows[index].title = "Cerulean - Amtrak train \(train.trainNumber) to \(train.destinationStationName)"
-                    
-                    self.mapWindows[index].contentView = AMMapView(train: placemark, timeLastUpdated: train.timeLastUpdated)
-                    self.mapWindows[index].center()
-                    self.mapWindows[index].setIsVisible(true)
-                    self.mapWindows[index].orderFrontRegardless()
-                    self.mapWindows[index].makeKey()
-                    NSApp.activate(ignoringOtherApps: true)
-                }
             }
         }
         mapMutex.unlock()
