@@ -191,4 +191,15 @@ enum CRLine {
             return URL(string: "https://www.transitchicago.com/yellowline/")!
         }
     }
+    
+    func glyph() -> NSImage? {
+        switch self {
+        case .red, .redAlternate, .blue, .blueAlternate:
+            return NSImage(named: "nightOwl")
+        case .yellow:
+            return NSImage(named: "skokieSwift")
+        default:
+            return nil
+        }
+    }
 }

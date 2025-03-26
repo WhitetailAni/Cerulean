@@ -211,27 +211,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor private func populateCTAMenuItem(line: CRLine) -> CRMenuItem {
         let lineItem = CRMenuItem(title: line.textualRepresentation(), action: #selector(openLink(_:)))
         lineItem.linkToOpen = line.link()
-        if line == .yellow {
-            let yellowLineTitle = NSMutableAttributedString(string: line.textualRepresentation())
+        if let baseImage = line.glyph() {
+            let title = NSMutableAttributedString(string: line.textualRepresentation())
             
             let height = NSFont.menuFont(ofSize: 0).boundingRectForFont.height - 5
-            let skokieSwiftBaseImage = NSImage(named: "skokieSwift")!
-            let aspectRatio = skokieSwiftBaseImage.size.width / skokieSwiftBaseImage.size.height
+            let aspectRatio = baseImage.size.width / baseImage.size.height
             let newSize = NSSize(width: height * aspectRatio, height: height)
-                
-            let skokieSwiftImage = NSImage(size: newSize)
-            skokieSwiftImage.lockFocus()
-            skokieSwiftBaseImage.draw(in: NSRect(origin: .zero, size: newSize))
-            skokieSwiftImage.unlockFocus()
             
-            let skokieSwift = NSTextAttachment()
-            skokieSwift.image = skokieSwiftImage
+            let image = NSImage(size: newSize)
+            image.lockFocus()
+            baseImage.draw(in: NSRect(origin: .zero, size: newSize))
+            image.unlockFocus()
             
-            let skokieSwiftString = NSAttributedString(attachment: skokieSwift)
-            yellowLineTitle.append(NSAttributedString(string: " "))
-            yellowLineTitle.append(skokieSwiftString)
-            lineItem.attributedTitle = yellowLineTitle
-        } else if line == .orange {
+            let glyphText = NSTextAttachment()
+            glyphText.image = image
+            
+            let glyphString = NSAttributedString(attachment: glyphText)
+            title.append(NSAttributedString(string: " "))
+            title.append(glyphString)
+            lineItem.attributedTitle = title
+        }
+        
+        if line == .orange {
             self.brownFlagged = false
             self.actuallyBrown = []
         } else if line == .brown {

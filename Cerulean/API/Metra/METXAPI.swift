@@ -106,6 +106,8 @@ class METXAPI: NSObject {
     
     func getStop(service: MTService, apiName: String) -> MTStation {
         let stations = storedStations[service.apiRepresentation()] ?? []
+        print(apiName)
+        print(stations)
         for station in stations {
             if station.apiName == apiName {
                 return station
@@ -191,24 +193,24 @@ class METXAPI: NSObject {
                 case .hc:
                     var union2 = union!
                     union2.supportedService = .hc
-                    union2.apiName = "HC"
+                    union2.apiName = "CUS"
                     var joliet2 = joliet!
-                    joliet2.apiName = "HC"
+                    joliet2.apiName = "JOLIET"
                     joliet2.supportedService = .hc
                     stationArray.append(joliet2)
                     stationArray.append(union2)
                 case .md_w:
                     var union2 = union!
-                    union2.apiName = "MD-W"
+                    union2.apiName = "CUS"
                     union2.supportedService = .md_w
                     var western2 = western!
-                    western2.apiName = "MD-W"
+                    western2.apiName = "WESTERNAVE"
                     western2.supportedService = .md_w
                     stationArray.append(western2)
                     stationArray.append(union2)
                 case .up_nw:
                     var ogilvie2 = ogilvie!
-                    ogilvie2.apiName = "UP-NW"
+                    ogilvie2.apiName = "OTC"
                     ogilvie2.supportedService = .up_nw
                     var clybourn2 = clybourn!
                     clybourn2.apiName = "UP-NW"
@@ -217,20 +219,20 @@ class METXAPI: NSObject {
                     stationArray.append(ogilvie2)
                 case .bnsf:
                     var union2 = union!
-                    union2.apiName = "BNSF"
+                    union2.apiName = "CUS"
                     union2.supportedService = .bnsf
                     stationArray.append(union2)
                 case .sws:
                     var union2 = union!
-                    union2.apiName = "SWS"
+                    union2.apiName = "CUS"
                     union2.supportedService = .sws
                     stationArray.append(union2)
                 case .ncs:
                     var union2 = union!
-                    union2.apiName = "NCS"
+                    union2.apiName = "CUS"
                     union2.supportedService = .ncs
                     var western2 = western!
-                    western2.apiName = "NCS"
+                    western2.apiName = "WESTERNAVE"
                     western2.supportedService = .ncs
                     stationArray.append(western2)
                     stationArray.append(union2)
