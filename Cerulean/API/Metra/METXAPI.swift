@@ -106,8 +106,6 @@ class METXAPI: NSObject {
     
     func getStop(service: MTService, apiName: String) -> MTStation {
         let stations = storedStations[service.apiRepresentation()] ?? []
-        print(apiName)
-        print(stations)
         for station in stations {
             if station.apiName == apiName {
                 return station
@@ -361,14 +359,28 @@ class METXAPI: NSObject {
         semaphore.wait()
     }
     
-    func getPolylineForKey(key: String) -> [MTPolyline] {
+    func getPolylineForKey(key: String, bundle: (String, MTService)) -> [MTPolyline] {
         var coordinateArray: [CLLocationCoordinate2D] = []
         
-        for point in storedPolylines[key] ?? [] {
-            coordinateArray.append(point.coordinate)
+        let polyline = storedPolylines[key] ?? []
+        let limit = getPolylineLimit(trainNumber: bundle.0, service: bundle.1, naturalCap: polyline.count)
+        
+        for i in 0..<limit {//point in storedPolylines[key] ?? [] {
+            coordinateArray.append(polyline[i].coordinate)
         }
         
         return [MTPolyline(coordinates: coordinateArray, count: coordinateArray.count)]
+    }
+    
+    func getPolylineLimit(trainNumber: String, service: MTService, naturalCap: Int) -> Int {
+        let dest = service.getDestination(trainString: trainNumber)
+        
+        guard let filePath = Bundle.main.path(forResource: "limits", ofType: "plist") else {
+            return naturalCap
+        }
+        
+        let limitDict = NSDictionary(contentsOfFile: filePath) as? [String: Int] ?? [:]
+        return limitDict[dest] ?? naturalCap
     }
     
     func getAllPolylines() -> [MTPolyline] {
@@ -433,7 +445,7 @@ class METXAPI: NSObject {
     func readGTFS(endpoint: String, completion: @escaping ([[String: Any]]) -> Void) {
         MetworkManager.shared.contactMetra(from: "https://gtfsapi.metrarail.com/gtfs/\(endpoint)") { (data, error) in
             if let error = error {
-                print("Error: \(error.localizedDescription)")
+                print("error \(error.localizedDescription)")
                 return
             }
             

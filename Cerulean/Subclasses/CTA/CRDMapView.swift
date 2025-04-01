@@ -31,7 +31,6 @@ class CRDMapView: MKMapView {
         self.pointOfInterestFilter = MKPointOfInterestFilter(including: [.airport, .publicTransport, .park, .hospital, .library, .museum, .nationalPark, .restroom, .postOffice, .beach])
         
         self.delegate = self
-        print("Delegate set to: \(String(describing: self.delegate))")
         self.register(CRDMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         
         timeLabel = NSTextField(labelWithString: "Updated at \(timeLastUpdated)")
@@ -310,10 +309,7 @@ extension CRDMapView: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        print("Requesting view for annotation: \(annotation)")
-        
         guard let pointAnnotation = annotation as? CRDPointAnnotation else {
-            print("Not a CRDPointAnnotation")
             return nil
         }
         
@@ -326,16 +322,7 @@ extension CRDMapView: MKMapViewDelegate {
             view = CRDMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
         }
         
-        // Force configure the view here
         view.configure(for: pointAnnotation)
         return view
-    }
-    
-    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
-        print("Map finished loading")
-    }
-
-    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
-        print("Added \(views.count) annotation views")
     }
 }

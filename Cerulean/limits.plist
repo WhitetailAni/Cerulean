@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>La Fox</key>
+	<integer>274</integer>
+	<key>Geneva</key>
+	<integer>267</integer>
+	<key>Blue Island/Vermont Street</key>
+	<integer>125</integer>
+	<key>Tinley Park</key>
+	<integer>152</integer>
+	<key>115th Street/Kensington</key>
+	<integer>59</integer>
+	<key>Homewood</key>
+	<integer>92</integer>
+	<key>Elgin</key>
+	<integer>329</integer>
+	<key>National Street</key>
+	<integer>318</integer>
+	<key>Franklin Park</key>
+	<integer>143</integer>
+	<key>Lake Forest</key>
+	<integer>148</integer>
+	<key>Deerfield</key>
+	<integer>145</integer>
+	<key>Libertyville</key>
+	<integer>193</integer>
+	<key>Grayslake</key>
+	<integer>222</integer>
+	<key>Crystal Lake</key>
+	<integer>225</integer>
+	<key>Des Plaines</key>
+	<integer>115</integer>
+	<key>Barrington</key>
+	<integer>172</integer>
+	<key>Palatine</key>
+	<integer>161</integer>
+	<key>Brookfield</key>
+	<integer>82</integer>
+	<key>Fairview Avenue</key>
+	<integer>119</integer>
+	<key>Naperville</key>
+	<integer>157</integer>
+	<key>Highland Park</key>
+	<integer>148</integer>
+	<key>Ravinia Park</key>
+	<integer>144</integer>
+	<key>Winnetka</key>
+	<integer>129</integer>
+	<key>Waukegan</key>
+	<integer>272</integer>
+	<key>179th Street/Orland Park</key>
+	<integer>181</integer>
+	<key>Antioch</key>
+	<integer>172</integer>
+</dict>
+</plist>

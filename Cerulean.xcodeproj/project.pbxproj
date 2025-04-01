@@ -24,10 +24,10 @@
 		422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */; };
 		422124DA2C502D920062695A /* CeruleanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124D92C502D900062695A /* CeruleanApp.swift */; };
 		424B28F32C509E81002E3E9B /* CRMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424B28F22C509E79002E3E9B /* CRMapView.swift */; };
+		42549F722D9CAA46005C8B27 /* limits.plist in Resources */ = {isa = PBXBuildFile; fileRef = 42549F712D9CAA46005C8B27 /* limits.plist */; };
 		425CCE462D8A70520002845B /* stops.plist in Resources */ = {isa = PBXBuildFile; fileRef = 425CCE452D8A70520002845B /* stops.plist */; };
 		429FCAF02D9141C800240DDA /* SouthShoreTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; };
-		429FCAF12D9141C800240DDA /* SouthShoreTracker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		42A41DF52C5B369E004ABBC1 /* CRTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A41DF42C5B369C004ABBC1 /* CRTextField.swift */; };
+		429FCAF12D9141C800240DDA /* SouthShoreTracker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */; };
 		42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FD2CFD823700A060A2 /* CRPoint.swift */; };
 		42D99A002CFD82D700A060A2 /* cta.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42D999FF2CFD82D700A060A2 /* cta.csv */; };
@@ -107,8 +107,8 @@
 		422124D92C502D900062695A /* CeruleanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeruleanApp.swift; sourceTree = "<group>"; };
 		422124DB2C502E6D0062695A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		424B28F22C509E79002E3E9B /* CRMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMapView.swift; sourceTree = "<group>"; };
+		42549F712D9CAA46005C8B27 /* limits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = limits.plist; sourceTree = "<group>"; };
 		425CCE452D8A70520002845B /* stops.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = stops.plist; sourceTree = "<group>"; };
-		42A41DF42C5B369C004ABBC1 /* CRTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRTextField.swift; sourceTree = "<group>"; };
 		42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = METXAPI.swift; sourceTree = "<group>"; };
 		42D999FD2CFD823700A060A2 /* CRPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPoint.swift; sourceTree = "<group>"; };
 		42D999FF2CFD82D700A060A2 /* cta.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = cta.csv; sourceTree = "<group>"; };
@@ -191,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				42D999FF2CFD82D700A060A2 /* cta.csv */,
+				42549F712D9CAA46005C8B27 /* limits.plist */,
 				420013042C54B1EC007ACC67 /* Structs */,
 				420012FE2C5367A5007ACC67 /* UserInfo.swift */,
 				420013002C536B93007ACC67 /* AboutWindowDelegate.swift */,
@@ -258,7 +259,6 @@
 				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
 				4200130B2C54B479007ACC67 /* CRPointAnnotation.swift */,
 				42D99A012CFD8B4400A060A2 /* CRPolyline.swift */,
-				42A41DF42C5B369C004ABBC1 /* CRTextField.swift */,
 				42F3F7D32D0CA1DE00B9B9DB /* CRDMapView.swift */,
 				42F0BC1B2D28CA6300F834DF /* CRDPointAnnotation.swift */,
 				42F3F7D52D0CAD7900B9B9DB /* CRDMarkerAnnotationView.swift */,
@@ -392,6 +392,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42549F722D9CAA46005C8B27 /* limits.plist in Resources */,
 				42D99A002CFD82D700A060A2 /* cta.csv in Resources */,
 				425CCE462D8A70520002845B /* stops.plist in Resources */,
 				422124C12C5026DA0062695A /* Assets.xcassets in Resources */,
@@ -445,7 +446,6 @@
 				42D99A232CFFF78400A060A2 /* MTStation.swift in Sources */,
 				42D99A0F2CFE9E4000A060A2 /* MTPlacemark.swift in Sources */,
 				420012FD2C535F8C007ACC67 /* AboutView.swift in Sources */,
-				42A41DF52C5B369E004ABBC1 /* CRTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

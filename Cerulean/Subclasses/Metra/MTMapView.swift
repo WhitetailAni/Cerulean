@@ -123,7 +123,7 @@ class MTMapView: MKMapView {
     
     private func applyLineOverlay() {
         DispatchQueue.global().async {
-            let overlays = METXAPI.polyline.getPolylineForKey(key: (self.train.service?.getPolylineKey(number: self.train.trainNumber!))!)
+            let overlays = METXAPI.polyline.getPolylineForKey(key: (self.train.service?.getPolylineKey(number: self.train.trainNumber!))!, bundle: (self.train.trainNumber!, self.train.service!))
                 
             DispatchQueue.main.sync {
                 self.addOverlays(overlays)

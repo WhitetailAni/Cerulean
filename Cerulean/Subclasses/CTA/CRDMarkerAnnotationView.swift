@@ -18,7 +18,6 @@ class CRDMarkerAnnotationView: MKMarkerAnnotationView {
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         self.canShowCallout = true
-        print("Created new CRDMarkerAnnotationView")
         configure(for: annotation)
     }
 

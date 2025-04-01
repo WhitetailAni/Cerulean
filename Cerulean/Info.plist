@@ -5,7 +5,7 @@
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>CRDebug</key>
-	<true/>
+	<false/>
 	<key>CRRefreshInterval</key>
 	<integer>360</integer>
 	<key>NSAppTransportSecurity</key>

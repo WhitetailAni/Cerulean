@@ -57,8 +57,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         redSouthUpTop = false
         redNorthUpTop = false
         
-        print(MTStop.purifyApiName(name: "IRVINGPK"))
-        
         let alerts = ChicagoTransitInterface().getRedAlerts()
         let alertsTwo = alerts["CTAAlerts"] as? [String: Any] ?? [:]
         let alertsThree = alertsTwo["Alert"] as? [[String: Any]] ?? []
@@ -285,13 +283,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             
                             trainItem = CRMenuItem(title: "\(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
                             trainItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                            //print(line2)
                             if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
-                                //print("hello brown")
                                 trainItem.isBrownge = .brown
                             }
                             if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
-                                //print("hello orange")
                                 trainItem.isBrownge = .orange
                             }
                             
@@ -307,19 +302,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         stationMenu.addItem(NSMenuItem.progressWheel())
                         trainItem.submenu = stationMenu
                         
-                        //print(destination)
                         if trainItem.isBrownge == .brown {
                             self.brownFlagged = true
-                            //print("putting in brownge")
                             self.actuallyBrown.append(trainItem)
                             line2 = .brown
                         } else if trainItem.isBrownge == .orange {
                             self.orangeFlagged = true
-                            //print("putting in brownge")
                             self.actuallyOrange.append(trainItem)
                             line2 = .orange
                         } else {
-                            //print("handling normal")
                             trainMenu.addItem(trainItem)
                         }
                         
@@ -340,12 +331,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     title.trainLine = line2
                                     
                                     if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
-                                        //print("good morning")
                                         self.brownFlagged = true
                                         trainItem.isBrownge = .brown
                                     }
                                     if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
-                                        //print("gm")
                                         self.orangeFlagged = true
                                         trainItem.isBrownge = .orange
                                     }
@@ -361,12 +350,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 } else {
                                     title = CRMenuItem(title: "\(line.textualRepresentation()) Line run \(run) to \(train["destinationStation"] ?? "Unknown destination")", action: nil)
                                     if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
-                                        //print("gayming")
                                         self.brownFlagged = true
                                         title.isBrownge = .brown
                                     }
                                     if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
-                                        //print("waow")
                                         self.orangeFlagged = true
                                         trainItem.isBrownge = .orange
                                     }
@@ -406,11 +393,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             stationItem.timeLastUpdated = timeLastUpdated
                                             
                                             if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
-                                                //print("WHY")
                                                 stationItem.isBrownge = .brown
                                             }
                                             if line2 == .brown && ((destination == "Midway" || destination == "Downtown, Midway") || (((Int(run) ?? 000) / 100) % 10 == 7)) {
-                                                //print("pain")
                                                 self.orangeFlagged = true
                                                 trainItem.isBrownge = .orange
                                             }
@@ -428,9 +413,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                         let delay = station["isDelayed"] ?? "7"
                                         let brokenDown = station["isBreakingDown"] ?? "7"
                                         let scheduledDeparture = station["isScheduled"] ?? "7"
-                                        /*print(delay)
-                                        print(brokenDown)
-                                        print(scheduledDeparture)*/
                                         
                                         if delay == "1" {
                                             let delayItem = CRMenuItem(title: "Delayed", action: #selector(self.openLink(_:)))

@@ -2,515 +2,487 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- UP-W -->
-    <key>ELBURN</key>
-    <string>Elburn</string>
-    <key>LAFOX</key>
-    <string>La Fox</string>
-    <key>GENEVA</key>
-    <string>Geneva</string>
-    <key>WCHICAGO</key>
-    <string>West Chicago</string>
-    <key>WINFIELD</key>
-    <string>Winfield</string>
-    <key>WHEATON</key>
-    <string>Wheaton</string>
-    <key>COLLEGEAVE</key>
-    <string>College Avenue</string>
-    <key>GLENELLYN</key>
-    <string>Glen Ellyn</string>
-    <key>LOMBARD</key>
-    <string>Lombard</string>
-    <key>VILLAPARK</key>
-    <string>Villa Park</string>
-    <key>ELMHURST</key>
-    <string>Elmhurst</string>
-    <key>BERKELEY</key>
-    <string>Berkeley</string>
-    <key>BELLWOOD</key>
-    <string>Bellwood</string>
-    <key>MELROSEPK</key>
-    <string>Melrose Park</string>
-    <key>MAYWOOD</key>
-    <string>Maywood</string>
-    <key>RIVRFOREST</key>
-    <string>River Forest</string>
-    <key>OAKPARK</key>
-    <string>Oak Park</string>
-    <key>KEDZIE</key>
-    <string>Kedzie</string>
-    
-    <!-- HC -->
-    <key>LOCKPORT</key>
-    <string>Lockport</string>
-    <key>ROMEOVILLE</key>
-    <string>Romeoville</string>
-    <key>LEMONT</key>
-    <string>Lemont</string>
-    <key>WILLOWSPRN</key>
-    <string>Willow Springs</string>
-    <key>SUMMIT</key>
-    <string>Summit</string>
-	
-    <!-- RI -->
-    <!-- mainline -->
-    <key>NEWLENOX</key>
-    <string>New Lenox</string>
-    <key>MOKENA</key>
-    <string>Mokena</string>
-    <key>HICKORYCRK</key>
-    <string>Hickory Creek/Mokena</string>
-    <key>TINLEY80TH</key>
-    <string>80th Avenue/Tinley Park</string>
-    <key>TINLEYPARK</key>
-    <string>Tinley Park</string>
-    <key>OAKFOREST</key>
-    <string>Oak Forest</string>
-    <key>MIDLOTHIAN</key>
-    <string>Midlothian</string>
-    <key>ROBBINS</key>
-    <string>Robbins</string>
-    <key>VERMONT</key>
-    <string>Blue Island/Vermont Street</string>
-    <key>WASHHGTS</key>
-    <string>103rd Street/Washington Heights</string>
-    <key>LONGWOOD</key>
-    <string>95th Street/Longwood</string>
-    <!-- beverly branch -->
-    <key>PRAIRIEST</key>
-    <string>Prairie Street</string>
-    <key>123RD-BEV</key>
-    <string>123rd Street/Blue Island</string>
-    <key>119TH-BEV</key>
-    <string>119th Street/Blue Island</string>
-    <key>115TH-BEV</key>
-    <string>115th Street/Morgan Park</string>
-    <key>111TH-BEV</key>
-    <string>111th Street/Morgan Park</string>
-    <key>107TH-BEV</key>
-    <string>107th Street/Beverly Hills</string>
-    <key>103RD-BEV</key>
-    <string>103rd Street/Beverly Hills</string>
-    <key>99TH-BEV</key>
-    <string>99th Street/Beverly Hills</string>
-    <key>BRAINERD</key>
-    <string>Brainerd</string>
-    <!-- mainline -->
-    <key>GRESHAM</key>
-    <string>Gresham</string>
-    <key>AUBURNPARK</key>
-    <string>Auburn Park</string>
-    <key>35TH</key>
-    <string>35th Street/"Lou" Jones</string>
-    <key>LSS</key>
-    <string>LaSalle Street Station</string>
-	
-    
-    <!-- RI -->
-    <!-- mainline -->
-    <key>UNIVERSITY</key>
-    <string>University Park</string>
-    <key>RICHTON</key>
-    <string>Richton Park</string>
-    <key>MATTESON</key>
-    <string>Matteson</string>
-    <key>211TH-UP</key>
-    <string>211th Street/Lincoln Highway</string>
-    <key>OLYMPIA</key>
-    <string>Olympia</string>
-    <key>FLOSSMOOR</key>
-    <string>Flossmoor</string>
-    <key>HOMEWOOD</key>
-    <string>Homewood</string>
-    <key>CALUMET</key>
-    <string>Calumet</string>
-    <key>HAZELCREST</key>
-    <string>Hazel Crest</string>
-    <key>HARVEY</key>
-    <string>Harvey</string>
-    <key>147TH-UP</key>
-    <string>147th Street/Sibley</string>
-    <key>IVANHOE</key>
-    <string>Ivanhoe</string>
-    <key>RIVERDALE</key>
-    <string>Riverdale</string>
-    <!-- blue island -->
-    <key>BLUEISLAND</key>
-    <string>Blue Island</string>
-    <key>BURROAK</key>
-    <string>Burr Oak</string>
-    <key>ASHLAND</key>
-    <string>Ashland/Calumet Park</string>
-    <key>RACINE</key>
-    <string>Racine Avenue</string>
-    <key>WPULLMAN</key>
-    <string>West Pullman</string>
-    <key>STEWARTRID</key>
-    <string>Stewart Ridge</string>
-    <key>STATEST</key>
-    <string>State Street</string>
-    <!-- mainline -->
-    <key>KENSINGTN</key>
-    <string>115th Street/Kensington</string>
-    <key>111TH-UP</key>
-    <string>111th Street/Pullman</string>
-    <key>107TH-UP</key>
-    <string>107th Street</string>
-    <key>103RD-UP</key>
-    <string>103rd Street/Rosemoor</string>
-    <key>95TH-UP</key>
-    <string>95th Street/CSU</string>
-    <key>91ST-UP</key>
-    <string>91st Street/Chesterfield</string>
-    <key>87TH-UP</key>
-    <string>87th Street/Woodruff</string>
-    <key>83RD-UP</key>
-    <string>83rd Street/Avalon Park</string>
-    <key>79TH-UP</key>
-    <string>79th Street/Chatham</string>
-    <key>75TH-UP</key>
-    <string>75th Street/Grand Crossing</string>
-    <!-- south chicago branch -->
-    <key>93RD-SC</key>
-    <string>93rd Street/South Chicago</string>
-    <key>87TH-SC</key>
-    <string>87th Street/South Chicago</string>
-    <key>83RD-SC</key>
-    <string>83rd Street</string>
-    <key>79TH-SC</key>
-    <string>79th Street/Cheltenham</string>
-    <key>WINDSORPK</key>
-    <string>Windsork Park</string>
-    <key>SOUTHSHORE</key>
-    <string>South Shore</string>
-    <key>BRYNMAWR</key>
-    <string>Bryn Mawr</string>
-    <key>STONYISLND</key>
-    <string>Stony Island</string>
-    <!-- mainline -->
-    <key>63RD-UP</key>
-    <string>63rd Street</string>
-    <key>59TH-UP</key>
-    <string>59th Street, University of Chicago</string>
-    <key>55-56-57TH</key>
-    <string>55th-56th-57th Street</string>
-    <key>51ST-53RD</key>
-    <string>51st/53rd Street/Hyde Park</string>
-    <key>47TH-UP</key>
-    <string>47th Street/Kenwood</string>
-    <key>27TH-UP</key>
-    <string>27th Street</string>
-    <key>MCCORMICK</key>
-    <string>McCormick Place</string>
-    <key>18TH-UP</key>
-    <string>18th Street</string>
-    <key>MUSEUM</key>
-    <string>Museum Campus/11th Street</string>
-    <key>VANBUREN</key>
-    <string>Van Buren Street</string>
-    <key>MILLENNIUM</key>
-    <string>Millennium Station</string>
-    
-    <!-- MD-W -->
-    <key>BIGTIMBER</key>
-    <string>Big Timber Road</string>
-    <key>ELGIN</key>
-    <string>Elgin</string>
-    <key>NATIONALS</key>
-    <string>National Street</string>
-    <key>BARTLETT</key>
-    <string>Bartlett</string>
-    <key>HANOVERP</key>
-    <string>Hanover Park</string>
-    <key>SCHAUM</key>
-    <string>Schaumburg</string>
-    <key>ROSELLE</key>
-    <string>Roselle</string>
-    <key>MEDINAH</key>
-    <string>Medinah</string>
-    <key>ITASCA</key>
-    <string>Itasca</string>
-    <key>WOODDALE</key>
-    <string>Wood Dale</string>
-    <key>BENSENVIL</key>
-    <string>Bensenville</string>
-    <key>MANNHEIM</key>
-    <string>Mannheim</string>
-    <key>FRANKLIN</key>
-    <string>Franklin Park</string>
-    <key>RIVERGROVE</key>
-    <string>River Grove</string>
-    <key>ELMWOODPK</key>
-    <string>Elmwood Park</string>
-    <key>MONTCLARE</key>
-    <string>Mont Clare</string>
-    <key>MARS</key>
-    <string>Mars</string>
-    <key>GALEWOOD</key>
-    <string>Galewood</string>
-    <key>HANSONPK</key>
-    <string>Hanson Park</string>
-    <key>GRAND-CIC</key>
-    <string>Grand/Cicero</string>
-    
-    <!-- MD-N -->
-    <key>FOXLAKE</key>
-    <string>Fox Lake</string>
-    <key>INGLESIDE</key>
-    <string>Ingleside</string>
-    <key>LONGLAKE</key>
-    <string>Long Lake</string>
-    <key>ROUNDLAKE</key>
-    <string>Round Lake</string>
-    <key>GRAYSLAKE</key>
-    <string>Grayslake</string>
-    <key>PRAIRIEXNG</key>
-    <string>Prairie Crossing/Libertyville</string>
-    <key>LIBERTYVIL</key>
-    <string>Libertyville</string>
-    <key>LAKEFRST</key>
-    <string>Lake Forest</string>
-    <key>DEERFIELD</key>
-    <string>Deerfield</string>
-    <key>LAKECOOKRD</key>
-    <string>Lake Cook Road</string>
-    <key>NBROOK</key>
-    <string>Northbrook</string>
-    <key>NGLENVIEW</key>
-    <string>The Glen/North Glenview</string>
-    <key>GLENVIEW</key>
-    <string>Glenview</string>
-    <key>GOLF</key>
-    <string>Golf</string>
-    <key>MORTONGRV</key>
-    <string>Morton Grove</string>
-    <key>EDGEBROOK</key>
-    <string>Edgebrook</string>
-    <key>FORESTGLEN</key>
-    <string>Forest Glen</string>
-    <key>MAYFAIR</key>
-    <string>Mayfair</string>
-    <key>GRAYLAND</key>
-    <string>Grayland</string>
-    <key>HEALY</key>
-    <string>Healy</string>
-    
-    <!-- UP-NW -->
-    <key>HARVARD</key>
-    <string>Harvard</string>
-    <key>WOODSTOCK</key>
-    <string>Woodstock</string>
-    <key>CRYSTAL</key>
-    <string>Crystal Lake</string>
-    <key>MCHENRY</key>
-    <string>McHenry</string>
-    <key>PINGREE</key>
-    <string>Pingree Road</string>
-    <key>CARY</key>
-    <string>Cary</string>
-    <key>FOXRG</key>
-    <string>Fox River Grove</string>
-    <key>BARRINGTON</key>
-    <string>Barrington</string>
-    <key>PALATINE</key>
-    <string>Palatine</string>
-    <key>ARLINGTNPK</key>
-    <string>Arlington Park</string>
-    <key>ARLINGTNHT</key>
-    <string>Arlington Heights</string>
-    <key>MTPROSPECT</key>
-    <string>Mount Prospect</string>
-    <key>CUMBERLAND</key>
-    <string>Cumberland</string>
-    <key>DESPLAINES</key>
-    <string>Des Plaines</string>
-    <key>DEEROAD</key>
-    <string>Dee Road</string>
-    <key>PARKRIDGE</key>
-    <string>Park Ridge</string>
-    <key>EDISONPK</key>
-    <string>Edison Park</string>
-    <key>NORWOODP</key>
-    <string>Norwood Park</string>
-    <key>GLADSTONEP</key>
-    <string>Gladstone Park</string>
-    <key>JEFFERSONP</key>
-    <string>Jefferson Park</string>
-    <key>IRVINGPK</key>
-    <string>Irving Park</string>
-	
-    <!-- BNSF -->
-    <key>AURORA</key>
-    <string>Aurora</string>
-    <key>ROUTE59</key>
-    <string>Route 59</string>
-    <key>NAPERVILLE</key>
-    <string>Naperville</string>
-    <key>LISLE</key>
-    <string>Lisle</string>
-    <key>BELMONT</key>
-    <string>Belmont</string>
-    <key>MAINST-DG</key>
-    <string>Downers Grove/Main Street</string>
-    <key>FAIRVIEWDG</key>
-    <string>Fairview Avenue</string>
-    <key>WESTMONT</key>
-    <string>Westmont</string>
-    <key>CLARNDNHIL</key>
-    <string>Clarendon Hills</string>
-    <key>WHINSDALE</key>
-    <string>West Hinsdale</string>
-    <key>HINSDALE</key>
-    <string>Hinsdale</string>
-    <key>HIGHLANDS</key>
-    <string>Highlands</string>
-    <key>WESTSPRING</key>
-    <string>Western Springs</string>
-    <key>STONEAVE</key>
-    <string>Stone Avenue</string>
-    <key>LAGRANGE</key>
-    <string>LaGrange Road</string>
-    <key>CONGRESSPK</key>
-    <string>Congress Park</string>
-    <key>BROOKFIELD</key>
-    <string>Brookfield</string>
-    <key>HOLLYWOOD</key>
-    <string>Hollywood/Zoo Stop</string>
-    <key>RIVERSIDE</key>
-    <string>Riverside</string>
-    <key>HARLEM</key>
-    <string>Harlem Avenue</string>
-    <key>BERWYN</key>
-    <string>Berwyn</string>
-    <key>LAVERGNE</key>
-    <string>LaVergne</string>
-    <key>CICERO</key>
-    <string>Cicero</string>
-    <key>BNWESTERN</key>
-    <string>Western Avenue</string>
-    <key>HALSTED</key>
-    <string>Halsted Street</string>
-    
-    <!-- UP-N -->
-    <key>KENOSHA</key>
-    <string>Kenosha</string>
-    <key>WINTHROP</key>
-    <string>Winthrop Harbor</string>
-    <key>ZION</key>
-    <string>Zion</string>
-    <key>WAUKEGAN</key>
-    <string>Waukegan</string>
-    <key>NCHICAGO</key>
-    <string>North Chicago</string>
-    <key>GRTLAKES</key>
-    <string>Great Lakes</string>
-    <key>LAKEBLUFF</key>
-    <string>Lake Bluff</string>
-    <key>LKFOREST</key>
-    <string>Lake Forest</string>
-    <key>FTSHERIDAN</key>
-    <string>Fort Sheridan</string>
-    <key>HIGHWOOD</key>
-    <string>Highwood</string>
-    <key>HIGHLANDPK</key>
-    <string>Highland Park</string>
-    <key>RAVINIA</key>
-    <string>Ravinia</string>
-    <key>BRAESIDE</key>
-    <string>Braeside</string>
-    <key>GLENCOE</key>
-    <string>Glencoe</string>
-    <key>HUBARDWOOD</key>
-    <string>Hubbard Woods</string>
-    <key>WINNETKA</key>
-    <string>Winnetka</string>
-    <key>INDIANHILL</key>
-    <string>Indian Hill</string>
-    <key>KENILWORTH</key>
-    <string>Kenilworth</string>
-    <key>WILMETTE</key>
-    <string>Wilmette</string>
-    <key>CENTRALST</key>
-    <string>Central Street/Evanston</string>
-    <key>EVANSTON</key>
-    <string>Davis Street/Evanston</string>
-    <key>MAINST</key>
-    <string>Main Street/Evanston</string>
-    <key>ROGERPK</key>
-    <string>Rogers Park</string>
-    <key>PETERSON</key>
-    <string>Peterson/Ridge</string>
-    <key>RAVENSWOOD</key>
-    <string>Ravenswood</string>
-	
-    <!-- SWS -->
-    <key>MANHATTAN</key>
-    <string>Manhattan</string>
-    <key>LARAWAY</key>
-    <string>Laraway Road</string>
-    <key>179TH-SWS</key>
-    <string>179th Street/Orland Park</string>
-    <key>153RD-SWS</key>
-    <string>153rd Street/Orland Park</string>
-    <key>143RD-SWS</key>
-    <string>143rd Street/Orland Park</string>
-    <key>PALOSPARK</key>
-    <string>Palos Park</string>
-    <key>PALOSHTS</key>
-    <string>Palos Heights</string>
-    <key>WORTH</key>
-    <string>Worth</string>
-    <key>CHICRIDGE</key>
-    <string>Chicago Ridge</string>
-    <key>OAKLAWN</key>
-    <string>Oak Lawn</string>
-    <key>ASHBURN</key>
-    <string>Ashburn</string>
-    <key>WRIGHTWOOD</key>
-    <string>Wrightwood</string>
-    
-    <!-- NCS -->
-    <key>ANTIOCH</key>
-    <string>Antioch</string>
-    <key>LAKEVILLA</key>
-    <string>Lake Villa</string>
-    <key>ROUNDLKBCH</key>
-    <string>Round Lake Beach</string>
-    <key>NCSGRAYSLK</key>
-    <string>Washington Street/Grayslake</string>
-    <key>PRAIRCROSS</key>
-    <string>Prairie Crossing/Libertyville</string>
-    <key>MUNDELEIN</key>
-    <string>Mundelein</string>
-    <key>VERNON</key>
-    <string>Vernon Hills</string>
-    <key>PRAIRIEVW</key>
-    <string>Prairie View</string>
-    <key>BUFFGROVE</key>
-    <string>Buffalo Grove</string>
-    <key>WHEELING</key>
-    <string>Wheeling</string>
-    <key>PROSPECTHG</key>
-    <string>Prospect Heights</string>
-    <key>OHARE</key>
-    <string>O'Hare Transfer</string>
-    <key>ROSEMONT</key>
-    <string>Rosemont</string>
-    <key>SCHILLERPK</key>
-    <string>Schiller Park</string>
-    <key>FRANKLINPK</key>
-    <string>Belmont Avenue/Franklin Park</string>
-    
-    <!-- ZONE1 -->
-    <key>JOLIET</key>
-    <string>Joliet</string>
-    <key>CLYBOURN</key>
-    <string>Clybourn</string>
-    <key>OTC</key>
-    <string>Ogilvie Transportation Center</string>
-    <key>WESTERNAVE</key>
-    <string>Western Avenue</string>
-    <key>CUS</key>
-    <string>Chicago Union Station</string>
+	<key>ELBURN</key>
+	<string>Elburn</string>
+	<key>LAFOX</key>
+	<string>La Fox</string>
+	<key>GENEVA</key>
+	<string>Geneva</string>
+	<key>WCHICAGO</key>
+	<string>West Chicago</string>
+	<key>WINFIELD</key>
+	<string>Winfield</string>
+	<key>WHEATON</key>
+	<string>Wheaton</string>
+	<key>COLLEGEAVE</key>
+	<string>College Avenue</string>
+	<key>GLENELLYN</key>
+	<string>Glen Ellyn</string>
+	<key>LOMBARD</key>
+	<string>Lombard</string>
+	<key>VILLAPARK</key>
+	<string>Villa Park</string>
+	<key>ELMHURST</key>
+	<string>Elmhurst</string>
+	<key>BERKELEY</key>
+	<string>Berkeley</string>
+	<key>BELLWOOD</key>
+	<string>Bellwood</string>
+	<key>MELROSEPK</key>
+	<string>Melrose Park</string>
+	<key>MAYWOOD</key>
+	<string>Maywood</string>
+	<key>RIVRFOREST</key>
+	<string>River Forest</string>
+	<key>OAKPARK</key>
+	<string>Oak Park</string>
+	<key>KEDZIE</key>
+	<string>Kedzie</string>
+	<key>LOCKPORT</key>
+	<string>Lockport</string>
+	<key>ROMEOVILLE</key>
+	<string>Romeoville</string>
+	<key>LEMONT</key>
+	<string>Lemont</string>
+	<key>WILLOWSPRN</key>
+	<string>Willow Springs</string>
+	<key>SUMMIT</key>
+	<string>Summit</string>
+	<key>NEWLENOX</key>
+	<string>New Lenox</string>
+	<key>MOKENA</key>
+	<string>Mokena</string>
+	<key>HICKORYCRK</key>
+	<string>Hickory Creek/Mokena</string>
+	<key>TINLEY80TH</key>
+	<string>80th Avenue/Tinley Park</string>
+	<key>TINLEYPARK</key>
+	<string>Tinley Park</string>
+	<key>OAKFOREST</key>
+	<string>Oak Forest</string>
+	<key>MIDLOTHIAN</key>
+	<string>Midlothian</string>
+	<key>ROBBINS</key>
+	<string>Robbins</string>
+	<key>VERMONT</key>
+	<string>Blue Island/Vermont Street</string>
+	<key>WASHHGTS</key>
+	<string>103rd Street/Washington Heights</string>
+	<key>LONGWOOD</key>
+	<string>95th Street/Longwood</string>
+	<key>PRAIRIEST</key>
+	<string>Prairie Street</string>
+	<key>123RD-BEV</key>
+	<string>123rd Street/Blue Island</string>
+	<key>119TH-BEV</key>
+	<string>119th Street/Blue Island</string>
+	<key>115TH-BEV</key>
+	<string>115th Street/Morgan Park</string>
+	<key>111TH-BEV</key>
+	<string>111th Street/Morgan Park</string>
+	<key>107TH-BEV</key>
+	<string>107th Street/Beverly Hills</string>
+	<key>103RD-BEV</key>
+	<string>103rd Street/Beverly Hills</string>
+	<key>99TH-BEV</key>
+	<string>99th Street/Beverly Hills</string>
+	<key>95TH-BEV</key>
+	<string>95th Street/Beverly Hills</string>
+	<key>91ST-BEV</key>
+	<string>91st Street/Beverly Hills</string>
+	<key>BRAINERD</key>
+	<string>Brainerd</string>
+	<key>GRESHAM</key>
+	<string>Gresham</string>
+	<key>AUBURNPARK</key>
+	<string>Auburn Park</string>
+	<key>35TH</key>
+	<string>35th Street/&quot;Lou&quot; Jones</string>
+	<key>LSS</key>
+	<string>LaSalle Street Station</string>
+	<key>UNIVERSITY</key>
+	<string>University Park</string>
+	<key>RICHTON</key>
+	<string>Richton Park</string>
+	<key>MATTESON</key>
+	<string>Matteson</string>
+	<key>211TH-UP</key>
+	<string>211th Street/Lincoln Highway</string>
+	<key>OLYMPIA</key>
+	<string>Olympia</string>
+	<key>FLOSSMOOR</key>
+	<string>Flossmoor</string>
+	<key>HOMEWOOD</key>
+	<string>Homewood</string>
+	<key>CALUMET</key>
+	<string>Calumet</string>
+	<key>HAZELCREST</key>
+	<string>Hazel Crest</string>
+	<key>HARVEY</key>
+	<string>Harvey</string>
+	<key>147TH-UP</key>
+	<string>147th Street/Sibley</string>
+	<key>IVANHOE</key>
+	<string>Ivanhoe</string>
+	<key>RIVERDALE</key>
+	<string>Riverdale</string>
+	<key>BLUEISLAND</key>
+	<string>Blue Island</string>
+	<key>BURROAK</key>
+	<string>Burr Oak</string>
+	<key>ASHLAND</key>
+	<string>Ashland/Calumet Park</string>
+	<key>RACINE</key>
+	<string>Racine Avenue</string>
+	<key>WPULLMAN</key>
+	<string>West Pullman</string>
+	<key>STEWARTRID</key>
+	<string>Stewart Ridge</string>
+	<key>STATEST</key>
+	<string>State Street</string>
+	<key>KENSINGTN</key>
+	<string>115th Street/Kensington</string>
+	<key>111TH-UP</key>
+	<string>111th Street/Pullman</string>
+	<key>107TH-UP</key>
+	<string>107th Street</string>
+	<key>103RD-UP</key>
+	<string>103rd Street/Rosemoor</string>
+	<key>95TH-UP</key>
+	<string>95th Street/CSU</string>
+	<key>91ST-UP</key>
+	<string>91st Street/Chesterfield</string>
+	<key>87TH-UP</key>
+	<string>87th Street/Woodruff</string>
+	<key>83RD-UP</key>
+	<string>83rd Street/Avalon Park</string>
+	<key>79TH-UP</key>
+	<string>79th Street/Chatham</string>
+	<key>75TH-UP</key>
+	<string>75th Street/Grand Crossing</string>
+	<key>93RD-SC</key>
+	<string>93rd Street/South Chicago</string>
+	<key>87TH-SC</key>
+	<string>87th Street/South Chicago</string>
+	<key>83RD-SC</key>
+	<string>83rd Street</string>
+	<key>79TH-SC</key>
+	<string>79th Street/Cheltenham</string>
+	<key>WINDSORPK</key>
+	<string>Windsor Park</string>
+	<key>SOUTHSHORE</key>
+	<string>South Shore</string>
+	<key>BRYNMAWR</key>
+	<string>Bryn Mawr</string>
+	<key>STONYISLND</key>
+	<string>Stony Island</string>
+	<key>63RD-UP</key>
+	<string>63rd Street</string>
+	<key>59TH-UP</key>
+	<string>59th Street, University of Chicago</string>
+	<key>55-56-57TH</key>
+	<string>55th-56th-57th Street</string>
+	<key>51ST-53RD</key>
+	<string>51st/53rd Street/Hyde Park</string>
+	<key>47TH-UP</key>
+	<string>47th Street/Kenwood</string>
+	<key>27TH-UP</key>
+	<string>27th Street</string>
+	<key>MCCORMICK</key>
+	<string>McCormick Place</string>
+	<key>18TH-UP</key>
+	<string>18th Street</string>
+	<key>MUSEUM</key>
+	<string>Museum Campus/11th Street</string>
+	<key>VANBUREN</key>
+	<string>Van Buren Street</string>
+	<key>MILLENNIUM</key>
+	<string>Millennium Station</string>
+	<key>BIGTIMBER</key>
+	<string>Big Timber Road</string>
+	<key>ELGIN</key>
+	<string>Elgin</string>
+	<key>NATIONALS</key>
+	<string>National Street</string>
+	<key>BARTLETT</key>
+	<string>Bartlett</string>
+	<key>HANOVERP</key>
+	<string>Hanover Park</string>
+	<key>SCHAUM</key>
+	<string>Schaumburg</string>
+	<key>ROSELLE</key>
+	<string>Roselle</string>
+	<key>MEDINAH</key>
+	<string>Medinah</string>
+	<key>ITASCA</key>
+	<string>Itasca</string>
+	<key>WOODDALE</key>
+	<string>Wood Dale</string>
+	<key>BENSENVIL</key>
+	<string>Bensenville</string>
+	<key>MANNHEIM</key>
+	<string>Mannheim</string>
+	<key>FRANKLIN</key>
+	<string>Franklin Park</string>
+	<key>RIVERGROVE</key>
+	<string>River Grove</string>
+	<key>ELMWOODPK</key>
+	<string>Elmwood Park</string>
+	<key>MONTCLARE</key>
+	<string>Mont Clare</string>
+	<key>MARS</key>
+	<string>Mars</string>
+	<key>GALEWOOD</key>
+	<string>Galewood</string>
+	<key>HANSONPK</key>
+	<string>Hanson Park</string>
+	<key>GRAND-CIC</key>
+	<string>Grand/Cicero</string>
+	<key>FOXLAKE</key>
+	<string>Fox Lake</string>
+	<key>INGLESIDE</key>
+	<string>Ingleside</string>
+	<key>LONGLAKE</key>
+	<string>Long Lake</string>
+	<key>ROUNDLAKE</key>
+	<string>Round Lake</string>
+	<key>GRAYSLAKE</key>
+	<string>Grayslake</string>
+	<key>PRAIRIEXNG</key>
+	<string>Prairie Crossing/Libertyville</string>
+	<key>LIBERTYVIL</key>
+	<string>Libertyville</string>
+	<key>LAKEFRST</key>
+	<string>Lake Forest</string>
+	<key>DEERFIELD</key>
+	<string>Deerfield</string>
+	<key>LAKECOOKRD</key>
+	<string>Lake Cook Road</string>
+	<key>NBROOK</key>
+	<string>Northbrook</string>
+	<key>NGLENVIEW</key>
+	<string>The Glen/North Glenview</string>
+	<key>GLENVIEW</key>
+	<string>Glenview</string>
+	<key>GOLF</key>
+	<string>Golf</string>
+	<key>MORTONGRV</key>
+	<string>Morton Grove</string>
+	<key>EDGEBROOK</key>
+	<string>Edgebrook</string>
+	<key>FORESTGLEN</key>
+	<string>Forest Glen</string>
+	<key>MAYFAIR</key>
+	<string>Mayfair</string>
+	<key>GRAYLAND</key>
+	<string>Grayland</string>
+	<key>HEALY</key>
+	<string>Healy</string>
+	<key>HARVARD</key>
+	<string>Harvard</string>
+	<key>WOODSTOCK</key>
+	<string>Woodstock</string>
+	<key>CRYSTAL</key>
+	<string>Crystal Lake</string>
+	<key>MCHENRY</key>
+	<string>McHenry</string>
+	<key>PINGREE</key>
+	<string>Pingree Road</string>
+	<key>CARY</key>
+	<string>Cary</string>
+	<key>FOXRG</key>
+	<string>Fox River Grove</string>
+	<key>BARRINGTON</key>
+	<string>Barrington</string>
+	<key>PALATINE</key>
+	<string>Palatine</string>
+	<key>ARLINGTNPK</key>
+	<string>Arlington Park</string>
+	<key>ARLINGTNHT</key>
+	<string>Arlington Heights</string>
+	<key>MTPROSPECT</key>
+	<string>Mount Prospect</string>
+	<key>CUMBERLAND</key>
+	<string>Cumberland</string>
+	<key>DESPLAINES</key>
+	<string>Des Plaines</string>
+	<key>DEEROAD</key>
+	<string>Dee Road</string>
+	<key>PARKRIDGE</key>
+	<string>Park Ridge</string>
+	<key>EDISONPK</key>
+	<string>Edison Park</string>
+	<key>NORWOODP</key>
+	<string>Norwood Park</string>
+	<key>GLADSTONEP</key>
+	<string>Gladstone Park</string>
+	<key>JEFFERSONP</key>
+	<string>Jefferson Park</string>
+	<key>IRVINGPK</key>
+	<string>Irving Park</string>
+	<key>AURORA</key>
+	<string>Aurora</string>
+	<key>ROUTE59</key>
+	<string>Route 59</string>
+	<key>NAPERVILLE</key>
+	<string>Naperville</string>
+	<key>LISLE</key>
+	<string>Lisle</string>
+	<key>BELMONT</key>
+	<string>Belmont</string>
+	<key>MAINST-DG</key>
+	<string>Downers Grove/Main Street</string>
+	<key>FAIRVIEWDG</key>
+	<string>Fairview Avenue</string>
+	<key>WESTMONT</key>
+	<string>Westmont</string>
+	<key>CLARNDNHIL</key>
+	<string>Clarendon Hills</string>
+	<key>WHINSDALE</key>
+	<string>West Hinsdale</string>
+	<key>HINSDALE</key>
+	<string>Hinsdale</string>
+	<key>HIGHLANDS</key>
+	<string>Highlands</string>
+	<key>WESTSPRING</key>
+	<string>Western Springs</string>
+	<key>STONEAVE</key>
+	<string>Stone Avenue</string>
+	<key>LAGRANGE</key>
+	<string>LaGrange Road</string>
+	<key>CONGRESSPK</key>
+	<string>Congress Park</string>
+	<key>BROOKFIELD</key>
+	<string>Brookfield</string>
+	<key>HOLLYWOOD</key>
+	<string>Hollywood/Zoo Stop</string>
+	<key>RIVERSIDE</key>
+	<string>Riverside</string>
+	<key>HARLEM</key>
+	<string>Harlem Avenue</string>
+	<key>BERWYN</key>
+	<string>Berwyn</string>
+	<key>LAVERGNE</key>
+	<string>LaVergne</string>
+	<key>CICERO</key>
+	<string>Cicero</string>
+	<key>BNWESTERN</key>
+	<string>Western Avenue</string>
+	<key>HALSTED</key>
+	<string>Halsted Street</string>
+	<key>KENOSHA</key>
+	<string>Kenosha</string>
+	<key>WINTHROP</key>
+	<string>Winthrop Harbor</string>
+	<key>ZION</key>
+	<string>Zion</string>
+	<key>WAUKEGAN</key>
+	<string>Waukegan</string>
+	<key>NCHICAGO</key>
+	<string>North Chicago</string>
+	<key>GRTLAKES</key>
+	<string>Great Lakes</string>
+	<key>LAKEBLUFF</key>
+	<string>Lake Bluff</string>
+	<key>LKFOREST</key>
+	<string>Lake Forest</string>
+	<key>FTSHERIDAN</key>
+	<string>Fort Sheridan</string>
+	<key>HIGHWOOD</key>
+	<string>Highwood</string>
+	<key>HIGHLANDPK</key>
+	<string>Highland Park</string>
+	<key>RAVINIA</key>
+	<string>Ravinia</string>
+	<key>BRAESIDE</key>
+	<string>Braeside</string>
+	<key>GLENCOE</key>
+	<string>Glencoe</string>
+	<key>HUBARDWOOD</key>
+	<string>Hubbard Woods</string>
+	<key>WINNETKA</key>
+	<string>Winnetka</string>
+	<key>INDIANHILL</key>
+	<string>Indian Hill</string>
+	<key>KENILWORTH</key>
+	<string>Kenilworth</string>
+	<key>WILMETTE</key>
+	<string>Wilmette</string>
+	<key>CENTRALST</key>
+	<string>Central Street/Evanston</string>
+	<key>EVANSTON</key>
+	<string>Davis Street/Evanston</string>
+	<key>MAINST</key>
+	<string>Main Street/Evanston</string>
+	<key>ROGERPK</key>
+	<string>Rogers Park</string>
+	<key>PETERSON</key>
+	<string>Peterson/Ridge</string>
+	<key>RAVENSWOOD</key>
+	<string>Ravenswood</string>
+	<key>MANHATTAN</key>
+	<string>Manhattan</string>
+	<key>LARAWAY</key>
+	<string>Laraway Road</string>
+	<key>179TH-SWS</key>
+	<string>179th Street/Orland Park</string>
+	<key>153RD-SWS</key>
+	<string>153rd Street/Orland Park</string>
+	<key>143RD-SWS</key>
+	<string>143rd Street/Orland Park</string>
+	<key>PALOSPARK</key>
+	<string>Palos Park</string>
+	<key>PALOSHTS</key>
+	<string>Palos Heights</string>
+	<key>WORTH</key>
+	<string>Worth</string>
+	<key>CHICRIDGE</key>
+	<string>Chicago Ridge</string>
+	<key>OAKLAWN</key>
+	<string>Oak Lawn</string>
+	<key>ASHBURN</key>
+	<string>Ashburn</string>
+	<key>WRIGHTWOOD</key>
+	<string>Wrightwood</string>
+	<key>ANTIOCH</key>
+	<string>Antioch</string>
+	<key>LAKEVILLA</key>
+	<string>Lake Villa</string>
+	<key>ROUNDLKBCH</key>
+	<string>Round Lake Beach</string>
+	<key>NCSGRAYSLK</key>
+	<string>Washington Street/Grayslake</string>
+	<key>PRAIRCROSS</key>
+	<string>Prairie Crossing/Libertyville</string>
+	<key>MUNDELEIN</key>
+	<string>Mundelein</string>
+	<key>VERNON</key>
+	<string>Vernon Hills</string>
+	<key>PRAIRIEVW</key>
+	<string>Prairie View</string>
+	<key>BUFFGROVE</key>
+	<string>Buffalo Grove</string>
+	<key>WHEELING</key>
+	<string>Wheeling</string>
+	<key>PROSPECTHG</key>
+	<string>Prospect Heights</string>
+	<key>OHARE</key>
+	<string>O&apos;Hare Transfer</string>
+	<key>ROSEMONT</key>
+	<string>Rosemont</string>
+	<key>SCHILLERPK</key>
+	<string>Schiller Park</string>
+	<key>FRANKLINPK</key>
+	<string>Belmont Avenue/Franklin Park</string>
+	<key>JOLIET</key>
+	<string>Joliet</string>
+	<key>CLYBOURN</key>
+	<string>Clybourn</string>
+	<key>OTC</key>
+	<string>Ogilvie Transportation Center</string>
+	<key>WESTERNAVE</key>
+	<string>Western Avenue</string>
+	<key>CUS</key>
+	<string>Chicago Union Station</string>
 </dict>
 </plist>

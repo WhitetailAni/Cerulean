@@ -12,6 +12,7 @@ enum MTServiceBranch {
     case beverly
     case south_chicago
     case blue_island
+    case mchenry
     case none
 }
 
@@ -61,13 +62,23 @@ enum MTService {
     
     static var allServices = [MTService.up_w, MTService.hc, MTService.ri, MTService.me, MTService.md_w, MTService.md_n, MTService.up_nw, MTService.bnsf, MTService.up_n, MTService.sws, MTService.ncs]
     
-    func getBranch(trainString: String) -> MTServiceBranch {
+    func getBranch(trainString: String, withOthers: Bool = false) -> MTServiceBranch {
         let trainNumber = Int(trainString.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
         if self == .me {
             if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                 return .blue_island
-            } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) {
+            } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) || trainNumber == 401 {
                 return .south_chicago
+            }
+        }
+        if self == .ri && withOthers {
+            if isNumberBetween(min: 500, max: 699, value: trainNumber) || isNumberBetween(min: 200, max: 399, value: trainNumber){
+                return .beverly
+            }
+        }
+        if self == .up_nw && withOthers {
+            if [610, 624, 633, 636, 643, 659].contains(trainNumber) {
+                return .mchenry
             }
         }
         return .none
@@ -122,7 +133,7 @@ enum MTService {
                         return "University Park"
                     } else if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                         return "Blue Island"
-                    } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) {
+                    } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) || trainNumber == 401 {
                         return "93rd Street/South Chicago"
                     } else if isNumberBetween(min: 600, max: 699, value: trainNumber) {
                         return "115th Street/Kensington"
@@ -348,14 +359,14 @@ enum MTService {
             return NSColor(r: 163, g: 0, b: 70)
         case .ri:
             switch branch {
-            case .none, .south_chicago, .blue_island:
+            case .none, .south_chicago, .blue_island, .mchenry:
                 return NSColor(r: 238, g: 49, b: 36)
             case .beverly:
                 return NSColor(r: 151, g: 153, b: 155)
             }
         case .me:
             switch branch {
-            case .none, .beverly:
+            case .none, .beverly, .mchenry:
                 return NSColor(r: 255, g: 81, b: 0)
             case .south_chicago:
                 return NSColor(r: 192, g: 192, b: 192)

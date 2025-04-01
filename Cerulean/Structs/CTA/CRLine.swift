@@ -68,7 +68,6 @@ enum CRLine {
         if line == .purple {
             let rawTrain = ChicagoTransitInterface().getRunNumberInfo(run: String(run))
             let location = InterfaceResultProcessing.getLocationForRun(info: rawTrain, gtfs: true)
-            print(location)
             if location.0.latitude < 42.01663 || location.1 == "Loop" {
                 line2 = .purpleExpress
             }
