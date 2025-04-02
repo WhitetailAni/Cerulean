@@ -656,11 +656,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                     stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openSSLMapWindow(_:)))
                                     stopItem.trainNumber = vehicle.trainNumber
                                     stopItem.stop = arrival.stop
+                                    stopItem.endStop = vehicle.endStop
                                     stopItem.trainCoordinate = vehicle.location
                                 } else {
                                     stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime) (scheduled at \(arrival.scheduledArrivalTime))", action: #selector(self.openSSLMapWindow(_:)))
                                     stopItem.trainNumber = vehicle.trainNumber
                                     stopItem.stop = arrival.stop
+                                    stopItem.endStop = vehicle.endStop
                                     stopItem.trainCoordinate = vehicle.location
                                 }
                                 stopMenu.addItem(stopItem)
