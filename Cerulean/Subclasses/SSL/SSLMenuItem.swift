@@ -15,6 +15,7 @@ class SSLMenuItem: NSMenuItem {
     var trainCoordinate: CLLocationCoordinate2D?
     
     var stop: SSLStop?
+    var endStop: SSLStop?
     
     var timeLastUpdated: String?
 }

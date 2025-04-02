@@ -129,16 +129,16 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "Millennium Station"
                 } else {
-                    if (isNumberBetween(min: 100, max: 199, value: trainNumber) && trainNumber != 165) || isNumberBetween(min: 700, max: 711, value: trainNumber) || isNumberBetween(min: 800, max: 899, value: trainNumber) {
-                        return "University Park"
+                    if [165, 721, 723, 725].contains(trainNumber) {
+                        return "Homewood"
                     } else if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
                         return "Blue Island"
                     } else if isNumberBetween(min: 300, max: 399, value: trainNumber) || isNumberBetween(min: 8300, max: 8399, value: trainNumber) || trainNumber == 401 {
                         return "93rd Street/South Chicago"
                     } else if isNumberBetween(min: 600, max: 699, value: trainNumber) {
                         return "115th Street/Kensington"
-                    } else if isNumberBetween(min: 712, max: 799, value: trainNumber) || trainNumber == 165 {
-                        return "Homewood"
+                    } else {
+                        return "University Park"
                     }
                 }
             case .md_w:

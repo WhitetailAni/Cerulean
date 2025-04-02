@@ -7,9 +7,12 @@
 
 import MapKit
 
+import SouthShoreTracker
+
 class SSLPlacemark: MKPlacemark, @unchecked Sendable {
     var trainNumber: String?
     var stationName: String?
+    var endStop: SSLStop?
     
     func placemarkWithNewLocation(_ location: CLLocationCoordinate2D) -> SSLPlacemark {
         let mark = SSLPlacemark(coordinate: location)

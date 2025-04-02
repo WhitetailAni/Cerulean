@@ -124,7 +124,7 @@ class SSLMapView: MKMapView {
     
     private func applyLineOverlay() {
         DispatchQueue.global().async {
-            let overlay = SSLTracker().getOverlay()
+            let overlay = SSLTracker().getOverlay(endStop: self.train.endStop, trainString: self.train.trainNumber ?? "502")
                 
             DispatchQueue.main.sync {
                 self.addOverlay(overlay)

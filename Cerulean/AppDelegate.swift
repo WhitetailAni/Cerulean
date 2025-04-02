@@ -631,12 +631,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     
                     for vehicle in vehicles {
                         let trainItem = SSLMenuItem(title: "\(vehicle.trainNumber) to \(vehicle.endStop.name)", action: #selector(self.openSSLMapWindow(_:)))
+                        trainItem.endStop = vehicle.endStop
                         trainItem.trainCoordinate = vehicle.location
                         trainItem.trainNumber = vehicle.trainNumber
                         
                         let stopMenu = NSMenu()
                         
                         let titleItem = SSLMenuItem(title: "Train \(vehicle.trainNumber) to \(vehicle.endStop.name)", action: #selector(self.openSSLMapWindow(_:)))
+                        titleItem.endStop = vehicle.endStop
                         titleItem.trainCoordinate = vehicle.location
                         titleItem.trainNumber = vehicle.trainNumber
                         
@@ -822,8 +824,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let placemark = SSLPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
             
-            if let trainNumber = sender.trainNumber, let stop = sender.stop {
+            if let trainNumber = sender.trainNumber, let stop = sender.stop, let endStop = sender.endStop {
                 placemark.trainNumber = trainNumber
+                placemark.endStop = endStop
                 
                 let stopMark = SSLPlacemark(coordinate: stop.location)
                 stopMark.stationName = stop.name
@@ -841,8 +844,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
-            } else if let trainNumber = sender.trainNumber {
+            } else if let trainNumber = sender.trainNumber, let endStop = sender.endStop {
                 placemark.trainNumber = trainNumber
+                placemark.endStop = endStop
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.locale = Locale.current

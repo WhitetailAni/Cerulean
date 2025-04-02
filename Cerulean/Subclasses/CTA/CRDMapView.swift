@@ -78,7 +78,7 @@ class CRDMapView: MKMapView {
         applyCTAOverlay(line: .greenAlternate, run: "001")
         
         DispatchQueue.global().async {
-            var overlayArray: [MKOverlay] = [SSLTracker().getOverlay()]
+            var overlayArray: [MKOverlay] = [SSLTracker().getOverlay(endStop: nil, trainString: "1")]
             let pverlays = METXAPI().getAllPolylines()
             for pverlay in pverlays {
                 overlayArray.append(pverlay)
