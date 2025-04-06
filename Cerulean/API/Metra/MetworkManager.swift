@@ -16,7 +16,7 @@ class MetworkManager {
         let authString = "\(username):\(password)"
         
         guard let authData = authString.data(using: .utf8) else {
-            fatalError("Could not create login data")
+            fatalError("couldnt create login info")
         }
         let encodedData = authData.base64EncodedString()
         

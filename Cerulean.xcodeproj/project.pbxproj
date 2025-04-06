@@ -25,9 +25,10 @@
 		422124DA2C502D920062695A /* CeruleanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124D92C502D900062695A /* CeruleanApp.swift */; };
 		424B28F32C509E81002E3E9B /* CRMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424B28F22C509E79002E3E9B /* CRMapView.swift */; };
 		42549F722D9CAA46005C8B27 /* limits.plist in Resources */ = {isa = PBXBuildFile; fileRef = 42549F712D9CAA46005C8B27 /* limits.plist */; };
+		42549FA52DA225AE005C8B27 /* RLMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42549FA42DA225AE005C8B27 /* RLMapView.swift */; };
 		425CCE462D8A70520002845B /* stops.plist in Resources */ = {isa = PBXBuildFile; fileRef = 425CCE452D8A70520002845B /* stops.plist */; };
 		429FCAF02D9141C800240DDA /* SouthShoreTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; };
-		429FCAF12D9141C800240DDA /* SouthShoreTracker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		429FCAF12D9141C800240DDA /* SouthShoreTracker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 42F0BBF72D26811800F834DF /* SouthShoreTracker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		42D999FC2CFD6E2500A060A2 /* METXAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */; };
 		42D999FE2CFD823E00A060A2 /* CRPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D999FD2CFD823700A060A2 /* CRPoint.swift */; };
 		42D99A002CFD82D700A060A2 /* cta.csv in Resources */ = {isa = PBXBuildFile; fileRef = 42D999FF2CFD82D700A060A2 /* cta.csv */; };
@@ -108,6 +109,7 @@
 		422124DB2C502E6D0062695A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		424B28F22C509E79002E3E9B /* CRMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMapView.swift; sourceTree = "<group>"; };
 		42549F712D9CAA46005C8B27 /* limits.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = limits.plist; sourceTree = "<group>"; };
+		42549FA42DA225AE005C8B27 /* RLMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLMapView.swift; sourceTree = "<group>"; };
 		425CCE452D8A70520002845B /* stops.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = stops.plist; sourceTree = "<group>"; };
 		42D999FB2CFD6E1F00A060A2 /* METXAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = METXAPI.swift; sourceTree = "<group>"; };
 		42D999FD2CFD823700A060A2 /* CRPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRPoint.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				424B28F22C509E79002E3E9B /* CRMapView.swift */,
+				42549FA42DA225AE005C8B27 /* RLMapView.swift */,
 				420013022C54B0AC007ACC67 /* CRMarkerAnnotationView.swift */,
 				420012EF2C50B9BD007ACC67 /* CRMenuItem.swift */,
 				420012F12C50B9C3007ACC67 /* CRPlacemark.swift */,
@@ -435,6 +438,7 @@
 				420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */,
 				42D99A172CFE9EBA00A060A2 /* MTMenuItem.swift in Sources */,
 				42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */,
+				42549FA52DA225AE005C8B27 /* RLMapView.swift in Sources */,
 				42D99A0D2CFE5E5800A060A2 /* MTService.swift in Sources */,
 				42D99A192CFE9FEA00A060A2 /* MTMapView.swift in Sources */,
 				42D99A022CFD8B4600A060A2 /* CRPolyline.swift in Sources */,
@@ -591,7 +595,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1612;
+				CURRENT_PROJECT_VERSION = 1672;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -609,7 +613,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.4.2;
+				MARKETING_VERSION = 3.4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -630,7 +634,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1612;
+				CURRENT_PROJECT_VERSION = 1672;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -648,7 +652,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.4.2;
+				MARKETING_VERSION = 3.4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

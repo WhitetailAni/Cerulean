@@ -15,7 +15,9 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     private let chicagoDataPortalAppToken = ""
     
     var polylines: [Int: [CRPoint]] = [:]
+    var pinkroute: [Int: [CRPoint]] = [:]
     public static var polyline = ChicagoTransitInterface(polyline: true)
+    public static var pinkroute = ChicagoTransitInterface(pinkroute: true)
     
     override init() {
         super.init()
@@ -24,6 +26,11 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     init(polyline: Bool) {
         super.init()
         storePolylines()
+    }
+    
+    init(pinkroute: Bool) {
+        super.init()
+        storePinks()
     }
     
     class private func isHoliday() -> Bool {
@@ -192,6 +199,37 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         polylines = extraSorted
     }
     
+    func storePinks() {
+        var pointArray: [CRPoint] = []
+        
+        let filePath = "/Users/whitetailani/Downloads/pink.csv"
+        
+        var rawList = ""
+        
+        do {
+            rawList = try String(contentsOfFile: filePath)
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+        
+        var rows = rawList.components(separatedBy: "\n")
+        rows.removeFirst()
+        
+        for i in 0..<rows.count {
+            let columns = rows[i].split(separator: ",")
+            if columns.count > 0 {
+                pointArray.append(CRPoint(routeId: Int(columns[0])!, coordinate: CLLocationCoordinate2D(latitude: Double(columns[1])!, longitude: Double(columns[2])!), sequencePosition: Int(columns[3])!))
+            }
+        }
+        let sorted = Dictionary(grouping: pointArray) { $0.routeId }
+        let extraSorted = sorted.mapValues { route in
+            route.sorted { $0.sequencePosition < $1.sequencePosition }
+        }
+        
+        pinkroute = extraSorted
+    }
+    
     func getPolylineForLine(line: CRLine, run: Int) -> CRPolyline {
         let desiredId = CRLine.gtfsIDForLineAndRun(line: line, run: run)
         let pojntArray: [CRPoint] = polylines[desiredId]!
@@ -205,6 +243,18 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         return overlay
     }
     
+    func getPinklineforId(id: Int) -> CRPolyline {
+        let pojntArray: [CRPoint] = pinkroute[id]!
+        var coordinateArray: [CLLocationCoordinate2D] = []
+        for pojnt in pojntArray {
+            coordinateArray.append(pojnt.coordinate)
+        }
+        let overlay = CRPolyline(coordinates: coordinateArray, count: coordinateArray.count)
+        overlay.line = .red
+        
+        return overlay
+    }
+    
     func getRedAlerts() -> [String: Any] {
         let baseURL = "http://www.transitchicago.com/api/1.0/alerts.aspx"
         var returnedData: [String: Any] = [:]
@@ -212,6 +262,24 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
             URLQueryItem(name: "routeid", value: "red"),
+            URLQueryItem(name: "outputType", value: "JSON")
+        ]
+        
+        contactDowntown(components: components) { result in
+            returnedData = result
+            self.semaphore.signal()
+        }
+        semaphore.wait()
+        return returnedData
+    }
+    
+    func getPinkAlerts() -> [String: Any] {
+        let baseURL = "http://www.transitchicago.com/api/1.0/alerts.aspx"
+        var returnedData: [String: Any] = [:]
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "routeid", value: "pink"),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
         

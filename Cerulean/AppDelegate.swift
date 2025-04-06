@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var redSouthUpTop = false
     var redNorthUpTop = false
+    var pinkRacine = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -54,34 +55,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = image
             button.imagePosition = .imageLeft
         }
-        redSouthUpTop = false
-        redNorthUpTop = false
-        
-        let alerts = ChicagoTransitInterface().getRedAlerts()
-        let alertsTwo = alerts["CTAAlerts"] as? [String: Any] ?? [:]
-        let alertsThree = alertsTwo["Alert"] as? [[String: Any]] ?? []
-        for alert in alertsThree {
-            let start = CRTime.ctaAPITimeToDate(string: alert["EventStart"] as? String ?? "")
-            let end = CRTime.ctaAPITimeToDate(string: alert["EventEnd"] as? String ?? "")
-            let isHappening = Date.now >= start && Date.now <= end
-            
-            if isHappening {
-                let desc = alert["ShortDescription"] as? String ?? ""
-                if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && desc.contains("elevated") {
-                    redSouthUpTop = true
-                }
-                if (desc.contains("Howard") || desc.contains("north")) && desc.contains("elevated") {
-                    redNorthUpTop = true
-                }
-                
-                if desc.contains("Red") && desc.contains("both") && desc.contains("elevated") {
-                    redSouthUpTop = true
-                    redNorthUpTop = true
-                }
-            }
-        }
         
         menu = NSMenu()
+        
+        /*let screenSize = NSScreen.main!.frame.size
+        let newWindow = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        newWindow.contentView = RLMapView()
+        newWindow.center()
+        newWindow.setIsVisible(true)
+        newWindow.orderFrontRegardless()
+        newWindow.makeKey()
+        NSApp.activate(ignoringOtherApps: true)*/
         
         let ctaItem = CRMenuItem(title: "CTA", action: #selector(openLink(_:)))
         ctaItem.linkToOpen = URL(string: "https://www.transitchicago.com/traintracker/")!
@@ -185,7 +169,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         refreshCTAInfo()
         refreshMetraInfo()
         refreshSSLInfo()
-        //refreshAmtrakInfo()
     }
     
     @MainActor @objc func refreshCTAInfo() {
@@ -194,6 +177,62 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for line in [CRLine.red, CRLine.blue, CRLine.green, CRLine.orange, CRLine.pink, CRLine.purple, CRLine.yellow] {
             let item = populateCTAMenuItem(line: line)
             ctaMenu.addItem(item)
+        }
+        
+        redSouthUpTop = false
+        redNorthUpTop = false
+        pinkRacine = false
+        
+        let rAlerts = ChicagoTransitInterface().getRedAlerts()
+        let rAlertsTwo = rAlerts["CTAAlerts"] as? [String: Any] ?? [:]
+        let rAlertsThree = rAlertsTwo["Alert"] as? [[String: Any]] ?? []
+        for alert in rAlertsThree {
+            let start = CRTime.ctaAPITimeToDate(string: alert["EventStart"] as? String ?? "")
+            let end = {
+                if alert["EventEnd"] as! NSObject == NSNull() {
+                    return Date.distantFuture
+                }
+                return CRTime.ctaAPITimeToDate(string: alert["EventEnd"] as? String ?? "")
+            }()
+            let isHappening = Date.now >= start && Date.now <= end
+            
+            if isHappening {
+                let desc = alert["ShortDescription"] as? String ?? ""
+                if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && (desc.contains("elevated") || desc.contains("Loop")) {
+                    redSouthUpTop = true
+                }
+                if (desc.contains("Howard") || desc.contains("north")) && (desc.contains("elevated") || desc.contains("Loop")) {
+                    redNorthUpTop = true
+                }
+                
+                if desc.contains("Red") && desc.contains("both") && (desc.contains("elevated") || desc.contains("Loop")) {
+                    redSouthUpTop = true
+                    redNorthUpTop = true
+                }
+            }
+        }
+        
+        let pAlerts = ChicagoTransitInterface().getPinkAlerts()
+        let pAlertsTwo = pAlerts["CTAAlerts"] as? [String: Any] ?? [:]
+        let pAlertsThree = pAlertsTwo["Alert"] as? [[String: Any]] ?? []
+        for alert in pAlertsThree {
+            let start = CRTime.ctaAPITimeToDate(string: alert["EventStart"] as? String ?? "")
+            let end = {
+                if alert["EventEnd"] as! NSObject == NSNull() {
+                    return Date.distantFuture
+                }
+                return CRTime.ctaAPITimeToDate(string: alert["EventEnd"] as? String ?? "")
+            }()
+            
+            let isHappening = Date.now >= start && Date.now <= end
+            
+            if isHappening {
+                let headline = alert["Headline"] as? String ?? ""
+                print(headline)
+                if headline.contains("Polk") && headline.contains("Racine") {
+                    pinkRacine = true
+                }
+            }
         }
         
         let item = populateCTAMenuItem(line: .brown)
@@ -274,6 +313,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         }
                         if destination == "Howard" && self.redNorthUpTop {
                             line2 = .redAlternate
+                        }
+                        if line == .pink && self.pinkRacine {
+                            line2 = .pinkAlternate
+                        }
+                        if line == .red && destination == "Ashland/63rd" {
+                            line2 = .redSouthSide
                         }
                     
                         let run = train["run"] ?? "Unknown Run"
