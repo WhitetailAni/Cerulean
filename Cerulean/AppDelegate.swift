@@ -228,7 +228,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if isHappening {
                 let headline = alert["Headline"] as? String ?? ""
-                print(headline)
                 if headline.contains("Polk") && headline.contains("Racine") {
                     pinkRacine = true
                 }
