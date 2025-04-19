@@ -118,7 +118,7 @@ class METXAPI: NSObject {
         var stopDict: [String: [MTStation]] = [:]
         
         readGTFS(endpoint: "schedule/stops") { result in
-            let sortedByService = Dictionary(grouping: result) { entry in
+            var sortedByService = Dictionary(grouping: result) { entry in
                 let url = entry["stop_url"] as? String ?? ""
                 
                 let components = url.components(separatedBy: "/")
@@ -134,8 +134,12 @@ class METXAPI: NSObject {
             
             var union: MTStation!
             var ogilvie: MTStation!
+            
             var western: MTStation!
             var clybourn: MTStation!
+            var rivergrove: MTStation!
+            
+            var prairiecrossing: MTStation!
             var joliet: MTStation!
             
             for zone1station in zone1 {
@@ -143,9 +147,9 @@ class METXAPI: NSObject {
                 let longitude = zone1station["stop_lon"] as? Double ?? 0.0
                 let accessible = zone1station["wheelchair_boarding"] as? Bool ?? false
                 if zone1station["stop_id"] as? String == "CUS" {
-                    union = MTStation(supportedService: .ses, apiName: "ZONE1", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
+                    union = MTStation(supportedService: .ses, apiName: "CUS", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
                 } else {
-                    ogilvie = MTStation(supportedService: .ses, apiName: "ZONE1", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
+                    ogilvie = MTStation(supportedService: .ses, apiName: "OTC", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
                 }
             }
             
@@ -160,6 +164,10 @@ class METXAPI: NSObject {
                 let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
                 if components[components.count - 1] == "WESTERNAVE" {
                     western = self.purifyStation(station: station)
+                } else if components[components.count - 1] == "PRAIRCROSS" {
+                    prairiecrossing = self.purifyStation(station: station)
+                    
+                    sortedByService["MD-N"]?.removeAll(where: { $0["stop_url"] as? String == station["stop_url"] as? String })
                 }
             }
             
@@ -167,6 +175,13 @@ class METXAPI: NSObject {
                 let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
                 if components[components.count - 1] == "CLYBOURN" {
                     clybourn = self.purifyStation(station: station)
+                }
+            }
+            
+            for station in sortedByService["MD-W"] ?? [] {
+                let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
+                if components[components.count - 1] == "RIVERGROVE" {
+                    rivergrove = self.purifyStation(station: station)
                 }
             }
             
@@ -185,53 +200,57 @@ class METXAPI: NSObject {
                 switch service {
                 case .up_w:
                     var ogilvie2 = ogilvie!
-                    ogilvie2.apiName = "UP-W"
                     ogilvie2.supportedService = .up_w
                     stationArray.append(ogilvie2)
                 case .hc:
                     var union2 = union!
                     union2.supportedService = .hc
-                    union2.apiName = "CUS"
                     var joliet2 = joliet!
-                    joliet2.apiName = "JOLIET"
                     joliet2.supportedService = .hc
                     stationArray.append(joliet2)
                     stationArray.append(union2)
                 case .md_w:
                     var union2 = union!
-                    union2.apiName = "CUS"
                     union2.supportedService = .md_w
+                    
                     var western2 = western!
-                    western2.apiName = "WESTERNAVE"
                     western2.supportedService = .md_w
+                    
                     stationArray.append(western2)
                     stationArray.append(union2)
                 case .up_nw:
                     var ogilvie2 = ogilvie!
-                    ogilvie2.apiName = "OTC"
                     ogilvie2.supportedService = .up_nw
+                    
                     var clybourn2 = clybourn!
-                    clybourn2.apiName = "UP-NW"
                     clybourn2.supportedService = .up_nw
+                    
                     stationArray.append(clybourn2)
                     stationArray.append(ogilvie2)
                 case .bnsf:
                     var union2 = union!
-                    union2.apiName = "CUS"
                     union2.supportedService = .bnsf
+                    
                     stationArray.append(union2)
                 case .sws:
                     var union2 = union!
-                    union2.apiName = "CUS"
                     union2.supportedService = .sws
+                    
                     stationArray.append(union2)
                 case .ncs:
                     var union2 = union!
-                    union2.apiName = "CUS"
                     union2.supportedService = .ncs
+                    
                     var western2 = western!
-                    western2.apiName = "WESTERNAVE"
                     western2.supportedService = .ncs
+                    
+                    var rivergrove2 = rivergrove!
+                    rivergrove2.supportedService = .ncs
+                    
+                    prairiecrossing.supportedService = .ncs
+                    
+                    stationArray.append(prairiecrossing)
+                    stationArray.append(rivergrove2)
                     stationArray.append(western2)
                     stationArray.append(union2)
                 case .ri, .me, .md_n, .up_n, .ses:

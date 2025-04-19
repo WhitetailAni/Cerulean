@@ -164,9 +164,9 @@
 		420013042C54B1EC007ACC67 /* Structs */ = {
 			isa = PBXGroup;
 			children = (
+				420013072C54B1FB007ACC67 /* CRTime.swift */,
 				42F0BBD52D267BBD00F834DF /* CTA */,
 				42D99A0A2CFE5E2E00A060A2 /* Metra */,
-				420013072C54B1FB007ACC67 /* CRTime.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -193,7 +193,6 @@
 			isa = PBXGroup;
 			children = (
 				42D999FF2CFD82D700A060A2 /* cta.csv */,
-				42549F712D9CAA46005C8B27 /* limits.plist */,
 				420013042C54B1EC007ACC67 /* Structs */,
 				420012FE2C5367A5007ACC67 /* UserInfo.swift */,
 				420013002C536B93007ACC67 /* AboutWindowDelegate.swift */,
@@ -241,9 +240,10 @@
 		42D99A0A2CFE5E2E00A060A2 /* Metra */ = {
 			isa = PBXGroup;
 			children = (
+				425CCE452D8A70520002845B /* stops.plist */,
+				42549F712D9CAA46005C8B27 /* limits.plist */,
 				42D99A222CFFF78200A060A2 /* MTStation.swift */,
 				42D99A202CFF789500A060A2 /* MTStop.swift */,
-				425CCE452D8A70520002845B /* stops.plist */,
 				42D99A1E2CFF782F00A060A2 /* MTPrediction.swift */,
 				42D99A1C2CFEB07100A060A2 /* MTPoint.swift */,
 				42D99A0C2CFE5E5600A060A2 /* MTService.swift */,
@@ -595,7 +595,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1673;
+				CURRENT_PROJECT_VERSION = 1684;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -613,9 +613,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.4.4;
+				MARKETING_VERSION = 3.4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_ENABLE_EMIT_CONST_VALUES = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -634,7 +636,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1673;
+				CURRENT_PROJECT_VERSION = 1684;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -652,9 +654,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.4.4;
+				MARKETING_VERSION = 3.4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_ENABLE_EMIT_CONST_VALUES = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";

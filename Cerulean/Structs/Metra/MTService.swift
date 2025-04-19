@@ -113,13 +113,13 @@ enum MTService {
                 if trainNumber % 2 == 0 {
                     return "LaSalle Street Station"
                 } else {
-                    if (trainNumber > 300 && trainNumber < 400) {
+                    if isNumberBetween(min: 300, max: 399, value: trainNumber) {
                         let day = Calendar.current.dateComponents(in: TimeZone(identifier: "America/Chicago")!, from: Date()).weekday
                         if day == 1 || day == 7 {
                             return "Blue Island/Vermont Street"
                         }
-                        return "Tinley Park"
-                    } else if trainNumber > 600 {
+                        return "80th Avenue/Tinley Park"
+                    } else if isNumberBetween(min: 600, max: 699, value: trainNumber) {
                         return "Blue Island/Vermont Street"
                     } else {
                         return "Joliet"

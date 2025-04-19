@@ -69,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let ctaItem = CRMenuItem(title: "CTA", action: #selector(openLink(_:)))
         ctaItem.linkToOpen = URL(string: "https://www.transitchicago.com/traintracker/")!
-        let ctaTitle = prependImageToString(imageName: "cta", title: "CTA")
+        let ctaTitle = createMutableStringFromImage(imageName: "cta")
         ctaItem.attributedTitle = ctaTitle
         ctaMenu = NSMenu()
         ctaItem.submenu = ctaMenu
@@ -78,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let metraItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
         metraItem.linkToOpen = URL(string: "https://metra.com/metratracker")!
-        let metraTitle = prependImageToString(imageName: "metra", title: "Metra")
+        let metraTitle = createMutableStringFromImage(imageName: "metra")
         metraItem.attributedTitle = metraTitle
         metraMenu = NSMenu()
         metraItem.submenu = metraMenu
@@ -87,7 +87,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let sslItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
         sslItem.linkToOpen = URL(string: "https://mysouthshoreline.com/")!
-        let sslTitle = prependImageToString(imageName: "ssl", title: "", ssl: true)
+        let sslTitle = createMutableStringFromImage(imageName: "ssl", ssl: true)
         sslItem.attributedTitle = sslTitle
         sslMenu = NSMenu()
         sslItem.submenu = sslMenu
@@ -136,7 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
     
-    func prependImageToString(imageName: String, title: String, ssl: Bool = false) -> NSMutableAttributedString {
+    func createMutableStringFromImage(imageName: String, ssl: Bool = false) -> NSMutableAttributedString {
         var coefficient: CGFloat = 5.0
         if ssl {
             coefficient = -2
@@ -160,7 +160,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let attributedTitle = NSMutableAttributedString(string: "")
         attributedTitle.append(resultingString)
         attributedTitle.append(NSAttributedString(string: " "))
-        attributedTitle.append(NSAttributedString(string: title))
         
         return attributedTitle
     }
@@ -819,7 +818,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let trainNumber = sender.trainNumber, let service = sender.service, let stationName = sender.stationName, let stationID = sender.stationID {
                 placemark.service = service
                 placemark.trainNumber = trainNumber
-                
                 let station = METXAPI.stations.getStop(service: service, apiName: stationID)
                 
                 let stopMark = MTPlacemark(coordinate: station.location)
