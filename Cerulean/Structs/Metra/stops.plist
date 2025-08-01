@@ -109,7 +109,7 @@
 	<key>211TH-UP</key>
 	<string>211th Street/Lincoln Highway</string>
 	<key>OLYMPIA</key>
-	<string>Olympia</string>
+	<string>Olympia Fields</string>
 	<key>FLOSSMOOR</key>
 	<string>Flossmoor</string>
 	<key>HOMEWOOD</key>
@@ -149,7 +149,7 @@
 	<key>103RD-UP</key>
 	<string>103rd Street/Rosemoor</string>
 	<key>95TH-UP</key>
-	<string>95th Street/CSU</string>
+	<string>95th Street/Chicago State University</string>
 	<key>91ST-UP</key>
 	<string>91st Street/Chesterfield</string>
 	<key>87TH-UP</key>
@@ -179,11 +179,11 @@
 	<key>63RD-UP</key>
 	<string>63rd Street</string>
 	<key>59TH-UP</key>
-	<string>59th Street, University of Chicago</string>
+	<string>59th Street/University of Chicago</string>
 	<key>55-56-57TH</key>
 	<string>55th-56th-57th Street</string>
 	<key>51ST-53RD</key>
-	<string>51st/53rd Street/Hyde Park</string>
+	<string>51st-53rd Street/Hyde Park</string>
 	<key>47TH-UP</key>
 	<string>47th Street/Kenwood</string>
 	<key>27TH-UP</key>

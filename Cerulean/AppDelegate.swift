@@ -197,14 +197,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if isHappening {
                 let desc = alert["ShortDescription"] as? String ?? ""
-                if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && (desc.contains("elevated") || desc.contains("Loop")) {
+                print(desc)
+                if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && (desc.contains("elevated") || desc.contains("Loop")) && desc.contains("routed") {
                     redSouthUpTop = true
                 }
-                if (desc.contains("Howard") || desc.contains("north")) && (desc.contains("elevated") || desc.contains("Loop")) {
+                if (desc.contains("Howard") || desc.contains("north")) && (desc.contains("elevated") || desc.contains("Loop")) && desc.contains("routed") {
                     redNorthUpTop = true
                 }
                 
-                if desc.contains("Red") && desc.contains("both") && (desc.contains("elevated") || desc.contains("Loop")) {
+                if desc.contains("Red") && desc.contains("both") && (desc.contains("elevated") || desc.contains("Loop")) && desc.contains("routed") {
                     redSouthUpTop = true
                     redNorthUpTop = true
                 }
@@ -306,10 +307,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         if line == .blue && destination == "UIC-Halsted" {
                             line2 = .blueAlternate
                         }
-                        if (destination == "95th/Dan Ryan" || destination == "130th") && self.redSouthUpTop {
+                        if line2 == .red, (destination == "95th/Dan Ryan" || destination == "130th") && self.redSouthUpTop {
                             line2 = .redAlternate
                         }
-                        if destination == "Howard" && self.redNorthUpTop {
+                        if line == .red, destination == "Howard" && self.redNorthUpTop {
                             line2 = .redAlternate
                         }
                         if line == .pink && self.pinkRacine {
@@ -738,6 +739,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if let line = sender.trainLine, let run = sender.trainRun, let timeLastUpdated = sender.timeLastUpdated {
                 let stationName = sender.trainDesiredStop ?? "Rochester"
+                print(run)
+                print(line)
                 trainMark.line = line
                 trainMark.trainRun = run
                 trainMark.stationName = stationName
