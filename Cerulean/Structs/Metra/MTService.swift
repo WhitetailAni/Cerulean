@@ -417,14 +417,13 @@ enum MTService {
         if number == "RAV1" {
             return "UP-N_\(inOut)_1"
         } else {
-            
             switch self {
             case .up_w:
                 return "UP-W_\(inOut)_1"
             case .hc:
                 return "HC_\(inOut)_1"
             case .ri:
-                if isNumberBetween(min: 300, max: 499, value: trainNumber) || trainNumber < 200 {
+                if isNumberBetween(min: 400, max: 599, value: trainNumber) || trainNumber < 200 {
                     return "RI_\(inOut)_2"
                 } else {
                     return "RI_\(inOut)_1"

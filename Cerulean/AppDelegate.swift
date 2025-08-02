@@ -197,7 +197,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if isHappening {
                 let desc = alert["ShortDescription"] as? String ?? ""
-                print(desc)
                 if (desc.contains("95th") || desc.contains("130th") || desc.contains("south")) && (desc.contains("elevated") || desc.contains("Loop")) && desc.contains("routed") {
                     redSouthUpTop = true
                 }
@@ -739,8 +738,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if let line = sender.trainLine, let run = sender.trainRun, let timeLastUpdated = sender.timeLastUpdated {
                 let stationName = sender.trainDesiredStop ?? "Rochester"
-                print(run)
-                print(line)
                 trainMark.line = line
                 trainMark.trainRun = run
                 trainMark.stationName = stationName

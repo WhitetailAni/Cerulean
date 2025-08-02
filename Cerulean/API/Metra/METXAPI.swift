@@ -218,6 +218,11 @@ class METXAPI: NSObject {
                     
                     stationArray.append(western2)
                     stationArray.append(union2)
+                case .md_n:
+                    var union2 = union!
+                    union2.supportedService = .md_n
+                    
+                    stationArray.append(union2)
                 case .up_nw:
                     var ogilvie2 = ogilvie!
                     ogilvie2.supportedService = .up_nw
@@ -226,6 +231,11 @@ class METXAPI: NSObject {
                     clybourn2.supportedService = .up_nw
                     
                     stationArray.append(clybourn2)
+                    stationArray.append(ogilvie2)
+                case .up_n:
+                    var ogilvie2 = ogilvie!
+                    ogilvie2.supportedService = .up_n
+                    
                     stationArray.append(ogilvie2)
                 case .bnsf:
                     var union2 = union!
@@ -383,9 +393,14 @@ class METXAPI: NSObject {
         
         let polyline = storedPolylines[key] ?? []
         let limit = getPolylineLimit(trainNumber: bundle.0, service: bundle.1, naturalCap: polyline.count)
-        
-        for i in 0..<limit {//point in storedPolylines[key] ?? [] {
-            coordinateArray.append(polyline[i].coordinate)
+        if bundle.0 == "245" {
+            for i in limit..<polyline.count {
+                coordinateArray.append(polyline[i].coordinate)
+            }
+        } else {
+            for i in 0..<limit {
+                coordinateArray.append(polyline[i].coordinate)
+            }
         }
         
         return [MTPolyline(coordinates: coordinateArray, count: coordinateArray.count)]
