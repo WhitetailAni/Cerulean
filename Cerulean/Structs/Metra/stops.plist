@@ -123,9 +123,9 @@
 	<key>147TH-UP</key>
 	<string>147th Street/Sibley</string>
 	<key>IVANHOE</key>
-	<string>Ivanhoe</string>
+	<string>144th Street/Ivanhoe</string>
 	<key>RIVERDALE</key>
-	<string>Riverdale</string>
+	<string>137th Street/Riverdale</string>
 	<key>BLUEISLAND</key>
 	<string>Blue Island</string>
 	<key>BURROAK</key>
@@ -203,7 +203,7 @@
 	<key>ELGIN</key>
 	<string>Elgin</string>
 	<key>NATIONALS</key>
-	<string>National Street</string>
+	<string>National Street/Elgin</string>
 	<key>BARTLETT</key>
 	<string>Bartlett</string>
 	<key>HANOVERP</key>
@@ -261,7 +261,7 @@
 	<key>NBROOK</key>
 	<string>Northbrook</string>
 	<key>NGLENVIEW</key>
-	<string>The Glen/North Glenview</string>
+	<string>North Glenview</string>
 	<key>GLENVIEW</key>
 	<string>Glenview</string>
 	<key>GOLF</key>
@@ -333,7 +333,7 @@
 	<key>MAINST-DG</key>
 	<string>Downers Grove/Main Street</string>
 	<key>FAIRVIEWDG</key>
-	<string>Fairview Avenue</string>
+	<string>Downers Grove/Fairview Avenue</string>
 	<key>WESTMONT</key>
 	<string>Westmont</string>
 	<key>CLARNDNHIL</key>

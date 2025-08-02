@@ -8,6 +8,8 @@
 	<false/>
 	<key>CRRefreshInterval</key>
 	<integer>360</integer>
+	<key>CRSSLDontShowScheduled</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

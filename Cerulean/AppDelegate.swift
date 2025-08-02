@@ -695,7 +695,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 var stopItem: SSLMenuItem!
                                 let arrival = arrivals[i]
                                 
-                                if arrival.actualArrivalTime == arrival.scheduledArrivalTime {
+                                if arrival.actualArrivalTime == arrival.scheduledArrivalTime || Bundle.main.infoDictionary?["CRSSLDontShowScheduled"] as? Bool ?? false {
                                     stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openSSLMapWindow(_:)))
                                     stopItem.trainNumber = vehicle.trainNumber
                                     stopItem.stop = arrival.stop

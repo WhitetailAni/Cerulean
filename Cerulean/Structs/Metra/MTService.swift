@@ -257,7 +257,6 @@ enum MTService {
                 }
             }
         }
-        return "Central Station"
     }
     
     func isNumberBetween(min: Int, max: Int, value: Int) -> Bool {

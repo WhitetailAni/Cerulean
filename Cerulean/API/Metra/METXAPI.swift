@@ -397,6 +397,10 @@ class METXAPI: NSObject {
             for i in limit..<polyline.count {
                 coordinateArray.append(polyline[i].coordinate)
             }
+        } else if ["ME_IB_2", "ME_OB_2"].contains(key) {
+            for element in polyline {
+                coordinateArray.append(element.coordinate)
+            }
         } else {
             for i in 0..<limit {
                 coordinateArray.append(polyline[i].coordinate)
