@@ -594,6 +594,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             titleItem.trainNumber = consist.trainNumber
                             titleItem.service = service
                             
+                            let carMenu = NSMenu()
+                            carMenu.addItem(NSMenuItem(title: "Car \(consist.headCarNumber) providing data", action: #selector(self.nop)))
+                            titleItem.submenu = carMenu
+                            
                             stopMenu.addItem(titleItem)
                             stopMenu.addItem(NSMenuItem.separator())
                             

@@ -263,7 +263,7 @@ class METXAPI: NSObject {
                     stationArray.append(rivergrove2)
                     stationArray.append(western2)
                     stationArray.append(union2)
-                case .ri, .me, .md_n, .up_n, .ses:
+                case .ri, .me, .ses:
                     { }()
                 }
                 

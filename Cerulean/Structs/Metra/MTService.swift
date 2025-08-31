@@ -408,7 +408,7 @@ enum MTService {
     }
     
     func getPolylineKey(number: String) -> String {
-        let trainNumber = Int(number) ?? 0
+        let trainNumber = Int(number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
         var inOut = "OB"
         if trainNumber % 2 == 0 {
             inOut = "IB"
