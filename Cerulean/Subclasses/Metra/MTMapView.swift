@@ -133,7 +133,6 @@ class MTMapView: MKMapView {
     
     @objc func refreshTrainPosition() {
         DispatchQueue.global().async {
-            
             let raw = METXAPI().getActiveTrains()
             let allTrains = raw.0
             let trains = allTrains[self.train.service?.apiRepresentation() ?? ""] ?? []

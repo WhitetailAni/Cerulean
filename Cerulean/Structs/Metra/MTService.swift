@@ -72,8 +72,15 @@ enum MTService {
             }
         }
         if self == .ri && withOthers {
-            if isNumberBetween(min: 500, max: 699, value: trainNumber) || isNumberBetween(min: 200, max: 399, value: trainNumber){
-                return .beverly
+            let day = Calendar.current.dateComponents(in: TimeZone(identifier: "America/Chicago")!, from: Date()).weekday
+            if day == 1 || day == 7 {
+                if isNumberBetween(min: 200, max: 399, value: trainNumber) {
+                    return .beverly
+                }
+            } else {
+                if isNumberBetween(min: 500, max: 699, value: trainNumber) {
+                    return .beverly
+                }
             }
         }
         if self == .up_nw && withOthers {
@@ -422,10 +429,19 @@ enum MTService {
             case .hc:
                 return "HC_\(inOut)_1"
             case .ri:
-                if isNumberBetween(min: 400, max: 599, value: trainNumber) || trainNumber < 200 {
-                    return "RI_\(inOut)_2"
+                let day = Calendar.current.dateComponents(in: TimeZone(identifier: "America/Chicago")!, from: Date()).weekday
+                if day == 1 || day == 7 {
+                    if trainNumber < 200 {
+                        return "RI_\(inOut)_2"
+                    } else {
+                        return "RI_\(inOut)_1"
+                    }
                 } else {
-                    return "RI_\(inOut)_1"
+                    if isNumberBetween(min: 300, max: 599, value: trainNumber) {
+                        return "RI_\(inOut)_2"
+                    } else {
+                        return "RI_\(inOut)_1"
+                    }
                 }
             case .me:
                 if isNumberBetween(min: 200, max: 299, value: trainNumber) || trainNumber > 8500 {
