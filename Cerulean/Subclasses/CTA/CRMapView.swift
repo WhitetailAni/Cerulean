@@ -135,7 +135,7 @@ class CRMapView: MKMapView {
                 let cleanedUp = InterfaceResultProcessing.cleanUpRunInfo(info: info)
                 if cleanedUp.count > 0 {
                     let first = cleanedUp[0]
-                    if first["finalStation"] == "Harlem/Lake" {
+                    if (first["finalStation"] != "Cottage Grove") || (first["finalStation"] != "Ashland/63rd") {
                         let pverlay = ChicagoTransitInterface.polyline.getPolylineForLine(line: CRLine.greenAlternate, run: Int(self.train.trainRun ?? "000") ?? 0)
                         overlayArray.append(pverlay)
                     }

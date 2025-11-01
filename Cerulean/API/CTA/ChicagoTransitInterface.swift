@@ -11,8 +11,8 @@ import CoreLocation
 ///The class used to interface with the CTA's Train Tracker API. A new instance should be created on every request to allow for multiple concurrent requests.
 class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     let semaphore = DispatchSemaphore(value: 0)
-    private let trainTrackerAPIKey = ""
-    private let chicagoDataPortalAppToken = ""
+    private let trainTrackerAPIKey =
+    private let chicagoDataPortalAppToken = 
     
     var polylines: [Int: [CRPoint]] = [:]
     var pinkroute: [Int: [CRPoint]] = [:]
@@ -169,7 +169,7 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
     func storePolylines() {
         var pointArray: [CRPoint] = []
         
-        guard let filePath = Bundle.main.path(forResource: "cta", ofType: "csv") else {
+        guard let filePath = Bundle.main.path(forResource: "cta_shapes", ofType: "csv") else {
             return
         }
         
@@ -261,7 +261,7 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "routeid", value: "red"),
+            URLQueryItem(name: "routeid", value: "Red"),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
         
@@ -279,7 +279,25 @@ class ChicagoTransitInterface: NSObject, @unchecked Sendable {
         
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
-            URLQueryItem(name: "routeid", value: "pink"),
+            URLQueryItem(name: "routeid", value: "Pink"),
+            URLQueryItem(name: "outputType", value: "JSON")
+        ]
+        
+        contactDowntown(components: components) { result in
+            returnedData = result
+            self.semaphore.signal()
+        }
+        semaphore.wait()
+        return returnedData
+    }
+    
+    func getBrownAlerts() -> [String: Any] {
+        let baseURL = "http://www.transitchicago.com/api/1.0/alerts.aspx"
+        var returnedData: [String: Any] = [:]
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "routeid", value: "Brn"),
             URLQueryItem(name: "outputType", value: "JSON")
         ]
         

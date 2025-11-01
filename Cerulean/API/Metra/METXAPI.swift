@@ -8,11 +8,13 @@
 import Foundation
 import CoreLocation
 import MapKit
+import GTFS
 
 class METXAPI: NSObject {
     let semaphore = DispatchSemaphore(value: 0)
     var storedPolylines: Dictionary<String, [MTPoint]> = [:]
     var storedStations: [String: [MTStation]] = [:]
+    var apiKey = 
     
     public static var polyline = METXAPI(polyline: true)
     public static var stations = METXAPI(stations: true)
@@ -32,7 +34,7 @@ class METXAPI: NSObject {
     }
     
     func getActiveTrains() -> ([String: [MTConsist]], String) {
-        var returnedData: [[String: Any]] = []
+        var returnedData: [String: Any] = [:]
         var consistArray: [MTConsist] = []
         
         METXAPI().readGTFS(endpoint: "positions") { result in
@@ -41,38 +43,23 @@ class METXAPI: NSObject {
         }
         semaphore.wait()
         
-        var gotTime = false
-        var timeStampString = ""
+        var timeStampString = "joe biden o' clock"
+        if let header = returnedData["header"] as? [String: Any], let timestampRaw = header["timestamp"] as? String, let timestamp = Double(timestampRaw) {
+            timeStampString = CRTime.unixTimestampToReadableTime(timestamp: timestamp)
+        }
         
-        for rawData in returnedData {
-            if let data: [String: Any] = rawData["vehicle"] as? [String: Any], let trip: [String: Any] = data["trip"] as? [String: Any], let vehicle: [String: Any] = data["vehicle"] as? [String: Any], let position: [String: Any] = data["position"] as? [String: Any], let timestamp: [String: Any] = data["timestamp"] as? [String : Any] {
-                
-                let trainNumber = vehicle["label"] as? String ?? "000"
-                let headCarNumber = vehicle["id"] as? String ?? "0000"
-                let startDateString = vehicle["start_date"] as? String ?? "19700101"
-                let startTimeString = vehicle["start_time"] as? String ?? "00:00:00"
-                
-                if !gotTime {
-                    timeStampString = CRTime.metraAPITimeToReadableTime(string: timestamp["low"] as? String ?? "1970-01-01T00:00:00.000Z")
-                    gotTime = true
+        if let returnedArray = returnedData["entity"] as? [[String: Any]] {
+            for rawData in returnedArray {
+                if let data = rawData["vehicle"] as? [String: Any], let vehicle = data["vehicle"] as? [String: Any], let position = data["position"] as? [String: Any], let trip = data["trip"] as? [String: Any] {
+                    if let carNumber = vehicle["id"] as? String, let trainNumber = vehicle["label"] as? String, let railLine = trip["routeId"] as? String, let latitude = position["latitude"] as? Double, let longitude = position["longitude"] as? Double {
+                        
+                        let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                        let service = MTService.init(fromAPI: railLine)
+                        
+                        let consist = MTConsist(trainNumber: trainNumber, headCarNumber: carNumber, location: coordinates, service: service)
+                        consistArray.append(consist)
+                    }
                 }
-                
-                let latitude = position["latitude"] as? Double ?? 0.0
-                let longitude = position["longitude"] as? Double ?? 0.0
-                let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                
-                let heading = position["bearing"] as? Int ?? 0
-                
-                let serviceString = trip["route_id"] as? String ?? "SES"
-                let service = MTService.init(fromAPI: serviceString)
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyyMMdd HH:mm:ss"
-                let spinarak = "\(startDateString) \(startTimeString)"
-                
-                let consist = MTConsist(heading: heading, location: coordinates, trainNumber: trainNumber, headCarNumber: headCarNumber, service: service, startTime: dateFormatter.date(from: spinarak) ?? Date(timeIntervalSince1970: 0))
-                
-                consistArray.append(consist)
             }
         }
         
@@ -104,6 +91,36 @@ class METXAPI: NSObject {
         return (consistDict, timeStampString)
     }
     
+    func getYardTrains() -> ([MTYardConsist], String) {
+        var returnedData: [String: Any] = [:]
+        var consistArray: [MTYardConsist] = []
+        
+        METXAPI().readGTFS(endpoint: "positions") { result in
+            returnedData = result
+            self.semaphore.signal()
+        }
+        semaphore.wait()
+        
+        var timeStampString = "joe biden o' clock"
+        if let header = returnedData["header"] as? [String: Any], let timestampRaw = header["timestamp"] as? String, let timestamp = Double(timestampRaw) {
+            timeStampString = CRTime.unixTimestampToReadableTime(timestamp: timestamp)
+        }
+        
+        if let returnedArray = returnedData["entity"] as? [[String: Any]] {
+            for rawData in returnedArray {
+                if let data = rawData["vehicle"] as? [String: Any], let vehicle = data["vehicle"] as? [String: Any], let position = data["position"] as? [String: Any], data["trip"] == nil {
+                    if let carNumber = vehicle["id"] as? String, let latitude = position["latitude"] as? Double, let longitude = position["longitude"] as? Double {
+                        let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                        
+                        let consist = MTYardConsist(headCarNumber: carNumber, location: coordinates)
+                        consistArray.append(consist)
+                    }
+                }
+            }
+        }
+        return (consistArray, timeStampString)
+    }
+    
     func getStop(service: MTService, apiName: String) -> MTStation {
         let stations = storedStations[service.apiRepresentation()] ?? []
         for station in stations {
@@ -117,161 +134,166 @@ class METXAPI: NSObject {
     func storeStops() {
         var stopDict: [String: [MTStation]] = [:]
         
-        readGTFS(endpoint: "schedule/stops") { result in
-            var sortedByService = Dictionary(grouping: result) { entry in
-                let url = entry["stop_url"] as? String ?? ""
-                
-                let components = url.components(separatedBy: "/")
-                if let trainLinesIndex = components.firstIndex(of: "train-lines"),
-                   trainLinesIndex + 1 < components.count {
-                    return components[trainLinesIndex + 1]
-                }
-                
-                return "ZONE1"
-            }
-            
-            let zone1: [[String: Any]] = sortedByService["ZONE1"] ?? []
-            
-            var union: MTStation!
-            var ogilvie: MTStation!
-            
-            var western: MTStation!
-            var clybourn: MTStation!
-            var rivergrove: MTStation!
-            
-            var prairiecrossing: MTStation!
-            var joliet: MTStation!
-            
-            for zone1station in zone1 {
-                let latitude = zone1station["stop_lat"] as? Double ?? 0.0
-                let longitude = zone1station["stop_lon"] as? Double ?? 0.0
-                let accessible = zone1station["wheelchair_boarding"] as? Bool ?? false
-                if zone1station["stop_id"] as? String == "CUS" {
-                    union = MTStation(supportedService: .ses, apiName: "CUS", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
-                } else {
-                    ogilvie = MTStation(supportedService: .ses, apiName: "OTC", location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
-                }
-            }
-            
-            for station in sortedByService["RI"] ?? [] {
-                let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
-                if components[components.count - 1] == "JOLIET" {
-                    joliet = self.purifyStation(station: station)
-                }
-            }
-            
-            for station in sortedByService["MD-N"] ?? [] {
-                let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
-                if components[components.count - 1] == "WESTERNAVE" {
-                    western = self.purifyStation(station: station)
-                } else if components[components.count - 1] == "PRAIRCROSS" {
-                    prairiecrossing = self.purifyStation(station: station)
-                    
-                    sortedByService["MD-N"]?.removeAll(where: { $0["stop_url"] as? String == station["stop_url"] as? String })
-                }
-            }
-            
-            for station in sortedByService["UP-N"] ?? [] {
-                let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
-                if components[components.count - 1] == "CLYBOURN" {
-                    clybourn = self.purifyStation(station: station)
-                }
-            }
-            
-            for station in sortedByService["MD-W"] ?? [] {
-                let components = (station["stop_url"] as? String ?? "").components(separatedBy: "/")
-                if components[components.count - 1] == "RIVERGROVE" {
-                    rivergrove = self.purifyStation(station: station)
-                }
-            }
-            
-            //joliet part of rock island
-            //western ave part of md-n
-            //clybourn part of up-n
-            
-            for service in MTService.allServices {
-                let stations = sortedByService[service.apiRepresentation()] ?? []
-                var stationArray: [MTStation] = []
-                
-                for station in stations {
-                    stationArray.append(self.purifyStation(station: station))
-                }
-                
-                switch service {
-                case .up_w:
-                    var ogilvie2 = ogilvie!
-                    ogilvie2.supportedService = .up_w
-                    stationArray.append(ogilvie2)
-                case .hc:
-                    var union2 = union!
-                    union2.supportedService = .hc
-                    var joliet2 = joliet!
-                    joliet2.supportedService = .hc
-                    stationArray.append(joliet2)
-                    stationArray.append(union2)
-                case .md_w:
-                    var union2 = union!
-                    union2.supportedService = .md_w
-                    
-                    var western2 = western!
-                    western2.supportedService = .md_w
-                    
-                    stationArray.append(western2)
-                    stationArray.append(union2)
-                case .md_n:
-                    var union2 = union!
-                    union2.supportedService = .md_n
-                    
-                    stationArray.append(union2)
-                case .up_nw:
-                    var ogilvie2 = ogilvie!
-                    ogilvie2.supportedService = .up_nw
-                    
-                    var clybourn2 = clybourn!
-                    clybourn2.supportedService = .up_nw
-                    
-                    stationArray.append(clybourn2)
-                    stationArray.append(ogilvie2)
-                case .up_n:
-                    var ogilvie2 = ogilvie!
-                    ogilvie2.supportedService = .up_n
-                    
-                    stationArray.append(ogilvie2)
-                case .bnsf:
-                    var union2 = union!
-                    union2.supportedService = .bnsf
-                    
-                    stationArray.append(union2)
-                case .sws:
-                    var union2 = union!
-                    union2.supportedService = .sws
-                    
-                    stationArray.append(union2)
-                case .ncs:
-                    var union2 = union!
-                    union2.supportedService = .ncs
-                    
-                    var western2 = western!
-                    western2.supportedService = .ncs
-                    
-                    var rivergrove2 = rivergrove!
-                    rivergrove2.supportedService = .ncs
-                    
-                    prairiecrossing.supportedService = .ncs
-                    
-                    stationArray.append(prairiecrossing)
-                    stationArray.append(rivergrove2)
-                    stationArray.append(western2)
-                    stationArray.append(union2)
-                case .ri, .me, .ses:
-                    { }()
-                }
-                
-                stopDict[service.apiRepresentation()] = stationArray
-            }
-            self.semaphore.signal()
+        guard let filePath = Bundle.main.path(forResource: "metra_stops", ofType: "csv") else {
+            return
         }
-        semaphore.wait()
+        
+        var result = ""
+        do {
+            result = try String(contentsOfFile: filePath)
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+
+        var rows = result.components(separatedBy: "\r\n")
+        rows.removeFirst()
+        
+        var sortedByService: [String: [MTStation]] = [:]
+        
+        for i in 0..<rows.count {
+            let columns = rows[i].split(separator: ",")
+            if columns.count > 0 && columns[6].components(separatedBy: "/").count > 5 {
+                let service = columns[6].components(separatedBy: "/")[5]
+                let station = MTStation(supportedService: MTService(fromAPI: service), apiName: String(columns[0]), location: CLLocationCoordinate2D(latitude: Double(columns[3]) ?? 0, longitude: Double(columns[4]) ?? 0), accessible: (Int(columns[7]) == 1))
+                
+                if sortedByService[service] == nil {
+                    sortedByService[service] = []
+                }
+                sortedByService[service]?.append(station)
+            }
+        }
+        
+        var union: MTStation!
+        var ogilvie: MTStation!
+        
+        var western: MTStation!
+        var clybourn: MTStation!
+        var rivergrove: MTStation!
+        
+        var prairiecrossing: MTStation!
+        var joliet: MTStation!
+        
+        for station in sortedByService["ZONE1"] ?? [] {
+            if station.apiName == "CUS" {
+                union = station
+            } else if station.apiName == "OTC" {
+                ogilvie = station
+            }
+        }
+        
+        for station in sortedByService["RI"] ?? [] {
+            if station.apiName == "JOLIET" {
+                joliet = station
+            }
+        }
+        
+        for station in sortedByService["MD-N"] ?? [] {
+            if station.apiName == "WESTERNAVE" {
+                western = station
+            } else if station.apiName == "PRAIRCROSS" {
+                prairiecrossing = station
+                
+                //sortedByService["MD-N"]?.removeAll(where: { $0["stop_url"] as? String == station["stop_url"] as? String })
+            }
+        }
+        
+        for station in sortedByService["UP-N"] ?? [] {
+            if station.apiName == "CLYBOURN" {
+                clybourn = station
+            }
+        }
+        
+        for station in sortedByService["MD-W"] ?? [] {
+            if station.apiName == "RIVERGROVE" {
+                rivergrove = station
+            }
+        }
+        
+        //joliet part of rock island
+        //western ave part of md-n
+        //clybourn part of up-n
+        
+        for service in MTService.allServices {
+            let stations = sortedByService[service.apiRepresentation()] ?? []
+            var stationArray: [MTStation] = []
+            
+            for station in stations {
+                stationArray.append(station)
+            }
+            
+            switch service {
+            case .up_w:
+                var ogilvie2 = ogilvie!
+                ogilvie2.supportedService = .up_w
+                stationArray.append(ogilvie2)
+            case .hc:
+                var union2 = union!
+                union2.supportedService = .hc
+                var joliet2 = joliet!
+                joliet2.supportedService = .hc
+                stationArray.append(joliet2)
+                stationArray.append(union2)
+            case .md_w:
+                var union2 = union!
+                union2.supportedService = .md_w
+                
+                var western2 = western!
+                western2.supportedService = .md_w
+                
+                stationArray.append(western2)
+                stationArray.append(union2)
+            case .md_n:
+                var union2 = union!
+                union2.supportedService = .md_n
+                
+                stationArray.append(union2)
+            case .up_nw:
+                var ogilvie2 = ogilvie!
+                ogilvie2.supportedService = .up_nw
+                
+                var clybourn2 = clybourn!
+                clybourn2.supportedService = .up_nw
+                
+                stationArray.append(clybourn2)
+                stationArray.append(ogilvie2)
+            case .up_n:
+                var ogilvie2 = ogilvie!
+                ogilvie2.supportedService = .up_n
+                
+                stationArray.append(ogilvie2)
+            case .bnsf:
+                var union2 = union!
+                union2.supportedService = .bnsf
+                
+                stationArray.append(union2)
+            case .sws:
+                var union2 = union!
+                union2.supportedService = .sws
+                
+                stationArray.append(union2)
+            case .ncs:
+                var union2 = union!
+                union2.supportedService = .ncs
+                
+                var western2 = western!
+                western2.supportedService = .ncs
+                
+                var rivergrove2 = rivergrove!
+                rivergrove2.supportedService = .ncs
+                
+                prairiecrossing.supportedService = .ncs
+                
+                stationArray.append(prairiecrossing)
+                stationArray.append(rivergrove2)
+                stationArray.append(western2)
+                stationArray.append(union2)
+            case .ri, .me, .ses:
+                { }()
+            }
+            
+            stopDict[service.apiRepresentation()] = stationArray
+        }
         
         storedStations = stopDict
     }
@@ -294,98 +316,66 @@ class METXAPI: NSObject {
         return MTStation(supportedService: MTService(fromAPI: serviceString), apiName: stationId, location: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), accessible: accessible)
     }
     
-    func getStopPredictions() -> [String: [MTPrediction]] {
-        var predictionDict: [String: [MTPrediction]] = [:]
+    func getStopPredictions() -> [String: MTPrediction] {
+        var returnedData: [[String: Any]] = []
         
-        readGTFS(endpoint: "tripUpdates") { result in
-            let sortedByService = Dictionary(grouping: result) { entry in
-                return ((entry["trip_update"] as? [String: Any] ?? [:])["trip"] as? [String: Any] ?? [:])["route_id"] as? String ?? "" //yea its awful cope
-            }
-            
-            for service in MTService.allServices {
-                let activeTrains = sortedByService[service.apiRepresentation()] ?? []
-                
-                var predictionArray: [MTPrediction] = []
-                
-                for activeTrain in activeTrains {
-                    let tripUpdate = activeTrain["trip_update"] as? [String: Any] ?? [:]
-                    if let vehicle = tripUpdate["vehicle"] as? [String: Any], let stopTimes = tripUpdate["stop_time_update"] as? [[String: Any]] {
-                        
-                        let trainNumber = vehicle["label"] as? String ?? "000"
-                        
-                        var stopArray: [MTStop] = []
-                        for stop in stopTimes {
-                            let position = stop["stop_sequence"] as? Int ?? 0
-                            let apiName = stop["stop_id"] as? String ?? "CENTRAL"
-                            let departure = stop["departure"] as? [String: Any] ?? [:]
-                            let departureTimeString = (departure["time"] as? [String: Any] ?? [:])["low"] as? String ?? "19700101T00:00:00.000Z"
-                            
-                            let arrival = stop["arrival"] as? [String: Any] ?? [:]
-                            let arrivalTimeString = (arrival["time"] as? [String: Any] ?? [:])["low"] as? String ?? "19700101T00:00:00.000Z"
-                            
-                            
-                            
-                            let departureTime = CRTime.metraAPITimeToDate(string: departureTimeString)
-                            let arrivalTime = CRTime.metraAPITimeToDate(string: arrivalTimeString)
-                            
-                            stopArray.append(MTStop(apiName: apiName, position: position, arrivalTime: arrivalTime, departureTime: departureTime))
-                        }
-                        
-                        predictionArray.append(MTPrediction(service: service, trainNumber: trainNumber, stops: stopArray))
-                    }
-                }
-                
-                predictionDict[service.apiRepresentation()] = predictionArray
+        var predictionDict: [String: MTPrediction] = [:]
+        
+        readGTFS(endpoint: "tripupdates") { result in
+            if let data = result["entity"] as? [[String: Any]] {
+                returnedData = data
             }
             
             self.semaphore.signal()
         }
         semaphore.wait()
+        
+        for data in returnedData {
+            let tripUpdate = data["tripUpdate"] as? [String: Any] ?? [:]
+            if let vehicle = tripUpdate["vehicle"] as? [String: Any], let stopTimes = tripUpdate["stopTimeUpdate"] as? [[String: Any]], let trainNumber = vehicle["label"] as? String, let routeId = (tripUpdate["trip"] as? [String: Any])?["routeId"] as? String {
+                
+                var stopArray: [MTStop] = []
+                for stop in stopTimes {
+                    if let position = stop["stopSequence"] as? Int, let apiName = stop["stopId"] as? String, let arrival = stop["arrival"] as? [String: Any], let arrivalTimestring = arrival["time"] as? String, let arrivalTimestamp = Double(arrivalTimestring) {
+                        stopArray.append(MTStop(apiName: apiName, position: position, arrivalTime: Date(timeIntervalSince1970: arrivalTimestamp)))
+                    }
+                }
+                
+                predictionDict[trainNumber] = MTPrediction(service: MTService(fromAPI: routeId), trainNumber: trainNumber, stops: stopArray)
+            }
+        }
         
         return predictionDict
     }
     
     func storePolylines() {
-        readGTFS(endpoint: "schedule/shapes") { result in
-            let sortedByService = Dictionary(grouping: result/*.filter { entry in
-                guard let shapeId = entry["shape_id"] as? String else { return false }
-                return !shapeId.contains("IB")
-            }*/) { entry in
-                return entry["shape_id"] as? String ?? ""
-            }
-
-            let superSorted = sortedByService.mapValues { entries in
-                entries.compactMap { entry -> MTPoint? in
-                    guard let rawId = entry["shape_id"] as? String,
-                          let sequencePosition = entry["shape_pt_sequence"] as? Int,
-                          let latitude = entry["shape_pt_lat"] as? Double,
-                          let longitude = entry["shape_pt_lon"] as? Double else {
-                        return nil
-                    }
-                    
-                    let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                    let apiForm: String = {
-                        if let obRange = rawId.range(of: "_OB") {
-                            return String(rawId[..<obRange.lowerBound])
-                        }
-                        
-                        if let ibRange = rawId.range(of: "_IB") {
-                            return String(rawId[..<ibRange.lowerBound])
-                        }
-                        
-                        return rawId
-                    }()
-                    
-                    return MTPoint(rawId: rawId, service: MTService(fromAPI: apiForm), sequencePosition: sequencePosition, coordinate: coordinate)
-                }
-                .sorted { $0.sequencePosition < $1.sequencePosition }
-            }
-            
-            self.storedPolylines = superSorted
-            
-            self.semaphore.signal()
+        guard let filePath = Bundle.main.path(forResource: "metra_shapes", ofType: "csv") else {
+            return
         }
-        semaphore.wait()
+        
+        var result = ""
+        
+        do {
+            result = try String(contentsOfFile: filePath)
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+
+        var rows = result.components(separatedBy: "\r\n")
+        rows.removeFirst()
+        
+        for i in 0..<rows.count {
+            let columns = rows[i].split(separator: ",")
+            if columns.count > 0 {
+                let currentOverlay = String(columns[0])
+                let point = MTPoint(rawId: currentOverlay, service: MTService(fromAPI: currentOverlay.components(separatedBy: "_").first ?? "SES"), sequencePosition: Int(columns[3]) ?? 0, coordinate: CLLocationCoordinate2D(latitude: Double(columns[1]) ?? 0, longitude: Double(columns[2]) ?? 0))
+                if storedPolylines[currentOverlay] == nil {
+                    storedPolylines[currentOverlay] = []
+                }
+                storedPolylines[currentOverlay]?.append(point)
+            }
+        }
     }
     
     func getPolylineForKey(key: String, bundle: (String, MTService)) -> [MTPolyline] {
@@ -480,21 +470,34 @@ class METXAPI: NSObject {
         return array
     }
     
-    func readGTFS(endpoint: String, completion: @escaping ([[String: Any]]) -> Void) {
-        MetworkManager.shared.contactMetra(from: "https://gtfsapi.metrarail.com/gtfs/\(endpoint)") { (data, error) in
+    private func readGTFS(endpoint: String, completion: @escaping ([String: Any]) -> Void) {
+        guard let url = URL(string: "https://gtfspublic.metrarr.com/gtfs/public/\(endpoint)?api_token=\(apiKey)") else {
+            completion(["Error": "Invalid URL"])
+            return
+        }
+        
+        let request = URLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("error \(error.localizedDescription)")
+                completion(["Error": "Request failed: \(error.localizedDescription)"])
                 return
             }
             
-            if let data = data, let jsonString = String(data: data, encoding: .utf8)?.replacingOccurrences(of: "\\", with: "") {
-                do {
-                    let jsonResult = try JSONSerialization.jsonObject(with: jsonString.data(using: .utf8) ?? Data(), options: []) as? [[String: Any]] ?? []
-                    completion(jsonResult)
-                } catch {
-                    completion([["Error": "JSON parsing failed: \(error)"]])
-                }
+            guard let data = data else {
+                completion(["Error": "No data received"])
+                return
+            }
+            
+            do {
+                let jsonString = try TransitRealtime_FeedMessage(serializedBytes: data) //new metra api only returns protobuf, but thats no good for swift
+                let jsonResult = try JSONSerialization.jsonObject(with: jsonString.jsonUTF8Bytes(), options: []) as? [String: Any] ?? ["Error": "Invalid JSON"] //so we convert it back to json LOL (old api returned json - it was a little broken, but it was json)
+                completion(jsonResult)
+            } catch {
+                completion(["Error": "JSON parsing failed: \(error.localizedDescription)"])
             }
         }
+        
+        task.resume()
     }
 }

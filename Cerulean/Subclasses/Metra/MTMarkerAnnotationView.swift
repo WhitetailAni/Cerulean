@@ -10,7 +10,6 @@ import MapKit
 import Foundation
 
 class MTMarkerAnnotationView: MKMarkerAnnotationView {
-    
     override var annotation: MKAnnotation? {
         didSet { configure(for: annotation) }
     }

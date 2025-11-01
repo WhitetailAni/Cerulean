@@ -41,6 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var redSouthUpTop = false
     var redNorthUpTop = false
     var pinkRacine = false
+    var brownMerchMart = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -76,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(ctaItem)
         
-        let metraItem = CRMenuItem(title: "", action: #selector(openLink(_:)))
+        let metraItem = CRMenuItem(title: "", action: #selector(twoInOne(_:)))
         metraItem.linkToOpen = URL(string: "https://metra.com/metratracker")!
         let metraTitle = createMutableStringFromImage(imageName: "metra")
         metraItem.attributedTitle = metraTitle
@@ -93,6 +94,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         sslItem.submenu = sslMenu
         
         menu.addItem(sslItem)
+        
+        _ = METXAPI(polyline: true)
+        _ = METXAPI(stations: true)
         
         refreshInfo()
         menu.addItem(NSMenuItem.separator())
@@ -204,7 +208,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     redNorthUpTop = true
                 }
                 
-                if desc.contains("Red") && desc.contains("both") && (desc.contains("elevated") || desc.contains("Loop")) && desc.contains("routed") {
+                if desc.contains("Red") && desc.contains("elevated") && (desc.contains("Loop") || ( desc.contains("Fullerton") && desc.contains("Cermak"))) && desc.contains("rerouted") {
                     redSouthUpTop = true
                     redNorthUpTop = true
                 }
@@ -227,8 +231,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if isHappening {
                 let headline = alert["Headline"] as? String ?? ""
-                if headline.contains("Polk") && headline.contains("Racine") {
+                if headline.contains("Rerouted") && headline.contains("Racine") {
                     pinkRacine = true
+                }
+            }
+        }
+        
+        let bAlerts = ChicagoTransitInterface().getBrownAlerts()
+        let bAlertsTwo = bAlerts["CTAAlerts"] as? [String: Any] ?? [:]
+        let bAlertsThree = bAlertsTwo["Alert"] as? [[String: Any]] ?? []
+        for alert in bAlertsThree {
+            let start = CRTime.ctaAPITimeToDate(string: alert["EventStart"] as? String ?? "")
+            let end = {
+                if alert["EventEnd"] as! NSObject == NSNull() {
+                    return Date.distantFuture
+                }
+                return CRTime.ctaAPITimeToDate(string: alert["EventEnd"] as? String ?? "")
+            }()
+            
+            let isHappening = Date.now >= start && Date.now <= end
+            
+            if isHappening {
+                let headline = alert["Headline"] as? String ?? ""
+                if headline.contains("Loop") && headline.contains("Suspension") {
+                    brownMerchMart = true
                 }
             }
         }
@@ -300,24 +326,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     for train in trains {
                         let destination = train["destinationStation"] ?? "Unknown Station"
                         var line2 = line
-                        if line == .green && destination == "Cottage Grove" {
-                            line2 = .greenAlternate
-                        }
-                        if line == .blue && destination == "UIC-Halsted" {
-                            line2 = .blueAlternate
-                        }
                         if line2 == .red, (destination == "95th/Dan Ryan" || destination == "130th") && self.redSouthUpTop {
                             line2 = .redAlternate
                         }
                         if line == .red, destination == "Howard" && self.redNorthUpTop {
                             line2 = .redAlternate
                         }
-                        if line == .pink && self.pinkRacine {
-                            line2 = .pinkAlternate
-                        }
                         if line == .red && destination == "Ashland/63rd" {
                             line2 = .redSouthSide
                         }
+                        if line == .blue && destination == "UIC-Halsted" {
+                            line2 = .blueAlternate
+                        }
+                        if line == .brown && self.brownMerchMart {
+                            line2 = .brownMerchMart
+                        }
+                        if line == .green && destination == "Cottage Grove" {
+                            line2 = .greenAlternate
+                        }
+                        if line == .pink && self.pinkRacine {
+                            line2 = .pinkAlternate
+                        }
+                        
                     
                         let run = train["run"] ?? "Unknown Run"
                         
@@ -536,7 +566,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let allConsists = rawTrainData.0
             let timeLastUpdated = rawTrainData.1
             
-            let allPredictionData = METXAPI().getStopPredictions()
+            let predictionData = METXAPI().getStopPredictions()
             
             DispatchQueue.main.sync {
                 let services = MTService.allServices
@@ -546,7 +576,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let apiRepresentation = service.apiRepresentation()
                     
                     let consists = allConsists[apiRepresentation] ?? []
-                    let predictionsForService = allPredictionData[apiRepresentation] ?? []
                     
                     let trainMenu = NSMenu()
                     
@@ -601,46 +630,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             stopMenu.addItem(titleItem)
                             stopMenu.addItem(NSMenuItem.separator())
                             
-                            if let trainSpecificPredictions: MTPrediction = {
-                                for prediction in predictionsForService {
-                                    if consist.trainNumber == prediction.trainNumber {
-                                        return prediction
-                                    }
-                                }
-                                return nil
-                            }() {
+                            if let trainSpecificPredictions: MTPrediction = predictionData[consist.trainNumber] {
                                 let stops = trainSpecificPredictions.stops
                                 
                                 if stops.count > 0 {
                                     for stop in stops {
                                         let purifiedName = MTStop.purifyApiName(name: stop.apiName)
-                                        if stop.arrivalTime == stop.departureTime {
-                                            let stopItem = MTMenuItem(title: "\(purifiedName) at \(CRTime.dateToReadableTime(date: stop.arrivalTime))", action: #selector(self.openMetraMapWindow(_:)))
-                                            stopItem.trainNumber = consist.trainNumber
-                                            stopItem.service = service
-                                            stopItem.stationID = stop.apiName
-                                            stopItem.stationName = purifiedName
-                                            stopItem.trainCoordinate = consist.location
-                                            
-                                            stopMenu.addItem(stopItem)
-                                        } else {
-                                            let arriveItem = MTMenuItem(title: "Arrives \(purifiedName) at \(CRTime.dateToReadableTime(date: stop.arrivalTime))", action: #selector(self.openMetraMapWindow(_:)))
-                                            arriveItem.trainNumber = consist.trainNumber
-                                            arriveItem.service = service
-                                            arriveItem.stationID = stop.apiName
-                                            arriveItem.stationName = purifiedName
-                                            arriveItem.trainCoordinate = consist.location
-                                            
-                                            let departItem = MTMenuItem(title: "Departs \(purifiedName) at \(CRTime.dateToReadableTime(date: stop.departureTime))", action: #selector(self.openMetraMapWindow(_:)))
-                                            departItem.trainNumber = consist.trainNumber
-                                            departItem.service = service
-                                            departItem.stationID = stop.apiName
-                                            departItem.stationName = purifiedName
-                                            departItem.trainCoordinate = consist.location
-                                            
-                                            stopMenu.addItem(arriveItem)
-                                            stopMenu.addItem(departItem)
-                                        }
+                                        let stopItem = MTMenuItem(title: "\(purifiedName) at \(CRTime.dateToReadableTime(date: stop.arrivalTime))", action: #selector(self.openMetraMapWindow(_:)))
+                                        stopItem.trainNumber = consist.trainNumber
+                                        stopItem.service = service
+                                        stopItem.stationID = stop.apiName
+                                        stopItem.stationName = purifiedName
+                                        stopItem.trainCoordinate = consist.location
+                                        
+                                        stopMenu.addItem(stopItem)
                                     }
                                 } else {
                                     let stopItem = MTMenuItem(title: "Arrived at terminal", action: nil)
@@ -863,6 +866,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mapMutex.unlock()
     }
     
+    @objc func openMetraYardWindow(_ sender: CRMenuItem) {
+        mapMutex.lock()
+        if let screenSize = NSScreen.main?.frame.size {
+            let window = NSWindow(contentRect: NSMakeRect(0, 0, screenSize.width * 0.5, screenSize.height * 0.5), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            let index = mapWindows.count
+            mapWindows.append(window)
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale.current
+            
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "HH:mm", options: 0, locale: Locale.current)
+            
+            mapWindows[index].title = "Cerulean - Metra trains in the yards"
+            
+            let yardConsists = METXAPI().getYardTrains()
+            
+            self.mapWindows[index].contentView = MTYMapView(consists: yardConsists.0, timeLastUpdated: yardConsists.1)
+            self.mapWindows[index].center()
+            self.mapWindows[index].setIsVisible(true)
+            self.mapWindows[index].orderFrontRegardless()
+            self.mapWindows[index].makeKey()
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        mapMutex.unlock()
+    }
+    
     @objc func openSSLMapWindow(_ sender: SSLMenuItem) {
         mapMutex.lock()
         if let screenSize = NSScreen.main?.frame.size {
@@ -957,6 +986,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             aboutWindows[index].delegate = aboutWindowDelegate
         }
         aboutMutex.unlock()
+    }
+    
+    @objc func twoInOne(_ sender: CRMenuItem) {
+        guard let currentEvent = NSApp.currentEvent else {
+            return
+        }
+        
+        if currentEvent.modifierFlags.contains(.option) {
+            openMetraYardWindow(sender)
+        } else {
+            openLink(sender)
+        }
     }
     
     @objc func openLink(_ sender: CRMenuItem) {

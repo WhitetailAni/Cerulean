@@ -82,28 +82,42 @@ struct CRTime: Comparable {
         return inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
     }
     
-    static func amtrakAPITimeToReadableTime(string: String, timeZone: TimeZone, actual: Bool = false) -> String {
-        let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXX"
-        inputFormatter.timeZone = timeZone//TimeZone(identifier: "UTC")
-        let time: Date = inputFormatter.date(from: string) ?? Date(timeIntervalSince1970: 0)
-        
-        if time < Date() && actual {
-            return "ALREADYHAPPEN"
-        }
-        
-        let testFormatter = DateFormatter()
-        testFormatter.dateFormat = "MM-dd"
-        testFormatter.timeZone = TimeZone.autoupdatingCurrent
-        
+    static func unixTimestampToReadableTime(timestamp: Double) -> String {
         let outputFormatter = DateFormatter()
-        if testFormatter.string(from: time) == testFormatter.string(from: Date()) {
-            outputFormatter.dateFormat = "HH:mm"
-        } else {
-            outputFormatter.dateFormat = "MM-dd HH:mm"
-        }
+        outputFormatter.dateFormat = "HH:mm"
         outputFormatter.timeZone = TimeZone.autoupdatingCurrent
         
-        return outputFormatter.string(from: time)
+        return outputFormatter.string(from: Date(timeIntervalSince1970: timestamp))
+    }
+
+    static func isRTASummer() -> Bool {
+        let now = Date()
+        let year = Calendar.current.component(.year, from: now)
+        
+        return now >= memorialDayIs(year: year) && now <= laborDayIs(year: year)
+    }
+
+    static func memorialDayIs(year: Int) -> Date {
+        let calendar = Calendar.current
+        
+        var components = DateComponents()
+        components.year = year
+        components.month = 5
+        components.day = 31
+        
+        let sydney = calendar.date(from: components)!
+        return calendar.date(byAdding: .day, value: -(calendar.component(.weekday, from: sydney) + 5) % 7, to: sydney)!
+    }
+
+    static func laborDayIs(year: Int) -> Date {
+        let calendar = Calendar.current
+        
+        var components = DateComponents()
+        components.year = year
+        components.month = 9
+        components.day = 1
+        
+        let platteville = calendar.date(from: components)!
+        return calendar.date(byAdding: .day, value: (9 - calendar.component(.weekday, from: platteville)) % 7, to: platteville)!
     }
 }

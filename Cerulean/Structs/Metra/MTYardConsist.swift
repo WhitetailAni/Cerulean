@@ -1,16 +1,14 @@
 //
-//  CRConsist.swift
+//  MTYardConsist.swift
 //  Cerulean
 //
-//  Created by WhitetailAni on 12/2/24.
+//  Created by WhitetailAni on 10/30/25.
 //
 
 import Foundation
 import CoreLocation
 
-struct MTConsist {
-    var trainNumber: String
+struct MTYardConsist {
     var headCarNumber: String
     var location: CLLocationCoordinate2D
-    var service: MTService
 }

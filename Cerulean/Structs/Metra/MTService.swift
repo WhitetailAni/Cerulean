@@ -226,14 +226,18 @@ enum MTService {
                     return "Ogilvie Transportation Center"
                 } else {
                     switch trainNumber {
-                    case 801, 805, 809, 819, 823, 831, 301, 815, 321, 337, 347, 351, 355, 359, 363, 373:
+                    case 803, 807, 815, 821, 823, 825, 829, 301, 303, 321, 337, 347, 351, 355, 359, 363, 373:
                         return "Kenosha"
                     case 309, 341, 345, 349, 353, 357, 361:
                         return "Highland Park"
                     case 305, 391, 313:
                         return "Winnetka"
                     case 393:
-                        return "Ravinia Park"
+                        if CRTime.isRTASummer() {
+                            return "Ravinia Park"
+                        } else {
+                            return "Winnetka"
+                        }
                     default:
                         return "Waukegan"
                     }
@@ -466,6 +470,9 @@ enum MTService {
             case .sws:
                 return "SWS_\(inOut)_1"
             case .ncs:
+                if trainNumber == 120 {
+                    return "NCS_IB_2"
+                }
                 return "NCS_\(inOut)_1"
             case .ses:
                 return "MD-W_\(inOut)_1"

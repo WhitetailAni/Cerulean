@@ -70,6 +70,7 @@ class SSLMapView: MKMapView {
             refreshButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
         ])
         
+        applyLineOverlay()
         if station.coordinate.latitude == 52.31697130005335 && station.coordinate.longitude == 4.746418131532647 {
             zoomMapToTrain()
         } else {
@@ -78,8 +79,6 @@ class SSLMapView: MKMapView {
     }
     
     private func zoomMapToTrain() {
-        applyLineOverlay()
-        
         self.removeAnnotations(self.annotations)
         
         let trainAnnotation = SSLPointAnnotation()
@@ -95,8 +94,6 @@ class SSLMapView: MKMapView {
     }
     
     private func zoomMapToTrainAndStation() {
-        applyLineOverlay()
-        
         self.removeAnnotations(self.annotations)
         
         let trainAnnotation = SSLPointAnnotation()

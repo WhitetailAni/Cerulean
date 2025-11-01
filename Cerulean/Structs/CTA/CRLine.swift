@@ -15,6 +15,8 @@ enum CRLine {
     case blue
     case blueAlternate
     case brown
+    case brownMerchMart
+    //case brownRoosevelt
     case green
     case greenAlternate
     case orange
@@ -63,6 +65,8 @@ enum CRLine {
             return CRLine.pinkAlternate
         case 308600003:
             return CRLine.redSouthSide
+        case 308600004:
+            return CRLine.brownMerchMart
         default:
             return CRLine.red
         }
@@ -102,6 +106,8 @@ enum CRLine {
             return 308400012/*, 308400010, 308500010].randomElement()!*/
         case .brown:
             return 308400017/*, 308500017].randomElement()!*/
+        case .brownMerchMart:
+            return 308600004
         case .orange:
             return 308400034/*, 308500034].randomElement()!*/
         case .pink:
@@ -123,7 +129,7 @@ enum CRLine {
             return "Red"
         case .blue, .blueAlternate:
             return "Blue"
-        case .brown:
+        case .brown, .brownMerchMart:
             return "Brown"
         case .green, .greenAlternate:
             return "Green"
@@ -144,7 +150,7 @@ enum CRLine {
             return "Red"
         case .blue, .blueAlternate:
             return "Blue"
-        case .brown:
+        case .brown, .brownMerchMart:
             return "Brn"
         case .green, .greenAlternate:
             return "G"
@@ -165,7 +171,7 @@ enum CRLine {
             return NSColor(r: 227, g: 25, b: 55)
         case .blue, .blueAlternate:
             return NSColor(r: 0, g: 157, b: 220)
-        case .brown:
+        case .brown, .brownMerchMart:
             return NSColor(r: 118, g: 66, b: 0)
         case .green, .greenAlternate:
             return NSColor(r: 0, g: 169, b: 79)
@@ -186,7 +192,7 @@ enum CRLine {
             return URL(string: "https://www.transitchicago.com/redline/")!
         case .blue, .blueAlternate:
             return URL(string: "https://www.transitchicago.com/blueline/")!
-        case .brown:
+        case .brown, .brownMerchMart:
             return URL(string: "https://www.transitchicago.com/brownline/")!
         case .green, .greenAlternate:
             return URL(string: "https://www.transitchicago.com/greenline/")!
