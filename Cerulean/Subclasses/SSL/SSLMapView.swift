@@ -13,12 +13,14 @@ import SouthShoreTracker
 class SSLMapView: MKMapView {
     var train: SSLPlacemark
     var station: SSLPlacemark
+    var branch: SSLBranch
     var timeLastUpdated: String
     var timeLabel: NSTextField!
     
     init(train: SSLPlacemark, timeLastUpdated: String) {
         self.train = train
         self.station = SSLPlacemark(coordinate: CLLocationCoordinate2D(latitude: 52.31697130005335, longitude: 4.746418131532647))
+        self.branch = train.branch ?? .lakeshore
         self.timeLastUpdated = timeLastUpdated
         super.init(frame: .zero)
     }
@@ -26,6 +28,7 @@ class SSLMapView: MKMapView {
     init(train: SSLPlacemark, station: SSLPlacemark, timeLastUpdated: String) {
         self.train = train
         self.station = station
+        self.branch = train.branch ?? .lakeshore
         self.timeLastUpdated = timeLastUpdated
         super.init(frame: .zero)
     }
@@ -121,7 +124,7 @@ class SSLMapView: MKMapView {
     
     private func applyLineOverlay() {
         DispatchQueue.global().async {
-            let overlay = SSLTracker().getOverlay(endStop: self.train.endStop, trainString: self.train.trainNumber ?? "502")
+            let overlay = SSLTracker().getOverlay(branch: self.branch, endStop: self.train.endStop, trainString: self.train.trainNumber ?? "502")
                 
             DispatchQueue.main.sync {
                 self.addOverlay(overlay)
@@ -144,6 +147,7 @@ class SSLMapView: MKMapView {
             }() {
                 DispatchQueue.main.sync {
                     self.train = self.train.placemarkWithNewLocation(specificTrain.location)
+                    self.train.branch = self.branch
                     self.timeLabel.stringValue = "Updated at \(specificTrain.timeLastUpdated)"
                     
                     if self.station.coordinate.latitude == 52.31697130005335 && self.station.coordinate.longitude == 4.746418131532647 {
@@ -161,7 +165,11 @@ extension SSLMapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? MKPolyline {
             let polylineRenderer = MKPolylineRenderer(polyline: polyline)
-            polylineRenderer.strokeColor = SSLTracker.colors.beige
+            if branch == .lakeshore {
+                polylineRenderer.strokeColor = SSLTracker.colors.lakeshore
+            } else {
+                polylineRenderer.strokeColor = SSLTracker.colors.monon
+            }
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
         }

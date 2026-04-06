@@ -95,6 +95,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(sslItem)
         
+        //SSLTracker().getServiceAnnouncements()
+        
         _ = METXAPI(polyline: true)
         _ = METXAPI(stations: true)
         
@@ -354,7 +356,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         var trainItem: CRMenuItem!
                         if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString), (latitude != 0 && longitude != 0) {
                             
-                            trainItem = CRMenuItem(title: "\(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
+                            var title = "\(run) to \(destination)"
+                            trainItem = CRMenuItem(title: "", action: #selector(self.openCTAMapWindow(_:)))
+                            if CRConsist.isHoliday(run: run) {
+                                title.append(" 🎄")
+                            }
+                            trainItem.title = title
+                            
                             trainItem.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                             if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
                                 trainItem.isBrownge = .brown
@@ -365,6 +373,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             
                             trainItem.trainLine = line2
                             trainItem.trainRun = train["run"] ?? "Unknown Run"
+                            
                             
                             trainItem.timeLastUpdated = timeLastUpdated
                         } else {
@@ -399,9 +408,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 var title: CRMenuItem!
                                 if let latitudeString = train["latitude"], let longitudeString = train["longitude"], let latitude = Double(latitudeString), let longitude = Double(longitudeString) {
                                     
-                                    title = CRMenuItem(title: "\(line2.textualRepresentation()) Line run \(run) to \(destination)", action: #selector(self.openCTAMapWindow(_:)))
+                                    var titleString = "\(line2.textualRepresentation()) Line run \(run) to \(destination)"
+                                    title = CRMenuItem(title: "", action: #selector(self.openCTAMapWindow(_:)))
                                     title.trainCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                                     title.trainLine = line2
+                                    
+                                    if CRConsist.isHoliday(run: run) {
+                                        titleString.append(" 🎄")
+                                    }
+                                    title.title = titleString
                                     
                                     if line2 == .orange && ((destination == "Kimball" || destination == "Downtown, Kimball") || (((Int(run) ?? 000) / 100) % 10 == 4)) {
                                         self.brownFlagged = true
@@ -684,6 +699,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         trainItem.endStop = vehicle.endStop
                         trainItem.trainCoordinate = vehicle.location
                         trainItem.trainNumber = vehicle.trainNumber
+                        trainItem.branch = vehicle.branch
                         
                         let stopMenu = NSMenu()
                         
@@ -691,6 +707,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         titleItem.endStop = vehicle.endStop
                         titleItem.trainCoordinate = vehicle.location
                         titleItem.trainNumber = vehicle.trainNumber
+                        titleItem.branch = vehicle.branch
                         
                         stopMenu.addItem(titleItem)
                         stopMenu.addItem(NSMenuItem.separator())
@@ -704,17 +721,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 
                                 if arrival.actualArrivalTime == arrival.scheduledArrivalTime || Bundle.main.infoDictionary?["CRSSLDontShowScheduled"] as? Bool ?? false {
                                     stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime)", action: #selector(self.openSSLMapWindow(_:)))
-                                    stopItem.trainNumber = vehicle.trainNumber
-                                    stopItem.stop = arrival.stop
-                                    stopItem.endStop = vehicle.endStop
-                                    stopItem.trainCoordinate = vehicle.location
                                 } else {
                                     stopItem = SSLMenuItem(title: "\(arrival.stop.name) at \(arrival.actualArrivalTime) (scheduled at \(arrival.scheduledArrivalTime))", action: #selector(self.openSSLMapWindow(_:)))
-                                    stopItem.trainNumber = vehicle.trainNumber
-                                    stopItem.stop = arrival.stop
-                                    stopItem.endStop = vehicle.endStop
-                                    stopItem.trainCoordinate = vehicle.location
                                 }
+                                stopItem.trainNumber = vehicle.trainNumber
+                                stopItem.stop = arrival.stop
+                                stopItem.endStop = vehicle.endStop
+                                stopItem.trainCoordinate = vehicle.location
+                                stopItem.branch = vehicle.branch
                                 stopMenu.addItem(stopItem)
                             }
                         } else {
@@ -901,12 +915,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let placemark = SSLPlacemark(coordinate: sender.trainCoordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))
             
-            if let trainNumber = sender.trainNumber, let stop = sender.stop, let endStop = sender.endStop {
+            if let trainNumber = sender.trainNumber, let stop = sender.stop, let endStop = sender.endStop, let branch = sender.branch {
                 placemark.trainNumber = trainNumber
                 placemark.endStop = endStop
+                placemark.branch = branch
                 
                 let stopMark = SSLPlacemark(coordinate: stop.location)
                 stopMark.stationName = stop.name
+                stopMark.branch = branch
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.locale = Locale.current
@@ -921,9 +937,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.mapWindows[index].orderFrontRegardless()
                 self.mapWindows[index].makeKey()
                 NSApp.activate(ignoringOtherApps: true)
-            } else if let trainNumber = sender.trainNumber, let endStop = sender.endStop {
+            } else if let trainNumber = sender.trainNumber, let endStop = sender.endStop, let branch = sender.branch {
                 placemark.trainNumber = trainNumber
                 placemark.endStop = endStop
+                placemark.branch = branch
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.locale = Locale.current

@@ -28,14 +28,21 @@ class SSLMarkerAnnotationView: MKMarkerAnnotationView {
     func configure(for annotation: MKAnnotation?) {
         if annotation is SSLPointAnnotation {
             let annotation: SSLPointAnnotation = annotation as! SSLPointAnnotation
-            if let train = annotation.mark?.trainNumber {
-                markerTintColor = SSLTracker.colors.maroon
-                glyphTintColor = SSLTracker.colors.beige
-                glyphText = train
-            } else if annotation.mark?.stationName != nil {
-                glyphImage = .ssl2
-                markerTintColor = SSLTracker.colors.maroon
-                glyphTintColor = SSLTracker.colors.beige
+            if let branch = annotation.mark?.branch {
+                if let train = annotation.mark?.trainNumber {
+                    if branch == .lakeshore {
+                        markerTintColor = SSLTracker.colors.lakeshore
+                        glyphTintColor = NSColor.black
+                    } else {
+                        markerTintColor = SSLTracker.colors.monon
+                        glyphTintColor = NSColor.white
+                    }
+                    glyphText = train
+                } else if annotation.mark?.stationName != nil {
+                    glyphImage = .ssl2
+                    markerTintColor = SSLTracker.colors.maroon
+                    glyphTintColor = SSLTracker.colors.beige
+                }
             }
             displayPriority = .required
         }

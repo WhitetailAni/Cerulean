@@ -14,7 +14,7 @@ class METXAPI: NSObject {
     let semaphore = DispatchSemaphore(value: 0)
     var storedPolylines: Dictionary<String, [MTPoint]> = [:]
     var storedStations: [String: [MTStation]] = [:]
-    var apiKey = 
+    var apiKey = ""
     
     public static var polyline = METXAPI(polyline: true)
     public static var stations = METXAPI(stations: true)

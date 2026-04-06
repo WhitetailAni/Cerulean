@@ -169,7 +169,7 @@
 	<key>79TH-SC</key>
 	<string>79th Street/Cheltenham</string>
 	<key>WINDSORPK</key>
-	<string>Windsor Park</string>
+	<string>75th Street/Windsor Park</string>
 	<key>SOUTHSHORE</key>
 	<string>South Shore</string>
 	<key>BRYNMAWR</key>
@@ -177,7 +177,7 @@
 	<key>STONYISLND</key>
 	<string>Stony Island</string>
 	<key>63RD-UP</key>
-	<string>63rd Street</string>
+	<string>63rd Street/Woodlawn</string>
 	<key>59TH-UP</key>
 	<string>59th Street/University of Chicago</string>
 	<key>55-56-57TH</key>
@@ -191,7 +191,7 @@
 	<key>MCCORMICK</key>
 	<string>McCormick Place</string>
 	<key>18TH-UP</key>
-	<string>18th Street</string>
+	<string>18th Street/Soldier Field</string>
 	<key>MUSEUM</key>
 	<string>Museum Campus/11th Street</string>
 	<key>VANBUREN</key>
@@ -347,7 +347,7 @@
 	<key>WESTSPRING</key>
 	<string>Western Springs</string>
 	<key>STONEAVE</key>
-	<string>Stone Avenue</string>
+	<string>Stone Avenue/LaGrange</string>
 	<key>LAGRANGE</key>
 	<string>LaGrange Road</string>
 	<key>CONGRESSPK</key>
@@ -425,7 +425,7 @@
 	<key>MANHATTAN</key>
 	<string>Manhattan</string>
 	<key>LARAWAY</key>
-	<string>Laraway Road</string>
+	<string>Laraway Road/New Lenox</string>
 	<key>179TH-SWS</key>
 	<string>179th Street/Orland Park</string>
 	<key>153RD-SWS</key>

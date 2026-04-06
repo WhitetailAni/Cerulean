@@ -13,6 +13,7 @@ class SSLPlacemark: MKPlacemark, @unchecked Sendable {
     var trainNumber: String?
     var stationName: String?
     var endStop: SSLStop?
+    var branch: SSLBranch?
     
     func placemarkWithNewLocation(_ location: CLLocationCoordinate2D) -> SSLPlacemark {
         let mark = SSLPlacemark(coordinate: location)

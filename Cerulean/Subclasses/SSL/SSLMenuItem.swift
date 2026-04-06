@@ -17,6 +17,8 @@ class SSLMenuItem: NSMenuItem {
     var stop: SSLStop?
     var endStop: SSLStop?
     
+    var branch: SSLBranch?
+    
     var timeLastUpdated: String?
 }
 

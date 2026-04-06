@@ -23,6 +23,7 @@
 		422124CE2C5026FA0062695A /* ChicagoTransitInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CC2C5026FA0062695A /* ChicagoTransitInterface.swift */; };
 		422124CF2C5026FA0062695A /* InterfaceResultProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */; };
 		422124DA2C502D920062695A /* CeruleanApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422124D92C502D900062695A /* CeruleanApp.swift */; };
+		423817142EDBC3050071E092 /* CRConsist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423817132EDBC3030071E092 /* CRConsist.swift */; };
 		423F087A2EB12AFF00D50C62 /* GTFS in Frameworks */ = {isa = PBXBuildFile; productRef = 423F08792EB12AFF00D50C62 /* GTFS */; };
 		423F087D2EB319E300D50C62 /* metra_stops.csv in Resources */ = {isa = PBXBuildFile; fileRef = 423F087C2EB319E200D50C62 /* metra_stops.csv */; };
 		423F087E2EB319E300D50C62 /* metra_shapes.csv in Resources */ = {isa = PBXBuildFile; fileRef = 423F087B2EB319E200D50C62 /* metra_shapes.csv */; };
@@ -114,6 +115,7 @@
 		422124CD2C5026FA0062695A /* InterfaceResultProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceResultProcessing.swift; sourceTree = "<group>"; };
 		422124D92C502D900062695A /* CeruleanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeruleanApp.swift; sourceTree = "<group>"; };
 		422124DB2C502E6D0062695A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		423817132EDBC3030071E092 /* CRConsist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRConsist.swift; sourceTree = "<group>"; };
 		423F087B2EB319E200D50C62 /* metra_shapes.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = metra_shapes.csv; sourceTree = "<group>"; };
 		423F087C2EB319E200D50C62 /* metra_stops.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = metra_stops.csv; sourceTree = "<group>"; };
 		423F087F2EB3DFE000D50C62 /* MTYMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTYMapView.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 		42F0BBD52D267BBD00F834DF /* CTA */ = {
 			isa = PBXGroup;
 			children = (
+				423817132EDBC3030071E092 /* CRConsist.swift */,
 				420013052C54B1F0007ACC67 /* CRLine.swift */,
 				42D999FD2CFD823700A060A2 /* CRPoint.swift */,
 			);
@@ -466,6 +469,7 @@
 				42D99A152CFE9E6500A060A2 /* MTPointAnnotation.swift in Sources */,
 				420012FF2C5367A7007ACC67 /* UserInfo.swift in Sources */,
 				42D99A172CFE9EBA00A060A2 /* MTMenuItem.swift in Sources */,
+				423817142EDBC3050071E092 /* CRConsist.swift in Sources */,
 				42D99A1D2CFEB07300A060A2 /* MTPoint.swift in Sources */,
 				42549FA52DA225AE005C8B27 /* RLMapView.swift in Sources */,
 				42D99A0D2CFE5E5800A060A2 /* MTService.swift in Sources */,
@@ -624,7 +628,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1973;
+				CURRENT_PROJECT_VERSION = 2026;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -642,7 +646,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.7.0;
+				MARKETING_VERSION = 3.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
@@ -665,7 +669,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1973;
+				CURRENT_PROJECT_VERSION = 2026;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -683,7 +687,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.7.0;
+				MARKETING_VERSION = 3.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitetailani.Cerulean;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;

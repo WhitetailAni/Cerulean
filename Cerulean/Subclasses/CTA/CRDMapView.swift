@@ -78,7 +78,7 @@ class CRDMapView: MKMapView {
         applyCTAOverlay(line: .greenAlternate, run: "001")
         
         DispatchQueue.global().async {
-            var overlayArray: [MKOverlay] = [SSLTracker().getOverlay(endStop: nil, trainString: "1")]
+            var overlayArray: [MKOverlay] = [SSLTracker().getOverlay(branch: .lakeshore, endStop: nil, trainString: "1"), SSLTracker().getOverlay(branch: .monon, endStop: nil, trainString: "2")]
             let pverlays = METXAPI().getAllPolylines()
             for pverlay in pverlays {
                 overlayArray.append(pverlay)
@@ -272,11 +272,11 @@ class CRDMapView: MKMapView {
             annote.mark = annotation.mark
             
             if let train = annotation.mark?.trainNumber {
-                annote.markerTint = SSLTracker.colors.maroon
+                annote.markerTint = SSLTracker.colors.monon
                 annote.glyphTint = SSLTracker.colors.beige
                 annote.text = train
             } else if annotation.mark?.stationName != nil {
-                annote.markerTint = SSLTracker.colors.maroon
+                annote.markerTint = SSLTracker.colors.monon
                 annote.glyphTint = SSLTracker.colors.beige
             }
             
